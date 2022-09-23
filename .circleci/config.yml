@@ -3,6 +3,11 @@ workflows:
   test-deploy:
     jobs:
       - test
+      filters:
+        branches:
+          only: 
+            - master
+            - development
 jobs:
   test:
     docker:
