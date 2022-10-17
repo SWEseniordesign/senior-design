@@ -1,5 +1,5 @@
 import React from 'react';
-import Router from './frontend/router/Router.js';
+import Router from './router/Router';
 import { BrowserRouter } from 'react-router-dom'; 
 
 function App() {
