@@ -11,7 +11,7 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: node --version
+      - run: sudo npm install -g npm@latest && node --version
       - node/install-packages:
           pkg-manager: yarn
       - run:
@@ -20,5 +20,5 @@ jobs:
             sudo apt-get update
             sudo apt install python3-pip
             sudo pip3 install awsebcli --upgrade
-      - run: yarn && yarn build
+      - run: yarn install --ig && yarn build
       - run: aws s3 sync ./build s3://my-till
