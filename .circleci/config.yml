@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - run: curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - && sudo apt-get install -y nodejs
-
+      -run: node --version
       - node/install-packages:
           pkg-manager: yarn
       - run:
