@@ -10,6 +10,8 @@ jobs:
     steps:
       - checkout
       - run: node --version
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
           name: INSTALLING AWS CLI
           command: |
