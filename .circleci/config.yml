@@ -11,8 +11,7 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-sudo apt-get install -y nodejs
+      - run: curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - && sudo apt-get install -y nodejs
 
       - node/install-packages:
           pkg-manager: yarn
