@@ -2,11 +2,21 @@ version: 2.1
 workflows:
   test-deploy:
     jobs:
-      - test
+      - build
 jobs:
-  test:
+  build:
+    machine:
+      image: ubuntu-2004:202010-01
     docker:
       - image: cimg/node:14.13.0
     steps:
       - checkout
       - run: node --version
+      - run:
+          name: INSTALLING AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt install python3-pip
+            sudo pip3 install awsebcli --upgrade
+      - run: yarn && yarn build
+      - run: aws s3 sync ./build s3://my-till
