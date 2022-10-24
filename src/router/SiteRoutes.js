@@ -4,11 +4,23 @@ import { Login } from '../pages/Login/Login';
 const SiteRoutes = [
     {
         path: '/',
-        component: Home
+        component: <Home/>
     },
     {
         path: '/login',
-        component: Login
+        component: <Login/>
+    },
+    {
+        path: '/sign-up',
+        // component: SignUp
+    },
+    {
+        path: '/create-till',
+        // component: CreateTill
+    },
+    {
+        path: '/view-till',
+        // component: ViewTill
     }
 ]
 

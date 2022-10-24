@@ -1,11 +1,21 @@
 import { Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React from "react";
-import './Home.css'
+
+const useStyle = makeStyles({
+    root: {
+        display: 'flex'
+    },
+    
+});
 
 export const Home = () => {
+
+    const classes = useStyle();
+
     return (
-        <div className={'root'}>
-            <Typography variant="h2">Welcome to myTill!</Typography>
+        <div className={classes.root}>
+            <Typography sx={{fontSize: '60px'}}>Welcome to my-till!</Typography>
         </div>
     );
 }
