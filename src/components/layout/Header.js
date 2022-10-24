@@ -1,9 +1,9 @@
-import { AppBar, Typography, Toolbar, Button } from "@mui/material";
+import { AppBar, Typography, Toolbar, Button, MenuItem, Menu } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import logoSD from '../../resources/logoSD.png';
+import logoSD from '../../resources/peanutbutterbaby.png';
 import { useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
-import React from "react";
+import React, { useState } from "react";
 
 const useStyles = makeStyles({
     toolBar: {
@@ -35,19 +35,46 @@ const useStyles = makeStyles({
 const Header = () => {
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        navigate('/login');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [anchorElBusiness, setAnchorElBusiness] = useState(null);
+
+    const handleOpenBusinessMenu = (e) => {
+        setAnchorElBusiness(e.currentTarget)
+    }
+
+    const handleCloseBusinessMenu = () => {
+        setAnchorElBusiness(null);
+    }
+
+    const handleIsLoggedIn = (e) => {
+        setIsLoggedIn(!isLoggedIn);
+    }
+
+    const handleAccessTill = () => {
+        navigate('/access-till');
     }
     
     const handleSignUp = () => {
-        navigate('/sign-up');
+        navigate('/create-account');
     }
 
     const handleHome = () => {
         navigate('/');
     }
 
-    const isLoggedIn = false;
+    const handleLogin = () => {
+        navigate('/login');
+    }
+
+    const handleCreateBusiness = () => {
+        navigate('/create-business');
+        handleCloseBusinessMenu();
+    }
+
+    const handleAccessBusiness = () => {
+        navigate('/access-business');
+        handleCloseBusinessMenu();
+    }
 
     const classes = useStyles();
 
@@ -63,14 +90,39 @@ const Header = () => {
                             color: COLOR_PALETTE.BABY_BLUE
                             }}>my-till</Typography>
                     </div>
-                    {isLoggedIn ?
-                        <Button variant="contained" onClick={handleLogin}>Login</Button>
-                    :   
-                        <div className={classes.signUpLoginContainer}>
-                            <Button variant="contained" onClick={handleLogin}>Access Till</Button>
-                            <Button variant="contained" onClick={handleSignUp}>Sign Up</Button>
-                        </div>
-                    }
+                    <div className={classes.signUpLoginContainer}>
+                        <Button variant="contained" onClick={(e) => handleIsLoggedIn()}>Bruh</Button>
+                        <Button variant="contained" onClick={handleAccessTill}>Access Till</Button>
+                        {!isLoggedIn ?
+                            <Button variant="contained" onClick={handleLogin}>Login</Button>
+                        :   
+                            <div>
+                                <Button variant="contained" onClick={handleOpenBusinessMenu}>
+                                    Business
+                                </Button>
+                                <Menu 
+                                    anchorEl={anchorElBusiness}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    }}
+                                    open={Boolean(anchorElBusiness)}
+                                    onClose={handleCloseBusinessMenu}>
+                                    <MenuItem onClick={handleCreateBusiness}>
+                                        <Typography>Create Business</Typography>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleAccessBusiness}>
+                                        <Typography>Access Business</Typography>
+                                    </MenuItem>
+                                </Menu>
+                            </div>}
+                        <Button variant="contained" onClick={handleSignUp}>Create Account</Button>
+                    </div>
                 </Toolbar>
             </AppBar>
         </div>
