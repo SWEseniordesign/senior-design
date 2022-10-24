@@ -1,5 +1,9 @@
 import { Home } from '../pages/Home/Home';
 import { Login } from '../pages/Login/Login';
+import { AccessTill } from '../pages/AccessTill/AccessTill';
+import { CreateBusiness } from '../pages/CreateBusiness/CreateBusiness';
+import { AccessBusiness } from '../pages/AccessBusiness/AccessBusiness';
+import { CreateAccount } from '../pages/CreateAccount/CreateAccount';
 
 const SiteRoutes = [
     {
@@ -11,8 +15,16 @@ const SiteRoutes = [
         component: <Login/>
     },
     {
-        path: '/sign-up',
-        // component: SignUp
+        path: '/create-account',
+        component: <CreateAccount/>
+    },
+    {
+        path: '/create-business',
+        component: <CreateBusiness/>
+    },
+    {
+        path: '/access-business',
+        component: <AccessBusiness/>
     },
     {
         path: '/create-till',
@@ -21,7 +33,11 @@ const SiteRoutes = [
     {
         path: '/view-till',
         // component: ViewTill
-    }
+    },
+    {
+        path: '/access-till',
+        component: <AccessTill/>
+    },
 ]
 
 export default SiteRoutes;
