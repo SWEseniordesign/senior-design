@@ -4,10 +4,11 @@ import CustomRoute from './CustomRoute';
 import SiteRoutes from './SiteRoutes';
 
 const Router = () => {
+    
     return (
         <Routes>
-            {SiteRoutes.map((route) => {
-                return <Route path={route.path} element={<CustomRoute content={route.component} />} />
+            {SiteRoutes.map((route, index) => {
+                return <Route key={index} path={route.path} element={<CustomRoute content={route.component} />} />
             })}
         </Routes>
     );
