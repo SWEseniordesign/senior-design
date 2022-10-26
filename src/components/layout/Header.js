@@ -38,6 +38,8 @@ const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [anchorElBusiness, setAnchorElBusiness] = useState(null);
 
+    // Might be worth making a new file in routes for redirecting the user to certain pages. Ex. handleAccessTill
+
     const handleOpenBusinessMenu = (e) => {
         setAnchorElBusiness(e.currentTarget)
     }
@@ -91,7 +93,8 @@ const Header = () => {
                             }}>my-till</Typography>
                     </div>
                     <div className={classes.signUpLoginContainer}>
-                        <Button variant="contained" onClick={(e) => handleIsLoggedIn()}>Bruh</Button>
+                        {/* Uncomment this for changing the loggedIn state */}
+                        {/* <Button variant="contained" onClick={(e) => handleIsLoggedIn()}>Bruh</Button> */}
                         <Button variant="contained" onClick={handleAccessTill}>Access Till</Button>
                         {!isLoggedIn ?
                             <Button variant="contained" onClick={handleLogin}>Login</Button>
