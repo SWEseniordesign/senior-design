@@ -4,6 +4,7 @@ import logoSD from '../../resources/peanutbutterbaby.png';
 import { useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
 import React, { useState } from "react";
+import { getItem, temp } from '../../api/items-api';
 
 const useStyles = makeStyles({
     toolBar: {
@@ -60,6 +61,12 @@ const Header = () => {
         navigate('/create-account');
     }
 
+    // TODO
+    async function handleTemp () {
+        let res = await temp()
+        console.log(res);
+    }
+
     const handleHome = () => {
         navigate('/');
     }
@@ -97,7 +104,7 @@ const Header = () => {
                         {/* <Button variant="contained" onClick={(e) => handleIsLoggedIn()}>Bruh</Button> */}
                         <Button variant="contained" onClick={handleAccessTill}>Access Till</Button>
                         {!isLoggedIn ?
-                            <Button variant="contained" onClick={handleLogin}>Login</Button>
+                            <Button variant="contained" onClick={handleTemp}>Login</Button>
                         :   
                             <div>
                                 <Button variant="contained" onClick={handleOpenBusinessMenu}>
