@@ -5,5 +5,4 @@ export const COLOR_PALETTE = {
     BABY_BLUE: '#D4F1F4'
 }
 
-export const FONT_FAMILY = 'Arial';
-
+export const FONT_FAMILY = 'Roboto';
