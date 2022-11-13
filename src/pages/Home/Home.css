@@ -1,0 +1,55 @@
+.root{
+    display: flex;
+    
+}
+
+.singleSectionBox{
+    width: 400px;
+}
+
+.buttonBox{
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+    align-items: center;
+    flex-direction: box;
+    gap: 16px;
+}
+
+.steps {
+    display: flex;
+    flex-direction: column;
+  
+    @media (--viewportMedium) {
+      flex-direction: row;
+    }
+  }
+  
+  .step {
+    @media (--viewportMedium) {
+      color: white;
+      background-color: black;
+      width: 280px;
+      border-radius: 30px;
+      padding: 20px;
+      margin: 0 auto 0;
+      margin-right: 10px;
+      /*fix centering after adding margin-right?*/
+    }
+  }
+  
+  .step:last-of-type {
+    @media (--viewportMedium) {
+      margin-right: 0;
+    }
+  }
+  
+  .stepTitle {
+    margin-top: 18px;
+    margin-bottom: 18px;
+  
+    @media (--viewportMedium) {
+      margin-top: 21px;
+      margin-bottom: 18px;
+    }
+  }
