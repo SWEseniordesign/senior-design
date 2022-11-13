@@ -1,4 +1,4 @@
-@import '../../styles/mediaQueries.css'
+@import '../../styles/mediaQueries.css';
 
 .root{
     display: flex;
