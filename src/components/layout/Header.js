@@ -4,7 +4,7 @@ import logoSD from '../../resources/peanutbutterbaby.png';
 import { useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
 import React, { useState } from "react";
-import { getItem, temp } from '../../api/items-api';
+import { saveUser, login } from "../../requests/users-req";
 
 const useStyles = makeStyles({
     toolBar: {
@@ -63,7 +63,20 @@ const Header = () => {
 
     // TODO
     async function handleTemp () {
-        let res = await temp()
+        let res = await saveUser({
+            fname: 'test',
+            lname: 'icle',
+            email: 'testicle@domain.cum'+Math.floor(Math.random()*100),
+            password: 'temp123'
+        })
+        console.log(res);
+    }
+
+    async function handleTemp2 () {
+        let res = await login({
+            email: 'testicle@domain.cum',
+            password: 'temp123'
+        })
         console.log(res);
     }
 
@@ -104,7 +117,7 @@ const Header = () => {
                         {/* <Button variant="contained" onClick={(e) => handleIsLoggedIn()}>Bruh</Button> */}
                         <Button variant="contained" onClick={handleAccessTill}>Access Till</Button>
                         {!isLoggedIn ?
-                            <Button variant="contained" onClick={handleTemp}>Login</Button>
+                            <Button variant="contained" onClick={handleLogin}>Login</Button>
                         :   
                             <div>
                                 <Button variant="contained" onClick={handleOpenBusinessMenu}>
