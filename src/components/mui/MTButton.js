@@ -6,7 +6,6 @@ import { COLOR_PALETTE } from "../../Constants";
 const useStyles = makeStyles({
   MTButton: {
     height: '50px',
-    width: '60px',
     '&.MuiButtonBase-root':{
         borderColor:  COLOR_PALETTE.BLUE_GROTTO,
         color: props => props.variant !== 'outlined' ? 'white' : COLOR_PALETTE.BLUE_GROTTO,
