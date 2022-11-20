@@ -1,7 +1,9 @@
-import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Button, Grid, Paper, TextField, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
+import { saveUser } from "../../requests/users-req";
 
 const useStyle = makeStyles({
     root: {
@@ -12,7 +14,7 @@ const useStyle = makeStyles({
         alignItems: 'center'
     },
     paper: {
-        height: '60%',
+        height: 'fit-content',
         width: '60%',
     },
     container: {
@@ -28,35 +30,114 @@ const useStyle = makeStyles({
         width: '80%',
         display: 'flex',
         justifyContent: 'space-evenly',
-        marginTop: '20px'
+    },
+    create_button: {
+        height: '50px',
+        width: '40%',
+
+        '&.MuiButtonBase-root':{
+            backgroundColor: COLOR_PALETTE.BLUE_GROTTO,
+            '&:hover': {
+                color: COLOR_PALETTE.BABY_BLUE,
+                backgroundColor: COLOR_PALETTE.NAVY_BLUE
+            }
+        }
+    },
+    cancel_button: {
+        height: '50px',
+        width: '40%',
+
+        '&.MuiButtonBase-root':{
+            borderColor: COLOR_PALETTE.NAVY_BLUE,
+            '&:hover': {
+                color: COLOR_PALETTE.BABY_BLUE,
+                backgroundColor: COLOR_PALETTE.NAVY_BLUE
+            }
+        },
     }
 
 });
 
 export const CreateAccount = () => {
 
+    const navigate = useNavigate();
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [confirmEmail, setConfirmEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [textFieldError, setTextFieldError] = useState(false);
-    const [isCreateDisabled, setIsCreateDisabled] = useState(true);
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
+    // const {isLoading: isUserCreated, refetch: refetchUser} = useQuery([{
+    //     fname: firstName,
+    //     lname: lastName,
+    //     email: email,
+    //     password: password
+    // }], saveUser, {enabled: false});
 
     const classes = useStyle();
-
-    const handleCreateAccount = () => {
-        if(password.length === 0){
-            setTextFieldError(!textFieldError);
+    
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
         }
+
+        setOpen(false);
+    };
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            if(!emailError && email.includes("@") && !passwordError){
+                let newUser = {
+                    fname: firstName,
+                    lname: lastName,
+                    email: email,
+                    password: password
+                }
+                let error = await saveUser(newUser);
+
+                if(error.code === 403){
+                    setAlertMessage({message: error.err, status: 'warning'});
+                } else {
+                    setAlertMessage({message: 'Account Created!', status: 'success'})
+                }
+
+                setOpen(true);
+                formSubmitted_ResetValues();
+            }
+        } catch(e){
+            console.log('bruh');
+        }
+
     }
 
+    const formSubmitted_ResetValues = () => {
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setConfirmEmail('');
+        setPassword('');
+        setConfirmPassword('');
+    }
+
+    
     useEffect(() => {
-        if(firstName.length > 0 && lastName.length > 0 && email.length > 0 && password.length > 0){
-            setIsCreateDisabled(false);
+        if(password !== confirmPassword){
+            setPasswordError(true);
         } else {
-            setIsCreateDisabled(true)
+            setPasswordError(false);
         }
-    }, [firstName, lastName, email, password]);
+        if(email !== confirmEmail){
+            setEmailError(true);
+        } else {
+            setEmailError(false);
+        }
+    }, [firstName, lastName, email, password, confirmEmail, confirmPassword]);
 
     return (
         <div className={classes.root}>
@@ -81,40 +162,86 @@ export const CreateAccount = () => {
                             alignItems: 'center'
                         }}>Business Owners Only</Typography>
                     </div>
-                    <Grid container rowSpacing={3}>
-                        <Grid item xs={12} md={6}>
-                            <TextField label='First Name' onChange={(e) => setFirstName(e.target.value)} sx={{ width: '80%'}}/>
+                    <form id="create-account-form" onSubmit={handleSubmit}>
+                        <Grid container rowSpacing={3}>
+                            <Grid item xs={12} md={6}>
+                                <TextField 
+                                    label='First Name' 
+                                    value={firstName}
+                                    required 
+                                    onChange={(e) => setFirstName(e.target.value)} 
+                                    helperText=" "
+                                    autoComplete="new-password"
+                                    sx={{ width: '80%'}}/>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    label='Last Name'
+                                    value={lastName} 
+                                    required 
+                                    onChange={(e) => setLastName(e.target.value)} 
+                                    helperText=" "
+                                    autoComplete="new-password"
+                                    sx={{ width: '80%'}}/>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField 
+                                    label='Email' 
+                                    value={email}
+                                    required 
+                                    onChange={(e) => setEmail(e.target.value)} 
+                                    error={emailError}
+                                    helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
+                                    autoComplete="new-password"
+                                    sx={{ width: '80%'}}/>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField 
+                                    label='Confirm Email' 
+                                    value={confirmEmail}
+                                    required 
+                                    onChange={(e) => setConfirmEmail(e.target.value)} 
+                                    error={emailError}
+                                    helperText=" "
+                                    autoComplete="new-password"
+                                    sx={{ width: '80%'}}/>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField 
+                                    label='Password' 
+                                    type='password'
+                                    value={password}
+                                    required 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    error={passwordError} 
+                                    helperText={passwordError ? "Passwords does not match" : " "}
+                                    autoComplete="new-password"
+                                    sx={{ width: '80%'}}/>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <TextField 
+                                    label='Confirm Password' 
+                                    type='password' 
+                                    value={confirmPassword}
+                                    required 
+                                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                                    autoComplete="new-password"
+                                    error={passwordError} 
+                                    sx={{ width: '80%'}}/>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <div className={classes.buttons_container}>
+                                    <Button variant='contained' type="submit" className={classes.create_button}>Create</Button>
+                                    <Button variant='outlined' onClick={() => navigate('/')} className={classes.cancel_button}>Cancel</Button>
+                                </div>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField label='Last Name' onChange={(e) => setLastName(e.target.value)} sx={{ width: '80%'}}/>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField label='Email' onChange={(e) => setEmail(e.target.value)} sx={{ width: '80%'}}/>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField label='Confirm Email' onChange={(e) => console.log(e.target.value)} sx={{ width: '80%'}}/>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField label='Password' type='password' onChange={(e) => setPassword(e.target.value)} error={textFieldError} sx={{ width: '80%'}}/>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField label='Confirm Password' type='password' onChange={(e) => console.log(e.target.value)} sx={{ width: '80%'}}/>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <div className={classes.buttons_container}>
-                                <Button variant='contained' disabled={isCreateDisabled} onClick={() => handleCreateAccount()} sx={{
-                                    backgroundColor: COLOR_PALETTE.BLUE_GROTTO,
-                                    height: '50px',
-                                    width: '40%'
-                                }}>Create</Button>
-                                <Button variant='outlined' sx={{
-                                    height: '50px',
-                                    width: '40%'
-                                }}>Cancel</Button>
-                            </div>
-                        </Grid>
-                    </Grid>
-
+                    </form>
+                    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
+                            {alertMessage.message}
+                        </Alert>
+                    </Snackbar>
                 </div>
             </Paper>
         </div>

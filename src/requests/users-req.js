@@ -8,7 +8,7 @@ export async function saveUser (obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => console.log(err));   
+    .catch(err => {return err;});   
     return data;
 }
 
