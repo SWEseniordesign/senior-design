@@ -27,12 +27,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Sessions
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }) // for saving session info in the database
-}));
+// app.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }) // for saving session info in the database
+// }));
 
 // Routes
 app.use('/items', require('./routes/items'));
