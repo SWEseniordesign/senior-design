@@ -3,5 +3,6 @@ This changelog will attempt to use [Semantic Versioning](https://semver.org/). T
 
 Add items closer to the version number so the date go from newest to oldest (top to bottom).
 
-### *0.1.0*
+### *Version 0.1.1*
+  - 2022/11/20 - [Create Layout for Create Account Page](https://sd-onlinepos.atlassian.net/browse/ON-45) 
   - 2022/11/20 - [Create CHANGELOG.md file](https://sd-onlinepos.atlassian.net/browse/ON-40)
