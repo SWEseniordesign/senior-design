@@ -18,6 +18,10 @@
     gap: 16px;
 }
 
+.sectionTitle{
+    margin-top: 40px;
+}
+
 .steps {
     display: flex;
     flex-direction: column;
