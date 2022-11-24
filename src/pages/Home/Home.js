@@ -218,7 +218,7 @@ export const Home = () => {
                                     </Typography>
                                 </div>
                                 <Typography sx={{fontSize: '18px', lineHeight: '22px'}}>
-                                    Your till can now be accessed by your employees and managers from any device.  Changes to the employees, managers, items, and arrangement of you tills can be changed at any time.
+                                    Your till can now be accessed by your employees and managers from any device.  Changes to the employees, managers, items, and arrangement of your tills can be changed at any time.
                                 </Typography>
                             </Box>
                         </Grid>
