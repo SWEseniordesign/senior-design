@@ -1,137 +1,66 @@
-import { Typography, Button, Grid, Box } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import React from "react";
-import css from"./Home.module.css";
-import "../../styles/mediaQueries.css";
-import { COLOR_PALETTE } from "../../Constants";
+import { Typography, Button, Grid, Box, Link } from "@mui/material";
 import Image from 'mui-image';
+import { makeStyles } from "@mui/styles";
+import React, { useState } from "react";
+import { COLOR_PALETTE } from "../../Constants";
+import { useNavigate } from "react-router";
 
-import exPic from "./HomePictures/example-pic.jpg";
-import workersPic from "./HomePictures/fast-food-workers.jpeg";
-import cashierPic from "./HomePictures/cashier.jpeg";
-import tillPic from "./HomePictures/till-sc.png";
-//import Grid from '@mui/material';
-//import { makeStyles } from "@mui/styles";
-//grid for layout
+import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
+import cashierPic from "../../resources/HomePictures/cashier.jpeg";
+import tillPic from "../../resources/HomePictures/till-sc.png";
 
 const useStyle = makeStyles({
     root: {
         //display: 'flex',
-        margin: '80px'
+        //margin: '80px',
+        //marginLeft: '240px',
+        //marginRight: '240px',
+        marginLeft: '16%',
+        marginRight: '16%'
+    },
+    heroSection: {
+        marginTop: '160px',
+        marginBottom: '140px',
+        width: '70%',
+        //display: 'flex',
+        //justifyContent: 'center',
     },
     heroTitle: {
-        //display: 'flex',
+        display: 'flex',
         marginTop: '40px',
         alignItems: 'center',
         justifyContent: 'center,'
     },
-    heroSection: {
-        marginTop: '200px',
-        width: '800px',
-        //display: 'flex',
-        //justifyContent: 'center',
-    },
-    singleSectionBox: {
-        width: '100%', //Change to percent?
-        marginTop: '120px',
-        marginBottom: '200px'
-    },
     buttonBox: {
         display: 'flex',
-        justifyContent: 'center',
+        //justifyContent: 'center',
         //justify-content: 'space-evenly',
         align: 'center',
         items: 'center',
         flexDirection: 'box',
-        gap: '16px'
+        gap: '16px',
+        marginTop: '32px'
     },
-    sectionTitle: {
-        marginTop: '40px'
-    },
-    steps: {
-        display: 'flex',
-        //flexDirection: 'column',
-      
-        //@media (--viewportMedium) {
-            //direction: ''
-          flexDirection: 'row',
-        //}
-      },
-      
-      step: {
-        //@media (--viewportMedium) {
-          display: 'flex',
-          color: 'white',
-          backgroundColor: COLOR_PALETTE.NAVY_BLUE,
-          width: '280px',
-          //border-radius: '30px',
-          padding: '20px',
-          margin: '0 auto 0',
-          marginRight: '30px'
-          /*fix centering after adding margin-right?*/
-        //}
-      },
-      
-      stepLast: {
-        //@media (--viewportMedium) {
-          marginRight: '0',
-          color: 'white',
-          backgroundColor: COLOR_PALETTE.NAVY_BLUE,
-          width: '280px',
-          //border-radius: '30px',
-          padding: '20px'
-        //}
-      },
-      
-      stepTitle: {
-        marginTop: '18px',
-        marginBottom: '18px'
-        //@media (--viewportMedium) {
-          //marginTop: '21px',
-          //marginBottom: '18px',
-        //}
-      },
-        
-    twoColBox: {
-        display: 'flex',
-        flexDirection: 'row',
-        marginTop: '0px'
-        
-        /*@media (--viewportMedium): {
-            flex-direction: row;
-            margin-top: 33px;
-        }*/
-    },
-        
-    colBox: {
+    singleSectionBox: {
         width: '100%',
-        marginTop: '25px'
-        
-        /* Remove link's hover effect */
-        /*&:hover {
-            text-decoration: none;
-        }
-        
-        @media (--viewportMedium) {
-            margin-top: 0;
-        }
-        @media (--viewportMedium) {
-            margin-right: 40px;
-            margin-bottom: 0;
-        */
+        marginTop: '120px',
+        marginBottom: '200px'
     },
-    
+    smallTitle: {
+        marginBottom: '22px'
+    },
+    steps: { //remove this?
+        display: 'flex',
+        flexDirection: 'row'
+      },
     imageWrapper: {
         position: 'relative',
         width: '100%',
         borderRadius: '6px',
         marginTop: '25px'
-        //transition: var(--transitionStyleButton);
-        
-        /*&:hover {
-            transform: scale(1.02);
-            box-shadow: var(--boxShadowSectionLocationHover);
-        }*/
+    },
+    endPage: {
+        marginBottom: '220px'
     }
         
 });
@@ -140,62 +69,163 @@ export const Home = () => {
 
     const classes = useStyle();
 
+    const navigate = useNavigate();
+    const handleSignUp = () => {
+        navigate('/create-account');
+    }
+
+    const handleLogin = () => {
+        navigate('/login');
+    }
+
     return (
         <div className={classes.root}>
             <div className={classes.heroSection}>
                 <div className={classes.heroTitle}>
-                    <Typography sx={{fontSize: '60px', alignContent: 'center', justifyContent: 'center'}}>Welcome to my-till!</Typography>
+                    <Typography sx={{fontSize: '64px', fontWeight: 'bold', lineHeight: '66px', alignContent: 'center', justifyContent: 'center'}}>A customized sales experience.</Typography>
                 </div>
                 <div className={classes.buttonBox}>
-                    <Button variant="contained" sx={{background: COLOR_PALETTE.NAVY_BLUE}}>SIGN UP</Button>
-                    <Button variant="outlined" sx={{color: COLOR_PALETTE.NAVY_BLUE, outlineColor: COLOR_PALETTE.NAVY_BLUE}}>LOG IN</Button>
+                    <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
+                    <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
                 </div>
             </div>
             <div className={classes.singleSectionBox}>
-
-                <Grid container spacing={2}>
+                <Grid container spacing={6}>
                     <Grid item xs={12} md={6}>
                         <Image sx={{borderRadius: '6px'}} src={cashierPic} />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        Secure and seamless access to your till.  Employees can login at the start of their shift, and their access will timeout once their shift is over.
-                    </Grid>
-                    <Grid item xs={12} md={6} sx={{marginTop: '40px'}}>
-                        <Box sx={{width: 300, height: 300, paddingRight: '20px'}}>
-                            <Typography sx={{fontSize: '20px'}}>
-                                Add employees and managers to your business's till.  myTill allows for all of an employees needs to be accessed in one place.
+                        <Box sx={{width: '100%', height: 300, paddingRight: '20px'}}>
+                            <div className={classes.smallTitle}>
+                                <Typography sx={{fontSize: '32px', lineHeight: '38px', fontWeight: '600'}}>
+                                    Secure and seamless access to your till.
+                                </Typography>
+                            </div>
+                            <Typography sx={{fontSize: '18px'}}>
+                                Employees can login at the start of their shift, and their access will timeout once their shift is over.  The till won't open until a manager enters their password.
                             </Typography>
-                        </Box>                    
+                        </Box>
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{marginTop: '40px'}}>
+
+                    
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{width: '100%', height: 300, paddingRight: '20px'}}>
+                            <div className={classes.smallTitle}>
+                                <Typography sx={{fontSize: '32px', lineHeight: '38px', fontWeight: '600'}}>
+                                    A solution that grows with your business.
+                                </Typography>
+                            </div>
+                            <Typography sx={{fontSize: '18px'}}>
+                            New employees and managers can easily be added to your till at any time.  A flexible customization system allows you to make changes whenever, from wherever.
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
                         <Image sx={{borderRadius: '6px'}} src={workersPic} />
                     </Grid>
+
                     <Grid item xs={12} md={6}>
-                        <Image sx={{borderRadius: '6px', height: 300, width: 300}} src={tillPic} />
+                        <Image sx={{borderRadius: '6px'}} src={tillPic} />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        Easily customize your till by dragging nand dropping
+                        <Box sx={{width: '100%', height: 300, paddingRight: '20px'}}>
+                            <div className={classes.smallTitle}>
+                                <Typography sx={{fontSize: '32px', lineHeight: '38px', fontWeight: '600'}}>
+                                    Bring your vision to life.
+                                </Typography>
+                            </div>
+                            <Typography sx={{fontSize: '18px'}}>
+                                Every business is unique, so we allow you to craft a till that is personalized to your needs.  MyTill allows you to edit the complete look and feel of your menu, right down to the colors.
+                            </Typography>
+                        </Box>
                     </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{width: '100%', height: 300, paddingRight: '20px'}}>
+                            <div className={classes.smallTitle}>
+                                <Typography sx={{fontSize: '32px', lineHeight: '38px', fontWeight: '600'}}>
+                                    Helping you keep up on your busiest days.
+                                </Typography>
+                            </div>
+                            <Typography sx={{fontSize: '18px'}}>
+                                Organize your till items to make them effortlessly findable when things get hectic.  Our tills also include a search bar, for when you just can't find that one item.
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Image sx={{borderRadius: '6px'}} src={tillPic} />
+                    </Grid>
+                </Grid>
+            </div>
+
+            <div className={classes.smallTitle}>
+                <Typography sx={{fontSize: '48px', fontWeight: 'bold'}}>
+                    How it works
+                </Typography>
+            </div>
+            <div className={classes.steps}>
+                <Grid container spacing={8}>
+
+                    <Grid item xs={12} s={6} md={3}>
+                            <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
+                                <div className={classes.smallTitle}>
+                                    <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
+                                        1. Sign up
+                                    </Typography>
+                                </div>
+                                <Typography sx={{fontSize: '18px', lineHeight: '22px'}}>
+                                    Create a busines owner account by signing up on our website.  Our till templates will be catered to your business type.
+                                </Typography>
+                                <Typography sx={{fontSize: '21px', marginTop: 2, color: COLOR_PALETTE.BABY_BLUE}}>
+                                <Link href="create-account" underline="hover" color={COLOR_PALETTE.BLUE_GROTTO}>
+                                    {'Get started'}
+                                </Link>
+                                </Typography>
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12} s={6} md={3}>
+                            <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
+                                <div className={classes.smallTitle}>
+                                    <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
+                                        2. Create till
+                                    </Typography>
+                                </div>
+                                <Typography sx={{fontSize: '18px', lineHeight: '22px'}}>
+                                    Till creation is quicker than ever with MyTill. Conveniently drag and drop your items, categories, and tabs.  Edit the colors and images to make it your own.
+                                </Typography>
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12} s={6} md={3}>
+                            <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
+                                <div className={classes.smallTitle}>
+                                    <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
+                                        3. Add employees & managers
+                                    </Typography>
+                                </div>
+                                <Typography sx={{fontSize: '18px', lineHeight: '22px'}}>
+                                    Add your employees and maangers to your till.  Don't worry - they can always be added or removed later.  A special till access password will be generated for each manager.
+                                </Typography>
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12} s={6} md={3}>
+                            <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
+                                <div className={classes.smallTitle}>
+                                    <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
+                                        4. Start selling
+                                    </Typography>
+                                </div>
+                                <Typography sx={{fontSize: '18px', lineHeight: '22px'}}>
+                                    Your till can now be accessed by your employees and managers from any device.  Changes to the employees, managers, items, and arrangement of you tills can be changed at any time.
+                                </Typography>
+                            </Box>
+                        </Grid>
                 </Grid>
 
             </div>
-            <Typography sx={{fontSize: '40px', marginTop: 8}}>How it works</Typography>
-            <div className={classes.steps}>
-                <div className={classes.step}>
-                    Sign up
-                    Create a busines owner account on our website
-                </div>
-                <div className={classes.step}>
-                    Create till
-                    Create and customuze your til using our nflwejf wejnvwl envwekv
-                </div>
-                <div className={classes.step}>
-                    Add employees and managers: krfner knfer lkfjnek rlgnrr gnerlkne rlkv glkge
-                </div>
-                <div className={classes.stepLast}>
-                    Start selling: Your employees can now use your till!
-                </div>
-
+            <div className={classes.endPage}>
             </div>
         </div>
     );
