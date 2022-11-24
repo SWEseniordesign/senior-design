@@ -205,7 +205,7 @@ export const Home = () => {
                                     </Typography>
                                 </div>
                                 <Typography sx={{fontSize: '18px', lineHeight: '22px'}}>
-                                    Add your employees and maangers to your till.  Don't worry - they can always be added or removed later.  A special till access password will be generated for each manager.
+                                    Add your employees and managers to your till.  Don't worry - they can always be added or removed later.  A special till access password will be generated for each manager.
                                 </Typography>
                             </Box>
                         </Grid>
