@@ -50,8 +50,9 @@ const useStyle = makeStyles({
         marginBottom: '22px'
     },
     steps: { //remove this?
-        display: 'flex',
-        flexDirection: 'row'
+        width: '100%'
+        //display: 'flex',
+        //flexDirection: 'row'
       },
     imageWrapper: {
         position: 'relative',
@@ -60,7 +61,7 @@ const useStyle = makeStyles({
         marginTop: '25px'
     },
     endPage: {
-        marginBottom: '220px'
+        marginBottom: '240px'
     }
         
 });
@@ -166,7 +167,7 @@ export const Home = () => {
             <div className={classes.steps}>
                 <Grid container spacing={8}>
 
-                    <Grid item xs={12} s={6} md={3}>
+                    <Grid item xs={12} sm={6} md={3}>
                             <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
                                 <div className={classes.smallTitle}>
                                     <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
@@ -184,7 +185,7 @@ export const Home = () => {
                             </Box>
                         </Grid>
 
-                        <Grid item xs={12} s={6} md={3}>
+                        <Grid item xs={12} sm={6} md={3}>
                             <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
                                 <div className={classes.smallTitle}>
                                     <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
@@ -197,7 +198,7 @@ export const Home = () => {
                             </Box>
                         </Grid>
 
-                        <Grid item xs={12} s={6} md={3}>
+                        <Grid item xs={12} sm={6} md={3}>
                             <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
                                 <div className={classes.smallTitle}>
                                     <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
@@ -210,7 +211,7 @@ export const Home = () => {
                             </Box>
                         </Grid>
 
-                        <Grid item xs={12} s={6} md={3}>
+                        <Grid item xs={12} sm={6} md={3}>
                             <Box sx={{width: '100%', height: '100%', padding: '18px', color: 'white', backgroundColor: COLOR_PALETTE.NAVY_BLUE, borderRadius: '6px'}}>
                                 <div className={classes.smallTitle}>
                                     <Typography sx={{fontSize: '28px', lineHeight: '34px', fontWeight: '600'}}>
