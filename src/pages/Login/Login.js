@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
-import { saveUser } from "../../requests/users-req";
+import { login } from "../../requests/users-req";
 
 const useStyle = makeStyles({
     root: {
@@ -62,14 +62,12 @@ export const Login = () => {
 
     const navigate = useNavigate();
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [confirmEmail, setConfirmEmail] = useState('');
+    const [dbEmail, setDbEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
-    const [emailError, setEmailError] = useState(false);
+    const [dBPassword, setdBPassword] = useState('');
+    //const [passwordError, setPasswordError] = useState(false);
+    //const [emailError, setEmailError] = useState(false);
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
     // const {isLoading: isUserCreated, refetch: refetchUser} = useQuery([{
@@ -92,41 +90,35 @@ export const Login = () => {
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            if(!emailError && email.includes("@") && !passwordError){
-                let newUser = {
-                    fname: firstName,
-                    lname: lastName,
+            if(email.includes("@")){
+                let userCreds = {
                     email: email,
                     password: password
                 }
-                let error = await saveUser(newUser);
+                let error = await login(userCreds);
 
                 if(error.code === 403){
                     setAlertMessage({message: error.err, status: 'warning'});
                 } else {
-                    setAlertMessage({message: 'Account Created!', status: 'success'})
+                    setAlertMessage({message: 'Logged in!', status: 'success'})
                 }
 
                 setOpen(true);
                 formSubmitted_ResetValues();
             }
         } catch(e){
-            console.log('bruh');
+            console.log('dn');
         }
 
     }
 
     const formSubmitted_ResetValues = () => {
-        setFirstName('');
-        setLastName('');
         setEmail('');
-        setConfirmEmail('');
         setPassword('');
-        setConfirmPassword('');
     }
 
-
-    useEffect(() => {
+    //TODO: instead of this check if email/pass exists? Or already done in auth
+    /*useEffect(() => {
         if(password !== confirmPassword){
             setPasswordError(true);
         } else {
@@ -137,8 +129,10 @@ export const Login = () => {
         } else {
             setEmailError(false);
         }
-    }, [firstName, lastName, email, password, confirmEmail, confirmPassword]);
+    }, [email, password]);*/
 
+
+    //CHECK: autocompletes and Snackbar
     return (
         <div className={classes.root}>
             <Paper className={classes.paper} elevation={5} sx={{
@@ -153,86 +147,43 @@ export const Login = () => {
                             lineHeight: '56px',
                             display: 'flex',
                             alignItems: 'center'
-                        }}>Create Account</Typography>
+                        }}>Login</Typography>
                         <Typography sx={{
                             fontFamily: FONT_FAMILY,
                             fontSize: '20px',
                             lineHeight: '28px',
                             display: 'flex',
                             alignItems: 'center'
-                        }}>Business Owners Only</Typography>
+                        }}>Enter your credentials</Typography>
                     </div>
-                    <form id="create-account-form" onSubmit={handleSubmit}>
+                    <form id="login-form" onSubmit={handleSubmit}>
                         <Grid container rowSpacing={3}>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label='First Name'
-                                    value={firstName}
-                                    required
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    helperText=" "
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label='Last Name'
-                                    value={lastName}
-                                    required
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    helperText=" "
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={12}>
                                 <TextField
                                     label='Email'
                                     value={email}
                                     required
                                     onChange={(e) => setEmail(e.target.value)}
-                                    error={emailError}
-                                    helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
-                                    autoComplete="new-password"
+                                    //error={emailError}
+                                    //helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
+                                    //autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label='Confirm Email'
-                                    value={confirmEmail}
-                                    required
-                                    onChange={(e) => setConfirmEmail(e.target.value)}
-                                    error={emailError}
-                                    helperText=" "
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={12}>
                                 <TextField
                                     label='Password'
                                     type='password'
                                     value={password}
                                     required
                                     onChange={(e) => setPassword(e.target.value)}
-                                    error={passwordError}
-                                    helperText={passwordError ? "Passwords does not match" : " "}
-                                    autoComplete="new-password"
+                                    //error={passwordError}
+                                    //helperText={passwordError ? "Passwords does not match" : " "}
+                                    //autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label='Confirm Password'
-                                    type='password'
-                                    value={confirmPassword}
-                                    required
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    autoComplete="new-password"
-                                    error={passwordError}
-                                    sx={{ width: '80%'}}/>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={12}>
                                 <div className={classes.buttons_container}>
-                                    <Button variant='contained' type="submit" className={classes.create_button}>Create</Button>
-                                    <Button variant='outlined' onClick={() => navigate('/')} className={classes.cancel_button}>Cancel</Button>
+                                    <Button variant='contained' type="submit" className={classes.create_button}>LOGIN</Button>
                                 </div>
                             </Grid>
                         </Grid>
