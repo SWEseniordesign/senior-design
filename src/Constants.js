@@ -4,3 +4,6 @@ export const COLOR_PALETTE = {
     BLUE_GREEN: '#75E6DA',
     BABY_BLUE: '#D4F1F4'
 }
+
+export const FONT_FAMILY = 'Arial';
+
