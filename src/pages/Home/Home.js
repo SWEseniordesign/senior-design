@@ -63,7 +63,7 @@ const useStyle = makeStyles({
     endPage: {
         marginBottom: '240px'
     }
-        
+
 });
 
 export const Home = () => {
@@ -108,7 +108,7 @@ export const Home = () => {
                         </Box>
                     </Grid>
 
-                    
+
                     <Grid item xs={12} md={6}>
                         <Box sx={{width: '100%', height: 300, paddingRight: '20px'}}>
                             <div className={classes.smallTitle}>
