@@ -1,7 +1,10 @@
 version: 2.1
+orbs:
+  node: circleci/node@5.0.3
 workflows:
   test-deploy:
     jobs:
+      - build
       - test
       filters:
         branches:
@@ -9,9 +12,20 @@ workflows:
             - master
             - development
 jobs:
-  test:
-    docker:
-      - image: cimg/node:14.13.0
+  build:
+    machine:
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: node --version
+      - run: nvm install 14.15.5 && nvm use 14.15.5 
+      - run: npm version
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          name: INSTALLING AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt install python3-pip
+            sudo pip3 install awsebcli --upgrade
+      - run: yarn install --ig && yarn build
+      - run: aws s3 sync ./build s3://my-till

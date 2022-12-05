@@ -1,6 +1,7 @@
 import { AppBar, Typography, Toolbar, Button, MenuItem, Menu } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import logoSD from '../../resources/peanutbutterbaby.png';
+import logoMT from '../../resources/mytill-logo-transparent.png';
 import { useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
 import React, { useState } from "react";
