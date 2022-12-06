@@ -16,9 +16,13 @@ const useStyle = makeStyles({
     paper: {
         height: 'fit-content',
         width: '60%',
+        maxWidth: '500px'
     },
     container: {
-        padding: '30px'
+        padding: '30px',
+        //display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     title_subtitle: {
         display: 'flex',
@@ -27,9 +31,10 @@ const useStyle = makeStyles({
         marginBottom: '24px'
     },
     buttons_container: {
-        width: '80%',
+        width: '100%',
+        maxWidth: '300px',
         display: 'flex',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
     },
     create_button: {
         height: '50px',
@@ -146,14 +151,16 @@ export const Login = () => {
                             fontSize: '48px',
                             lineHeight: '56px',
                             display: 'flex',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}>Login</Typography>
                         <Typography sx={{
                             fontFamily: FONT_FAMILY,
                             fontSize: '20px',
                             lineHeight: '28px',
                             display: 'flex',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}>Enter your credentials</Typography>
                     </div>
                     <form id="login-form" onSubmit={handleSubmit}>
@@ -167,7 +174,7 @@ export const Login = () => {
                                     //error={emailError}
                                     //helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
                                     //autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
+                                    sx={{ width: '100%', maxWidth: '300px'}}/>
                             </Grid>
                             <Grid item xs={12} md={12}>
                                 <TextField
@@ -179,11 +186,11 @@ export const Login = () => {
                                     //error={passwordError}
                                     //helperText={passwordError ? "Passwords does not match" : " "}
                                     //autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
+                                    sx={{ width: '100%', maxWidth: '300px'}}/>
                             </Grid>
                             <Grid item xs={12} md={12}>
                                 <div className={classes.buttons_container}>
-                                    <Button variant='contained' type="submit" className={classes.create_button}>LOGIN</Button>
+                                    <Button variant='contained' type="submit" className={classes.create_button} sx={{width: '100%', justifyContent: 'center'}}>LOGIN</Button>
                                 </div>
                             </Grid>
                         </Grid>
