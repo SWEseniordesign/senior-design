@@ -1,6 +1,6 @@
 import { AppBar, Typography, Toolbar, Button, MenuItem, Menu } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import logoSD from '../../resources/peanutbutterbaby.png';
+import logoSD from '../../resources/logoIdea.PNG';
 import { useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
 import React, { useState } from "react";
@@ -31,26 +31,27 @@ const useStyles = makeStyles({
         marginLeft: 'auto'
     },
     logo: {
-        height: '80px',
-        width: '100px'
+        height: '40px',
+        width: '40px'
     },
     dropdownContainer: {
         display: 'flex',
         gap: '12px'
+    },
+    separator: {
+        width: '1px',
+        height: '35px',
+        opacity: '0.7',
+        backgroundColor: COLOR_PALETTE.BABY_BLUE,
     }
 });
 
 const Header = () => {
     const navigate = useNavigate();
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [anchorElBusiness, setAnchorElBusiness] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     // Might be worth making a new file in routes for redirecting the user to certain pages. Ex. handleAccessTill
-
-    const handleIsLoggedIn = (e) => {
-        setIsLoggedIn(!isLoggedIn);
-    }
 
     const handleAccessTill = () => {
         navigate('/access-till');
@@ -103,21 +104,33 @@ const Header = () => {
             <AppBar position="static">
                 <Toolbar className={classes.toolBar}>
                     <div className={classes.logoTitleContainer} onClick={handleHome}>
-                        <img src={logoSD} alt="logo" className={classes.logo}/>
+                        {/* <img src={logoSD} alt="logo" className={classes.logo}/> */}
                         <Typography sx={{
                             fontSize: '35px',
                             fontFamily: 'Arial',
                             color: COLOR_PALETTE.BABY_BLUE
-                            }}>my-till</Typography>
+                        }}>my</Typography>
+                        <Typography sx={{
+                            fontSize: '35px',
+                            fontFamily: 'Arial',
+                            color: COLOR_PALETTE.BLUE_GROTTO
+                        }}>Till</Typography>
                     </div>
+                    <div className={classes.separator}></div>
                     <div className={classes.dropdownContainer}>
                         <MTDropdown label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
                         <MTDropdown label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
                     </div>
-                    <div className={classes.signUpLoginContainer}>
-                        <MTButton variant="contained" onClick={handleLogin} label={'LOGIN'}/>
-                        <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} />
-                    </div>
+                    {!isLoggedIn ? 
+                        <div className={classes.signUpLoginContainer}>
+                            <MTButton variant="contained" onClick={handleLogin} label={'SIGN IN'}/>
+                            <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} />
+                        </div>
+                        : 
+                        <div className={classes.signUpLoginContainer}>
+                            <MTDropdown isAccount />
+                        </div>
+                    }
                 </Toolbar>
             </AppBar>
         </div>

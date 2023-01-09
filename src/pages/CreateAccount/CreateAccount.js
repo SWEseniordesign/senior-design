@@ -111,7 +111,7 @@ export const CreateAccount = () => {
                 formSubmitted_ResetValues();
             }
         } catch(e){
-            console.log('bruh');
+            console.log(e);
         }
 
     }
@@ -141,7 +141,7 @@ export const CreateAccount = () => {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper} elevation={5} sx={{
+            <Paper className={classes.paper} square elevation={5} sx={{
                 backgroundColor: COLOR_PALETTE.BABY_BLUE
             }}>
                 <div className={classes.container}>
