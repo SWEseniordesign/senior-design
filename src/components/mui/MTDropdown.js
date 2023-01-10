@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { FONT_FAMILY } from "../../Constants";
+import { useNavigate } from "react-router-dom";
 
 const MTDropdown = (props) => {
 
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const {label, menuItems=[], variant, isAccount} = props;
 
@@ -66,7 +68,8 @@ const MTDropdown = (props) => {
                         }}
                         open={Boolean(anchorEl)}
                         onClose={handleCloseMenu}>
-                            <MenuItem>
+                            {/* Might want to change this to have the menuItems in an array in which ever file uses the dropdown. So its not specific to one file and can be used throughout the project.*/}
+                            <MenuItem onClick={() => navigate('/create-business')}>
                                 <Typography sx={{
                                     fontFamily: FONT_FAMILY,
                                     fontSize: '12',
