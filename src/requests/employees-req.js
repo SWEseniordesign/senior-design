@@ -1,6 +1,6 @@
 /*
-This allows us to create an employee document.
-    Pass in a json object with a email and isManager field to ensure it works.
+Create an employee document.
+    Pass in a json object with a email and isManager field.
 */
 export async function saveEmployee (obj) {
     let data;
@@ -16,6 +16,9 @@ export async function saveEmployee (obj) {
     return data;
 }
 
+/*
+Get an employee
+*/
 export async function getEmployee (obj) {
     let data;
     await fetch('http://localhost:8080/employee/get', {

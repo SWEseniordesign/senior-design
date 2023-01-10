@@ -10,6 +10,7 @@ import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
 
 import { saveEmployee } from "../../requests/employees-req";
+import { createBusiness, getBusiness } from "../../requests/businesses-req";
 
 const useStyle = makeStyles({
     root: {
@@ -86,8 +87,14 @@ export const Home = () => {
         let employee = {
             email: 'test3@unb.ca',
             isManager: true
-        }
-        let error = await saveEmployee(employee);
+        };
+        let business = {
+            name: 'McDonalds',
+            ownerId: '6377f3e996d92774ba4dcce8',
+            admins: [],
+            tills: []
+        };
+        let error = await getBusiness(business);
         console.log(error);
     }
 
