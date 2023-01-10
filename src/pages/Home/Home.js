@@ -9,6 +9,8 @@ import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
 
+import { saveEmployee } from "../../requests/employees-req";
+
 const useStyle = makeStyles({
     root: {
         //display: 'flex',
@@ -79,6 +81,16 @@ export const Home = () => {
         navigate('/login');
     }
 
+    //This is temporary to allow me to test creating data
+    const handleCreateData = async () => {
+        let employee = {
+            email: 'test3@unb.ca',
+            isManager: true
+        }
+        let error = await saveEmployee(employee);
+        console.log(error);
+    }
+
     return (
         <div className={classes.root}>
             <div className={classes.heroSection}>
@@ -88,6 +100,7 @@ export const Home = () => {
                 <div className={classes.buttonBox}>
                     <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
                     <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
+                    <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button>
                 </div>
             </div>
             <div className={classes.singleSectionBox}>
