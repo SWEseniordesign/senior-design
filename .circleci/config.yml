@@ -5,6 +5,12 @@ workflows:
   test-deploy:
     jobs:
       - build
+      - test
+      filters:
+        branches:
+          only: 
+            - master
+            - development
 jobs:
   build:
     machine:
