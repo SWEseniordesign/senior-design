@@ -4,13 +4,13 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   MTButton: {
-    height: '50px',
+    height: '2.5rem',
   }
 })
 export default function BasicButtons(props) {    
   const classes = useStyles(props);
   
   return (
-    <Button className= {classes.MTButton} variant = {props.variant} onClick = {props.onClick}>{props.label}</Button>
+    <Button className={classes.MTButton} variant={props.variant} onClick={props.onClick}>{props.label}</Button>
   );
 }
