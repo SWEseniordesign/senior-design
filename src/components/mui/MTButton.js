@@ -11,6 +11,6 @@ export default function BasicButtons(props) {
   const classes = useStyles(props);
   
   return (
-    <Button className={classes.MTButton} variant={props.variant} onClick={props.onClick}>{props.label}</Button>
+    <Button className={classes.MTButton} variant={props.variant} onClick={props.onClick} type={!!(props.type) ? props.type : 'button'} fullWidth={props.isFullWidth ? true : false}>{props.label}</Button>
   );
 }
