@@ -3,7 +3,7 @@ import React from "react";
 
 const MTSelect = (props) => {
 
-    const {label, items, value, setValue, isFullWidth} = props;
+    const {label, items, value, setValue, isFullWidth, isRequired} = props;
 
     const handleChange = (e) => {
         setValue(e.target.value);
@@ -11,7 +11,7 @@ const MTSelect = (props) => {
 
     return (
         <div>
-            <FormControl fullWidth={isFullWidth ? true : false}>
+            <FormControl fullWidth={isFullWidth ? true : false} required={isRequired ? true : false}>
                 <InputLabel id={"label_select"}>{label}</InputLabel>
                 <Select 
                     labelId={"label_select"} 
@@ -19,7 +19,7 @@ const MTSelect = (props) => {
                     value={value} 
                     onChange={(e) => handleChange(e)}>
                     {items.map((item) =>
-                        <MenuItem id={item.id} value={item.title}>{item.title}</MenuItem>
+                        <MenuItem key={item.id} value={item.title}>{item.title}</MenuItem>
                     )}    
                 </Select> 
             </FormControl>

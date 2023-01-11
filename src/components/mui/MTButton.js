@@ -7,10 +7,31 @@ const useStyles = makeStyles({
     height: '2.5rem',
   }
 })
-export default function BasicButtons(props) {    
+
+/*
+  Parameters than be passed in:
+   - Label
+   - Variant
+   - OnClick function
+   - Width
+   - Type
+   - isFullWidth
+*/
+export default function MtButton(props) {    
   const classes = useStyles(props);
+
+  console.log(!!(props.width))
   
   return (
-    <Button className={classes.MTButton} variant={props.variant} onClick={props.onClick} type={!!(props.type) ? props.type : 'button'} fullWidth={props.isFullWidth ? true : false}>{props.label}</Button>
+    <Button 
+      className={classes.MTButton} 
+      variant={props.variant} 
+      onClick={props.onClick} 
+      sx={{
+        width: !props.isFullWidth ? !!(props.width) ? props.width : 'auto' : '100%'
+      }}
+      type={!!(props.type) ? props.type : 'button'}>
+        {props.label}
+      </Button>
   );
 }

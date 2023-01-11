@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { FONT_FAMILY } from "../../Constants";
+import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { useNavigate } from "react-router-dom";
 
 const MTDropdown = (props) => {
@@ -52,7 +52,7 @@ const MTDropdown = (props) => {
                 <div>
                     <Tooltip title={'Account Settings'}>
                         <IconButton onClick={handleOpenMenu}>
-                            <Avatar sx={{width: 32, height: 32}}>D</Avatar>
+                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>D</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu 
@@ -69,7 +69,10 @@ const MTDropdown = (props) => {
                         open={Boolean(anchorEl)}
                         onClose={handleCloseMenu}>
                             {/* Might want to change this to have the menuItems in an array in which ever file uses the dropdown. So its not specific to one file and can be used throughout the project.*/}
-                            <MenuItem onClick={() => navigate('/create-business')}>
+                            <MenuItem onClick={() => {
+                                navigate('/create-business');
+                                handleCloseMenu();
+                            }}>
                                 <Typography sx={{
                                     fontFamily: FONT_FAMILY,
                                     fontSize: '12',

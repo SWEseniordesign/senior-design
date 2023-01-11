@@ -9,7 +9,7 @@ const useStyles = makeStyles({
 })
 export default function MTTextField(props) {    
   const classes = useStyles(props);
-  const {onChangeFunc, isFullWidth} = props;
+  const {onChangeFunc, isFullWidth, isRequired} = props;
   
   return (
     <TextField 
@@ -17,6 +17,7 @@ export default function MTTextField(props) {
       variant={props.variant} 
       placeholder={props.placeholder} 
       label={props.label} 
+      required={isRequired ? true : false}
       onChange={(e) => onChangeFunc(e.target.value)} 
       value={props.value}
       fullWidth={isFullWidth ? true: false}>
