@@ -5,6 +5,7 @@ import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import MTTextField from '../../components/mui/MTTextField' 
 import MTSelect from "../../components/mui/MTSelect";
 import MTButton from "../../components/mui/MTButton";
+import { createBusiness } from "../../requests/business-req";
 
 const useStyles = makeStyles({
     root: {
@@ -43,8 +44,30 @@ export const CreateBusiness = () => {
         setOpen(false);
     };
 
-    const handleSubmit = () => {
-        
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            let newUser = {
+                name: businessName,
+                type: businessType
+            }
+            let response = await createBusiness(newUser);
+
+            // if(response.code === 403){
+            //     setAlertMessage({message: response.err, status: 'warning'});
+            // } else {
+            //     setAlertMessage({message: 'Business Created!', status: 'success'})
+            // }
+
+            setAlertMessage({message: 'Business Created!', status: 'success'})
+
+
+            setOpen(true);
+            setBusinessName('');
+            setBusinessType('');
+        } catch(e){
+            console.log(e);
+        }
     }
 
     const businessTypes = [
@@ -70,11 +93,11 @@ export const CreateBusiness = () => {
                     </div>
                     <form id="create-account-form" onSubmit={handleSubmit}>
                         <Grid container spacing={3}>
-                            <Grid item xs={7}>
-                                <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth />
+                            <Grid item xs={12} md={12} lg={7}>
+                                <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired />
                             </Grid>
-                            <Grid item xs={5}>
-                                <MTSelect label={'Types'} items={businessTypes} value={businessType} setValue={setBusinessType} isFullWidth />
+                            <Grid item xs={12} md={12} lg={5}>
+                                <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isFullWidth isRequired />
                             </Grid>
                             <Grid item xs={12}>
                                 <MTButton label={'CREATE'} variant={'contained'} type={'submit'} isFullWidth></MTButton>
