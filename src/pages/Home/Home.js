@@ -11,6 +11,7 @@ import tillPic from "../../resources/HomePictures/till-sc.png";
 
 import { saveEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness } from "../../requests/businesses-req";
+import { createTill, getTill } from "../../requests/tills-req";
 
 const useStyle = makeStyles({
     root: {
@@ -94,7 +95,14 @@ export const Home = () => {
             admins: [],
             tills: []
         };
-        let error = await getBusiness(business);
+        let till = {
+            name: 'Fredericton',
+            managerPassword: '69420',
+            employees: [],
+            tabs: [],
+            props: []
+        };
+        let error = await getTill(till);
         console.log(error);
     }
 

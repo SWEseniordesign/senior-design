@@ -25,10 +25,49 @@ export async function createBusiness (obj) {
 
 /*
 Get a business from its name
+    Pass in a json object with a key called name or a object shown in the above comments
 */
 export async function getBusiness (obj) {
     let data;
     await fetch('http://localhost:8080/business/get', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
+TODO
+Add admins to a business
+    Pass in a json object with a key called name or a object shown in the above comments
+*/
+export async function addAdmins (obj) {
+    let data;
+    await fetch('http://localhost:8080/business/admins', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
+TODO
+Add tills to a business
+    Pass in a json object with a key called name or a object shown in the above comments
+*/
+export async function addTills (obj) {
+    let data;
+    await fetch('http://localhost:8080/business/tills', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
