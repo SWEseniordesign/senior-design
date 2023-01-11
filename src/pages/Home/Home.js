@@ -13,6 +13,7 @@ import { saveEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness } from "../../requests/businesses-req";
 import { createTill, getTill } from "../../requests/tills-req";
 import { createTab, getTab } from "../../requests/tabs-req";
+import { createCard, getCard } from "../../requests/cards-req";
 
 const useStyle = makeStyles({
     root: {
@@ -107,6 +108,13 @@ export const Home = () => {
             name: 'test tab',
             color: 'red',
             cards: []
+        }
+        //Not tested
+        let card = {
+            name: 'Burgers',
+            color: 'blue',
+            dimensions: {x: 1, y: 2, width: 3, height: 4},
+            items: []
         }
         let error = await getTab(tab);
         console.log(error);

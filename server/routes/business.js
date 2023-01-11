@@ -3,7 +3,6 @@ const router = express.Router();
 const Business = require('../models/Business');
 
 /*
-TODO
 Gets a business
 */
 router.post('/get', function(req, res){
@@ -18,7 +17,6 @@ router.post('/get', function(req, res){
 });
 
 /*
-TODO
 Posts a business
 */
 router.post('/create', async (req, res) => {
