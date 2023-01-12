@@ -29,15 +29,15 @@ router.post('/create', async (req, res) => {
         tills: req.body.tills
     });
 
-    let find_business = await Business.findOne({email: req.body.name}).exec();
+    let find_business = await Business.findOne({name: req.body.name}).exec();
     if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
 
-    new_business.save(function(err, savedBusiness) {
+    new_business.save(function(err, business) {
         if(err) {
             console.log(err);
             return res.status(500).send();
         }
-        return res.status(201).send(true);
+        return res.status(201).send({err: 'Business Created!', code: 201});
     });
 });
 

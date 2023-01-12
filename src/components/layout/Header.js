@@ -1,9 +1,9 @@
-import { AppBar, Typography, Toolbar } from "@mui/material";
+import { AppBar, Typography, Toolbar, Grow } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useLocation, useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
-import React, { useState } from "react";
-import { saveUser, login } from "../../requests/users-req";
+import React from "react";
+import { login } from "../../requests/users-req";
 import MTDropdown from "../mui/MTDropdown";
 import MTButton from '../mui/MTButton';
 import { userState } from "../../states/userState";
@@ -65,33 +65,14 @@ const Header = () => {
         navigate('/create-account');
     }
 
-    // // TODO
-    // async function handleTemp () {
-    //     let res = await saveUser({
-    //         fname: 'test',
-    //         lname: 'icle',
-    //         email: 'testicle@domain.cum'+Math.floor(Math.random()*100),
-    //         password: 'temp123'
-    //     })
-    //     console.log(res);
-    // }
-
-    // async function handleTemp2 () {
-    //     let res = await login({
-    //         email: 'testicle@domain.cum',
-    //         password: 'temp123'
-    //     })
-    //     console.log(res);
-    // }
-
     const handleHome = () => {
         navigate('/');
     }
 
     const handleLogin = async() => {
         let loginUser = {
-            email: 'bruh@gmail.com',
-            password: 'bruh'
+            email: 'dunc@',
+            password: 'fred'
         }
         let response = await login(loginUser);
 
@@ -114,11 +95,14 @@ const Header = () => {
     ];
 
     const dropdownMenuItems_Account = [
-        {id: 1, title: 'View Business Profile', action: () => {
+        {id: 1, title: 'View Business Dashboard', action: () => {
             navigate('/create-business'); 
             pageState.previousPage.set(location.pathname)}},
         {id: 2, title: 'Edit Profile', action: () => {}},
-        {id: 3, title: 'Logout', action: () => {uState.isLoggedIn.set(false)}}
+        {id: 3, title: 'Logout', action: () => {
+            uState.isLoggedIn.set(false);
+            uState.user.set({});
+        }}
     ];
 
     const classes = useStyles();

@@ -6,6 +6,7 @@ import MTTextField from '../../components/mui/MTTextField'
 import MTButton from "../../components/mui/MTButton";
 import { createBusiness } from "../../requests/businesses-req";
 import MTSelect from "../../components/mui/MTSelect";
+import { userState } from "../../states/userState";
 
 const useStyles = makeStyles({
     root: {
@@ -49,18 +50,19 @@ export const CreateBusiness = () => {
         try{
             let newUser = {
                 name: businessName,
-                ownerId: "",
+                ownerId: userState.user.get()._id,
                 type: businessType,
                 admins: [],
                 tills: []
             }
             let response = await createBusiness(newUser);
-            console.log(response)
 
-            if(!(response) || response.code !== 201){
-                setAlertMessage({message: !(response) ? 'Failed to create business.' : response.err, status: 'warning'});
-            } else {
+            if(!(response)){
+                setAlertMessage({message: 'Failed to create business.', status: 'warning'});
+            } else if(response.code === 201){
                 setAlertMessage({message: 'Business Created!', status: 'success'})
+            } else if(response.code !== 201){
+                setAlertMessage({message: response.err, status: 'warning'});
             }
 
             setOpen(true);
