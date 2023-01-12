@@ -18,6 +18,7 @@ router.post('/get', function(req, res){
 });
 
 /*
+    TODO Check if the user already has a business
     Posts a business
 */
 router.post('/create', async (req, res) => {
@@ -57,6 +58,17 @@ router.post('/admins', async function(req, res){
 /*
    TODO 
     Modify a businesses' tills
+*/
+router.post('/edittills', async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    let find_business = await Business.findOne({email: req.body.name}).exec();
+    if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
+});
+
+/*
+   TODO 
+    fetch a businesses' tills
 */
 router.post('/tills', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});

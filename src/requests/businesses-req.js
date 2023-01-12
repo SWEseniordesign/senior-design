@@ -68,6 +68,24 @@ Add tills to a business
 */
 export async function addTills (obj) {
     let data;
+    await fetch('http://localhost:8080/business/edittills', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
+TODO
+Fetches a businesses' tills
+*/
+export async function getTills (obj) {
+    let data;
     await fetch('http://localhost:8080/business/tills', {
         method: 'POST',
         headers: {
