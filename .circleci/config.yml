@@ -5,10 +5,11 @@ workflows:
   build:
     jobs:
       - testandbuild:
-        filters:
-          branches:
-            only: 
-              - development
+          filters:
+            branches:
+              only: 
+                - master
+                - development
 jobs:
   testandbuild:
     docker:
