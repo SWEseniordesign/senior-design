@@ -1,9 +1,10 @@
 import { Button, Grid, Paper, TextField, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
+import { pageState } from "../../states/pageState";
 
 const useStyle = makeStyles({
     root: {
@@ -72,12 +73,6 @@ export const CreateAccount = () => {
     const [emailError, setEmailError] = useState(false);
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    // const {isLoading: isUserCreated, refetch: refetchUser} = useQuery([{
-    //     fname: firstName,
-    //     lname: lastName,
-    //     email: email,
-    //     password: password
-    // }], saveUser, {enabled: false});
 
     const classes = useStyle();
 

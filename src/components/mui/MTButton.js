@@ -19,8 +19,6 @@ const useStyles = makeStyles({
 */
 export default function MtButton(props) {    
   const classes = useStyles(props);
-
-  console.log(!!(props.width))
   
   return (
     <Button 

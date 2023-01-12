@@ -1,6 +1,10 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import React from "react";
 
+/*
+    The items props must be in the following format. [{id: '', title: '', onClick: () => {}}]
+*/
+
 const MTSelect = (props) => {
 
     const {label, items, value, setValue, isFullWidth, isRequired} = props;
