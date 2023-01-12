@@ -8,7 +8,6 @@ workflows:
         filters:
           branches:
             only: 
-              - master
               - development
 jobs:
   testandbuild:
