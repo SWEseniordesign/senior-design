@@ -3,9 +3,9 @@ import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import MTTextField from '../../components/mui/MTTextField' 
-import MTSelect from "../../components/mui/MTSelect";
 import MTButton from "../../components/mui/MTButton";
-import { createBusiness } from "../../requests/business-req";
+import { createBusiness } from "../../requests/businesses-req";
+import MTSelect from "../../components/mui/MTSelect";
 
 const useStyles = makeStyles({
     root: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles({
     },
     paper: {
         height: 'fit-content',
-        width: '40%',
+        width: '25%',
     },
     container: {
         padding: '30px'
@@ -49,18 +49,19 @@ export const CreateBusiness = () => {
         try{
             let newUser = {
                 name: businessName,
-                type: businessType
+                ownerId: "",
+                type: businessType,
+                admins: [],
+                tills: []
             }
             let response = await createBusiness(newUser);
+            console.log(response)
 
-            // if(response.code === 403){
-            //     setAlertMessage({message: response.err, status: 'warning'});
-            // } else {
-            //     setAlertMessage({message: 'Business Created!', status: 'success'})
-            // }
-
-            setAlertMessage({message: 'Business Created!', status: 'success'})
-
+            if(!(response) || response.code !== 201){
+                setAlertMessage({message: !(response) ? 'Failed to create business.' : response.err, status: 'warning'});
+            } else {
+                setAlertMessage({message: 'Business Created!', status: 'success'})
+            }
 
             setOpen(true);
             setBusinessName('');
@@ -93,11 +94,11 @@ export const CreateBusiness = () => {
                     </div>
                     <form id="create-account-form" onSubmit={handleSubmit}>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} md={12} lg={7}>
+                            <Grid item xs={12}>
                                 <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired />
                             </Grid>
-                            <Grid item xs={12} md={12} lg={5}>
-                                <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isFullWidth isRequired />
+                            <Grid item xs={12}>
+                                <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
                             </Grid>
                             <Grid item xs={12}>
                                 <MTButton label={'CREATE'} variant={'contained'} type={'submit'} isFullWidth></MTButton>

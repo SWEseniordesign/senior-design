@@ -10,11 +10,11 @@ const CardSchema = new mongoose.Schema({
         type: String
     },
     dimensions: {
-        type: {x: Number, y: Number, width: Number, height: Numbers}
+        type: {x: Number, y: Number, width: Number, height: Number}
     },
     items: {
         type: [mongoose.Schema.Types.ObjectId]
     }
 });
 
-module.exports = mongoose.model('Tab', TabSchema);
+module.exports = mongoose.model('Card', CardSchema);
