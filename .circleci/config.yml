@@ -8,9 +8,8 @@ workflows:
         filters:
           branches:
             only: 
-            - master
+              - master
               - development
-              - fix-build
 jobs:
   testandbuild:
     docker:
