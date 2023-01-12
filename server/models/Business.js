@@ -10,6 +10,10 @@ const BusinessSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    type: {
+        type: String,
+        required: true
+    },
     admins: {
         type: [mongoose.Schema.Types.ObjectId]
     },

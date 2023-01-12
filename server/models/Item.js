@@ -17,6 +17,9 @@ const ItemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    props: {
+        type: [String]
+    },
     stock: {
         type: Number,
     }

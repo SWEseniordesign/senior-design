@@ -3,7 +3,8 @@ const router = express.Router();
 const Business = require('../models/Business');
 
 /*
-Gets a business
+    TODO Format return object
+    Gets a business
 */
 router.post('/get', function(req, res){
     let name = req.body.name;
@@ -17,7 +18,7 @@ router.post('/get', function(req, res){
 });
 
 /*
-Posts a business
+    Posts a business
 */
 router.post('/create', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -25,6 +26,7 @@ router.post('/create', async (req, res) => {
     let new_business = new Business({
         name: req.body.name,
         ownerId: req.body.ownerId,
+        type: req.body.type,
         admins: req.body.admins,
         tills: req.body.tills
     });
@@ -42,8 +44,8 @@ router.post('/create', async (req, res) => {
 });
 
 /*
-Modify a businesses' admins
-TODO
+    TODO
+    Modify a businesses' admins
 */
 router.post('/admins', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -53,8 +55,8 @@ router.post('/admins', async function(req, res){
 });
 
 /*
-Modify a businesses' tills
-TODO
+   TODO 
+    Modify a businesses' tills
 */
 router.post('/tills', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});

@@ -3,7 +3,8 @@ const router = express.Router();
 const Tab = require('../models/Tab');
 
 /*
-Gets a till
+    TODO format return object
+    Gets a till
 */
 router.post('/get', function(req, res){
     let name = req.body.name;
@@ -17,7 +18,7 @@ router.post('/get', function(req, res){
 });
 
 /*
-Posts a till
+    Posts a till
 */
 router.post('/create', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -41,8 +42,8 @@ router.post('/create', async (req, res) => {
 });
 
 /*
-Modify a tabs's color
-TODO
+    TODO
+    Modify a tabs's color
 */
 router.post('/color', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -52,8 +53,8 @@ router.post('/color', async function(req, res){
 });
 
 /*
-Modify a tabs's cards
-TODO
+    TODO
+    Modify a tabs's cards
 */
 router.post('/cards', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});

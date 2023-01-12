@@ -94,6 +94,7 @@ export const Home = () => {
         let business = {
             name: 'McDonalds',
             ownerId: '6377f3e996d92774ba4dcce8',
+            type: 'Wholesale',
             admins: [],
             tills: []
         };
@@ -116,7 +117,7 @@ export const Home = () => {
             dimensions: {x: 1, y: 2, width: 3, height: 4},
             items: []
         }
-        let error = await getTab(tab);
+        let error = await createBusiness(business);
         console.log(error);
     }
 

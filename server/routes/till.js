@@ -3,7 +3,8 @@ const router = express.Router();
 const Till = require('../models/Till');
 
 /*
-Gets a till
+    TODO format return object
+    Gets a till
 */
 router.post('/get', function(req, res){
     let name = req.body.name;
@@ -17,7 +18,7 @@ router.post('/get', function(req, res){
 });
 
 /*
-Posts a till
+    Posts a till
 */
 router.post('/create', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -43,8 +44,8 @@ router.post('/create', async (req, res) => {
 });
 
 /*
-Modify a till's employees
-TODO
+    TODO
+    Modify a till's employees
 */
 router.post('/employees', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -54,8 +55,8 @@ router.post('/employees', async function(req, res){
 });
 
 /*
-Modify a till's tabs
-TODO
+    TODO    
+    Modify a till's tabs
 */
 router.post('/tabs', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -65,8 +66,8 @@ router.post('/tabs', async function(req, res){
 });
 
 /*
-Modify a till's props
-TODO
+    TODO
+    Modify a till's props
 */
 router.post('/props', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});

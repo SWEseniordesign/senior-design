@@ -3,6 +3,10 @@ const User = require('../models/User');
 
 const router = express.Router();
 
+/*
+    TODO acutually setup token/auth stuff
+    "logs a user in" but really get checks if they are in the db
+*/
 router.post('/login', async function(req, res) {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_user = await User.findOne({email: req.body.email, password: req.body.password}).exec();
@@ -14,6 +18,9 @@ router.post('/login', async function(req, res) {
     }
 })
 
+/*
+    Creates a new user
+*/
 router.post('/register', async function(req, res) {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -34,6 +41,16 @@ router.post('/register', async function(req, res) {
         }
         return res.status(201).send(true);
     });
-})
+});
+
+/*
+    TODO
+    Update a users password
+*/
+router.post('/password', async (req, res) => {
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+    let find_user = await User.findOne({email: req.body.email}).exec();
+    if(!find_user) return res.status(403).send({err: 'User already exists', code: 403});
+});
 
 module.exports = router;

@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Card = require('../models/Card');
+
 /*
-    I have not Tested anything in this file yet
-*/
-/*
-Gets a card
+    TODO format return object
+    Gets a card
 */
 router.post('/get', function(req, res){
     let name = req.body.name;
-    Tab.findOne({name: name}, function(err, till){
+    Card.findOne({name: name}, function(err, till){
         if(err){
             console.log(err);
         } else {
@@ -19,7 +18,7 @@ router.post('/get', function(req, res){
 });
 
 /*
-Posts a card
+    Posts a card
 */
 router.post('/create', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -44,8 +43,8 @@ router.post('/create', async (req, res) => {
 });
 
 /*
-Modify a card's dimensions
-TODO
+    TODO
+    Modify a card's dimensions
 */
 router.post('/dimensions', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -55,8 +54,8 @@ router.post('/dimensions', async function(req, res){
 });
 
 /*
-Modify a card's items
-TODO
+    TODO
+    Modify a card's items
 */
 router.post('/items', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -66,8 +65,8 @@ router.post('/items', async function(req, res){
 });
 
 /*
-Modify a card's color
-TODO
+    TODO
+    Modify a card's color
 */
 router.post('/color', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});

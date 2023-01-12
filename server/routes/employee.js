@@ -3,7 +3,8 @@ const router = express.Router();
 const Employee = require('../models/Employee');
 
 /*
-Gets an employee from a email
+    TODO check if retunr object needs to be formatted
+    Gets an employee from a email
 */
 router.get('/get', function(req, res){
     let email = req.body.email;
@@ -17,7 +18,7 @@ router.get('/get', function(req, res){
 });
 
 /*
-Posts an employee with the email and isManager
+    Posts an employee with the email and isManager
 */
 router.post('/create', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -37,6 +38,17 @@ router.post('/create', async (req, res) => {
         }
         return res.status(201).send(true);
     });
+});
+
+/*
+    TODO
+    Modify an employees isManager field
+*/
+router.post('/manager', async (req, res) => {
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    let find_employee = await Employee.findOne({email: req.body.email}).exec();
+    if(!find_employee) return res.status(403).send({err: 'Employee does not exist', code: 403});
 });
 
 module.exports = router;
