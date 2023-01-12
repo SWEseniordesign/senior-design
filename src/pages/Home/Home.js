@@ -10,7 +10,7 @@ import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
 
 import { saveEmployee } from "../../requests/employees-req";
-import { createBusiness, getBusiness } from "../../requests/businesses-req";
+import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill } from "../../requests/tills-req";
 import { createTab, getTab } from "../../requests/tabs-req";
 import { createCard, getCard } from "../../requests/cards-req";
@@ -92,12 +92,16 @@ export const Home = () => {
             isManager: true
         };
         let business = {
-            name: 'McDonalds',
+            name: 'Facebook',
             ownerId: '6377f3e996d92774ba4dcce8',
             type: 'Wholesale',
             admins: [],
             tills: []
         };
+        let businessAdmins = {
+            name: 'McDonalds',
+            admins: ['6377f3e996d92774ba4dcce8']
+        }
         let till = {
             name: 'Fredericton',
             managerPassword: '69420',
@@ -110,14 +114,13 @@ export const Home = () => {
             color: 'red',
             cards: []
         }
-        //Not tested
         let card = {
             name: 'Burgers',
             color: 'blue',
             dimensions: {x: 1, y: 2, width: 3, height: 4},
             items: []
         }
-        let error = await createBusiness(business);
+        let error = await addAdmins(businessAdmins);
         console.log(error);
     }
 

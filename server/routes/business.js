@@ -1,24 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const Business = require('../models/Business');
+const User = require('../models/User');
+
 
 /*
-    TODO Format return object
+    * DONE (at least for now)  
     Gets a business
 */
 router.post('/get', function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+    
     let name = req.body.name;
     Business.findOne({name: name}, function(err, business){
         if(err){
             console.log(err);
         } else {
-            res.json(business);
+            let formattedBus = {
+                id: business._id,
+                name: business.name,
+                ownerId: business.ownerId,
+                type: business.type,
+                admins: business.admins,
+                tills: business.tills
+            };
+            return res.status(201).send({formattedBus, code: 201});
         }
     })
 });
 
 /*
-    TODO Check if the user already has a business
+    * DONE (at least for now)
     Posts a business
 */
 router.post('/create', async (req, res) => {
@@ -32,27 +44,73 @@ router.post('/create', async (req, res) => {
         tills: req.body.tills
     });
 
-    let find_business = await Business.findOne({email: req.body.name}).exec();
+    let find_owner = await Business.findOne({ownerId: req.body.ownerId}).exec();
+    if(find_owner) return res.status(403).send({err: 'User already owns a business', code: 403});
+
+    let find_business = await Business.findOne({name: req.body.name}).exec();
     if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
 
-    new_business.save(function(err, savedBusiness) {
+    new_business.save(function(err, business) {
         if(err) {
             console.log(err);
             return res.status(500).send();
         }
-        return res.status(201).send(true);
+        let formattedBus = {
+            id: business._id,
+            name: business.name,
+            ownerId: business.ownerId,
+            type: business.type,
+            admins: business.admins,
+            tills: business.tills
+        };
+        return res.status(201).send({formattedBus, code: 201});
     });
 });
 
 /*
-    TODO
+    TODO: find a better way to check which users were not found, filter out users that are already admins for the business, & ensure 
     Modify a businesses' admins
 */
 router.post('/admins', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_business = await Business.findOne({email: req.body.name}).exec();
-    if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
+    //checks if the users exist
+    let result = await User.find({ '_id': { $in: req.body.admins } });
+    if(result.length != req.body.admins.length) return res.status(400).send({err: 'Unable to find admin(s)', code: 403});
+    
+    //checks if the admin to be added is already an admin of that business
+    Business.findOne({name: req.body.name}, function(err, business){
+        if(err){
+            console.log(err);
+        } else {
+            req.body.admins.forEach(admin => {
+                const index = business.admins.indexOf(admin);
+                if (index > -1) {
+                    req.body.admins.splice(index, 1); // 2nd parameter means remove one item only
+                }
+            });
+        }
+    })
+
+    //gets the business and adds the admins
+    let update = await Business.findOneAndUpdate({name: req.body.name}, {$push: {admins: req.body.admins}}, { new: true });
+    if(!update) return res.status(400).send({err: 'Unable to update businesses admins', code: 403});
+
+    update.save(function(err, business) {
+        if(err) {
+            console.log(err);
+            return res.status(500).send();
+        }
+        let formattedBus = {
+            id: business._id,
+            name: business.name,
+            ownerId: business.ownerId,
+            type: business.type,
+            admins: business.admins,
+            tills: business.tills
+        };
+        return res.status(201).send({formattedBus, code: 201});
+    });
 });
 
 /*
