@@ -6,16 +6,21 @@ const User = require('../models/User');
 
 /*
     * DONE (at least for now)  
-    Gets a business
+    Gets a business based on the businesses name
 */
 router.post('/get', function(req, res){
-    if(!req.body) return res.status(400).send({err: 'No request body'});
+    //Check if there is a body in the request
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
     
+    //Find the business then format it and return
     let name = req.body.name;
     Business.findOne({name: name}, function(err, business){
         if(err){
             console.log(err);
+            return res.status(500).send({err: 'Unable to get business', code: 500});
         } else {
+            //If business is not found
+            if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
             let formattedBus = {
                 id: business._id,
                 name: business.name,
@@ -34,8 +39,10 @@ router.post('/get', function(req, res){
     Posts a business
 */
 router.post('/create', async (req, res) => {
+    //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
+    //Create temp new business
     let new_business = new Business({
         name: req.body.name,
         ownerId: req.body.ownerId,
@@ -44,12 +51,14 @@ router.post('/create', async (req, res) => {
         tills: req.body.tills
     });
 
+    //Check if owner already has a business
     let find_owner = await Business.findOne({ownerId: req.body.ownerId}).exec();
     if(find_owner) return res.status(403).send({err: 'User already owns a business', code: 403});
-
+    //Check if a business with the same name exists
     let find_business = await Business.findOne({name: req.body.name}).exec();
     if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
 
+    //Attempt to save the business
     new_business.save(function(err, business) {
         if(err) {
             console.log(err);
@@ -68,7 +77,8 @@ router.post('/create', async (req, res) => {
 });
 
 /*
-    TODO: find a better way to check which users were not found, filter out users that are already admins for the business, & ensure 
+    TODO: find a better way to check which users were not found, filter out users that are already admins for the business, & ensure
+    * NOT WORKING 100%
     Modify a businesses' admins
 */
 router.post('/admins', async function(req, res){
@@ -99,7 +109,7 @@ router.post('/admins', async function(req, res){
     update.save(function(err, business) {
         if(err) {
             console.log(err);
-            return res.status(500).send();
+            return res.status(500).send({err: 'Unable to update businesses admins', code: 500});
         }
         let formattedBus = {
             id: business._id,

@@ -1,7 +1,7 @@
 /*
 Create a business document.
     Pass in a json object with a email and isManager field, and the other two fields can be
-    empty as shown below. name is unique. type should be Wholesale or Quickservice an is required.
+    empty as shown below. name is unique (name is case sensitive). type should be Wholesale or Quickservice an is required.
     let business = {
         name: 'McDonalds',
         ownerId: '6377f3e996d92774ba4dcce8',

@@ -4,7 +4,6 @@ const TillSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true
     },
     managerPassword: {
         type: Number,

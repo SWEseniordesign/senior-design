@@ -92,7 +92,7 @@ export const Home = () => {
             isManager: true
         };
         let business = {
-            name: 'Facebook',
+            name: 'McDonalds',
             ownerId: '6377f3e996d92774ba4dcce8',
             type: 'Wholesale',
             admins: [],
@@ -103,12 +103,14 @@ export const Home = () => {
             admins: ['6377f3e996d92774ba4dcce8']
         }
         let till = {
+            businessId: '63c00db199361ea1767b451e',
             name: 'Fredericton',
-            managerPassword: '69420',
+            managerPassword: '54321',
             employees: [],
             tabs: [],
             props: []
         };
+        let tabId = {id: '63be021d79729847f8035ba9'};
         let tab = {
             name: 'test tab',
             color: 'red',
@@ -120,7 +122,7 @@ export const Home = () => {
             dimensions: {x: 1, y: 2, width: 3, height: 4},
             items: []
         }
-        let error = await addAdmins(businessAdmins);
+        let error = await createTill(till);
         console.log(error);
     }
 
