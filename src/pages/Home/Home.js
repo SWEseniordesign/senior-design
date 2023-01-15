@@ -9,6 +9,14 @@ import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
 
+import { saveEmployee } from "../../requests/employees-req";
+import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
+import { createTill, getTill } from "../../requests/tills-req";
+import { createTab, getTab } from "../../requests/tabs-req";
+import { createCard, getCard } from "../../requests/cards-req";
+import { createItem, getItem } from "../../requests/items-req";
+import { getUserBusiness, saveUser } from "../../requests/users-req";
+
 const useStyle = makeStyles({
     root: {
         //display: 'flex',
@@ -79,6 +87,67 @@ export const Home = () => {
         navigate('/login');
     }
 
+    //This is temporary to allow me to test creating data
+    const handleCreateData = async () => {
+        let employee = {
+            email: 'test3@unb.ca',
+            isManager: true
+        };
+        let business = {
+            name: 'McDonalds',
+            ownerId: '6377f3e996d92774ba4dcce8',
+            type: 'Wholesale',
+            admins: [],
+            tills: []
+        };
+        let businessAdmins = {
+            name: 'McDonalds',
+            admins: ['6377f3e996d92774ba4dcce8']
+        }
+        let till = {
+            businessId: '63c00db199361ea1767b451e',
+            name: 'Fredericton',
+            managerPassword: '54321',
+            employees: [],
+            tabs: [],
+            props: []
+        };
+        let tabId = {id: '63c44024140e3d9f771083c8'};
+        let tab = {
+            tillId: '63be021d79729847f8035ba9',
+            name: 'Sammichs',
+            color: 'green',
+            cards: []
+        }
+        let card = {
+            tabId: '63c44024140e3d9f771083c8',
+            name: 'Dog',
+            color: 'yellow',
+            dimensions: {x: 1, y: 2, width: 3, height: 4},
+            items: []
+        }
+        let cardId = {id: '63c4454e4ffdaf5afa747913'};
+        let item = {
+            cardId: '63c44500cc60f58fb8b2b1f3',
+            name: 'Salad',
+            price: 420.69,
+            image: null,
+            props: [],
+            stock: 69
+        }
+        let itemId = {id: '63c44a7891476b0ffbecaa53'};
+        let user = {
+            fname: 'Colby',
+            lname: 'Bruh',
+            email: 'cBruh@bruh.bruh',
+            password: 'balls',
+            businessId: '63c03e39d4e646c1151dd54c'
+        };
+        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
+        let error = await getUserBusiness(userId);
+        console.log(error);
+    }
+
     return (
         <div className={classes.root}>
             <div className={classes.heroSection}>
@@ -88,6 +157,7 @@ export const Home = () => {
                 <div className={classes.buttonBox}>
                     <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
                     <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
+                    <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button>
                 </div>
             </div>
             <div className={classes.singleSectionBox}>

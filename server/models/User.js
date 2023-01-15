@@ -18,6 +18,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    businessId: {
+        type: mongoose.Schema.Types.ObjectId
+    }
 });
 
 module.exports = mongoose.model('User', UserSchema);

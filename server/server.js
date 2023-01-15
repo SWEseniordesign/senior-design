@@ -36,7 +36,12 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/items', require('./routes/items'));
-app.use('/auth', require('./routes/auth'));
+app.use('/user', require('./routes/user'));
+app.use('/employee', require('./routes/employee'));
+app.use('/business', require('./routes/business'));
+app.use('/till', require('./routes/till'));
+app.use('/tab', require('./routes/tab'));
+app.use('/card', require('./routes/card'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, 
