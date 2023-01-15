@@ -36,7 +36,7 @@ router.post('/register', async function(req, res) {
         fname: req.body.fname,
         lname: req.body.lname,
         email: req.body.email,
-        password: await bcrypt.hash(req.body.password, 10)
+        password: await bcrypt.hash(req.body.password, 10),
         businessId: req.body.businessId
     });
 
