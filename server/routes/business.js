@@ -35,8 +35,8 @@ router.post('/get', function(req, res){
 });
 
 /*
-    * DONE (at least for now)
-    Posts a business
+    TODO: test creating a business an ensure it links to user
+    Posts a business & links it to a user
 */
 router.post('/create', async (req, res) => {
     //Check if there is a body in the request
@@ -62,7 +62,7 @@ router.post('/create', async (req, res) => {
     new_business.save(function(err, business) {
         if(err) {
             console.log(err);
-            return res.status(500).send();
+            return res.status(500).send({err: 'Error saving Business', code: 403});
         }
         let formattedBus = {
             id: business._id,
@@ -72,6 +72,14 @@ router.post('/create', async (req, res) => {
             admins: business.admins,
             tills: business.tills
         };
+        //Update owner to inlcude the businessId
+        find_owner.businessId = formattedBus.id;
+        find_owner.save(function(err, owner){
+            if(err) {
+                console.log(err);
+                return res.status(500).send({err: 'Error updating user', code: 403});
+            }
+        });
         return res.status(201).send({formattedBus, code: 201});
     });
 });

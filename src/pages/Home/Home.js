@@ -14,6 +14,8 @@ import { createBusiness, getBusiness, addAdmins } from "../../requests/businesse
 import { createTill, getTill } from "../../requests/tills-req";
 import { createTab, getTab } from "../../requests/tabs-req";
 import { createCard, getCard } from "../../requests/cards-req";
+import { createItem, getItem } from "../../requests/items-req";
+import { getUserBusiness, saveUser } from "../../requests/users-req";
 
 const useStyle = makeStyles({
     root: {
@@ -110,19 +112,39 @@ export const Home = () => {
             tabs: [],
             props: []
         };
-        let tabId = {id: '63be021d79729847f8035ba9'};
+        let tabId = {id: '63c44024140e3d9f771083c8'};
         let tab = {
-            name: 'test tab',
-            color: 'red',
+            tillId: '63be021d79729847f8035ba9',
+            name: 'Sammichs',
+            color: 'green',
             cards: []
         }
         let card = {
-            name: 'Burgers',
-            color: 'blue',
+            tabId: '63c44024140e3d9f771083c8',
+            name: 'Dog',
+            color: 'yellow',
             dimensions: {x: 1, y: 2, width: 3, height: 4},
             items: []
         }
-        let error = await createTill(till);
+        let cardId = {id: '63c4454e4ffdaf5afa747913'};
+        let item = {
+            cardId: '63c44500cc60f58fb8b2b1f3',
+            name: 'Salad',
+            price: 420.69,
+            image: null,
+            props: [],
+            stock: 69
+        }
+        let itemId = {id: '63c44a7891476b0ffbecaa53'};
+        let user = {
+            fname: 'Colby',
+            lname: 'Bruh',
+            email: 'cBruh@bruh.bruh',
+            password: 'balls',
+            businessId: '63c03e39d4e646c1151dd54c'
+        };
+        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
+        let error = await getUserBusiness(userId);
         console.log(error);
     }
 
