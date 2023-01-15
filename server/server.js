@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/items', require('./routes/items'));
-app.use('/auth', require('./routes/user'));
+app.use('/user', require('./routes/user'));
 app.use('/employee', require('./routes/employee'));
 app.use('/business', require('./routes/business'));
 app.use('/till', require('./routes/till'));
