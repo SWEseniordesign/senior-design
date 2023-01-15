@@ -3,7 +3,7 @@
 */
 export async function saveUser (obj) {
     let data;
-    await fetch('http://localhost:8080/auth/register', {
+    await fetch('http://localhost:8080/user/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ export async function saveUser (obj) {
 */
 export async function login (obj) {
     let data;
-    await fetch('http://localhost:8080/auth/login', {
+    await fetch('http://localhost:8080/user/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ export async function login (obj) {
 */
 export async function updatePassword(obj){
     let data;
-    await fetch('http://localhost:8080/auth/register', {
+    await fetch('http://localhost:8080/user/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
