@@ -2,8 +2,8 @@ import { AppBar, Typography, Toolbar } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useLocation, useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
-import React, { useState } from "react";
-import { saveUser, login } from "../../requests/users-req";
+import React from "react";
+import { login } from "../../requests/users-req";
 import MTDropdown from "../mui/MTDropdown";
 import MTButton from '../mui/MTButton';
 import { userState } from "../../states/userState";
@@ -64,25 +64,6 @@ const Header = () => {
         pageState.previousPage.set(location.pathname);
         navigate('/create-account');
     }
-
-    // // TODO
-    // async function handleTemp () {
-    //     let res = await saveUser({
-    //         fname: 'test',
-    //         lname: 'icle',
-    //         email: 'testicle@domain.cum'+Math.floor(Math.random()*100),
-    //         password: 'temp123'
-    //     })
-    //     console.log(res);
-    // }
-
-    // async function handleTemp2 () {
-    //     let res = await login({
-    //         email: 'testicle@domain.cum',
-    //         password: 'temp123'
-    //     })
-    //     console.log(res);
-    // }
 
     const handleHome = () => {
         navigate('/');
