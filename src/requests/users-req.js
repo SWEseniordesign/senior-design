@@ -37,7 +37,7 @@ export async function login (obj) {
 */
 export async function updatePassword(obj){
     let data;
-    await fetch('http://localhost:8080/auth/register', {
+    await fetch('http://localhost:8080/auth/password', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

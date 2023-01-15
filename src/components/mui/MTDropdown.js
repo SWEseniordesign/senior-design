@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { COLOR_PALETTE } from "../../Constants";
+import { userState } from "../../states/userState";
 
 const MTDropdown = (props) => {
 
@@ -50,7 +51,7 @@ const MTDropdown = (props) => {
                 <div>
                     <Tooltip title={'Account Settings'}>
                         <IconButton onClick={handleOpenMenu}>
-                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>D</Avatar>
+                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>{userState.user.get().fname.charAt(0).toUpperCase()}</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu 

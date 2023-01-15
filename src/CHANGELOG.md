@@ -7,7 +7,7 @@ Add items closer to the version number so the date go from newest to oldest (top
 
 ### *Version 0.1.6*
  - 2023/01/12 - [Create Layout for Create Business Page](https://sd-onlinepos.atlassian.net/browse/ON-73) 
- - 2022/01/12 - [Build CI](https://sd-onlinepos.atlassian.net/browse/ON-39) 
+ - 2023/01/12 - [Build CI](https://sd-onlinepos.atlassian.net/browse/ON-39) 
  - 2023/01/09 - [Header Changes to support before and after login](https://sd-onlinepos.atlassian.net/browse/ON-75) 
  - 2022/11/28 - [Create Reuseable components](https://sd-onlinepos.atlassian.net/browse/ON-28) 
  - 2022/11/28 - [Create Layout for Landing Page](https://sd-onlinepos.atlassian.net/browse/ON-41) 

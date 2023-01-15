@@ -1,10 +1,9 @@
 import { Button, Grid, Paper, TextField, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
-import { pageState } from "../../states/pageState";
 
 const useStyle = makeStyles({
     root: {

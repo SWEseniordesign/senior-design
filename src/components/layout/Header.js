@@ -3,12 +3,12 @@ import { makeStyles } from "@mui/styles";
 import { useLocation, useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
 import React from "react";
-import { login } from "../../requests/users-req";
 import MTDropdown from "../mui/MTDropdown";
 import MTButton from '../mui/MTButton';
 import { userState } from "../../states/userState";
 import { pageState } from "../../states/pageState";
 import { useHookstate } from "@hookstate/core";
+// import { login } from "../../requests/users-req";
 
 const useStyles = makeStyles({
     toolBar: {
@@ -71,13 +71,13 @@ const Header = () => {
 
     const handleLogin = async() => {
         // let loginUser = {
-        //     email: 'bruh@gmail.com',
+        //     email: 'bruh@',
         //     password: 'bruh'
         // }
         // let response = await login(loginUser);
 
         // if((!!response)) {
-        //     uState.user.set(response);
+        //     uState.user.set(response); //? These two lines will be needed in the login page in order for the header changes to occur
         //     uState.isLoggedIn.set(true);
         //     console.log(uState.user.get());
         //     console.log(uState.isLoggedIn.get());
