@@ -4,6 +4,7 @@ import { AccessTill } from '../pages/AccessTill/AccessTill';
 import { CreateBusiness } from '../pages/CreateBusiness/CreateBusiness';
 import { AccessBusiness } from '../pages/AccessBusiness/AccessBusiness';
 import { CreateAccount } from '../pages/CreateAccount/CreateAccount';
+import Dashboard from '../pages/Dashboard/Dashboard';
 
 const SiteRoutes = [
     {
@@ -37,6 +38,10 @@ const SiteRoutes = [
     {
         path: '/access-till',
         component: <AccessTill/>
+    },
+    {
+        path: '/dashboard',
+        component: <Dashboard/>
     },
 ]
 

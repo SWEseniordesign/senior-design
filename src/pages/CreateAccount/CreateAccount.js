@@ -72,12 +72,6 @@ export const CreateAccount = () => {
     const [emailError, setEmailError] = useState(false);
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    // const {isLoading: isUserCreated, refetch: refetchUser} = useQuery([{
-    //     fname: firstName,
-    //     lname: lastName,
-    //     email: email,
-    //     password: password
-    // }], saveUser, {enabled: false});
 
     const classes = useStyle();
 

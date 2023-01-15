@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { FONT_FAMILY } from "../../Constants";
+import { COLOR_PALETTE } from "../../Constants";
+import { userState } from "../../states/userState";
 
 const MTDropdown = (props) => {
 
@@ -50,7 +51,7 @@ const MTDropdown = (props) => {
                 <div>
                     <Tooltip title={'Account Settings'}>
                         <IconButton onClick={handleOpenMenu}>
-                            <Avatar sx={{width: 32, height: 32}}>D</Avatar>
+                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>{userState.user.get().fname.charAt(0).toUpperCase()}</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu 
@@ -66,26 +67,18 @@ const MTDropdown = (props) => {
                         }}
                         open={Boolean(anchorEl)}
                         onClose={handleCloseMenu}>
-                            <MenuItem>
-                                <Typography sx={{
-                                    fontFamily: FONT_FAMILY,
-                                    fontSize: '12',
-                                    color: 'primary'
-                                }}>View Business Dashboard</Typography>
-                            </MenuItem>
-                            <MenuItem>
-                                <Typography sx={{
-                                    fontFamily: FONT_FAMILY,
-                                    fontSize: '12',
-                                    color: 'secondary'
-                                }}>Edit Profile</Typography>
-                            </MenuItem>
-                            <MenuItem>
-                                <Typography color={'error'}>Logout</Typography>
-                            </MenuItem>
+                        {menuItems.map((item) => {
+                            return (
+                                <MenuItem key={item.id} onClick={() => {
+                                    item.action();
+                                    handleCloseMenu();
+                                }}>
+                                    <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
+                                </MenuItem>
+                            );
+                        })}
                     </Menu>
                 </div>
-
             }
         </div>
     );
