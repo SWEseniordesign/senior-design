@@ -89,19 +89,24 @@ const Header = () => {
     }
 
     const handleLogin = async() => {
-        let loginUser = {
-            email: 'bruh@gmail.com',
-            password: 'bruh'
-        }
-        let response = await login(loginUser);
+        // let loginUser = {
+        //     email: 'bruh@gmail.com',
+        //     password: 'bruh'
+        // }
+        // let response = await login(loginUser);
 
-        if((!!response)) {
-            uState.user.set(response);
-            uState.isLoggedIn.set(true);
-            console.log(uState.user.get());
-            console.log(uState.isLoggedIn.get());
-        }
-        // navigate('/login');
+        // if((!!response)) {
+        //     uState.user.set(response);
+        //     uState.isLoggedIn.set(true);
+        //     console.log(uState.user.get());
+        //     console.log(uState.isLoggedIn.get());
+        // }
+        navigate('/login');
+    }
+
+    const userHasBusiness = () => {
+        //? Will make a request to the backend that will determine whether or not the user has a business
+        return false;
     }
 
     const dropdownMenuItems_ForEmployees = [
@@ -114,8 +119,8 @@ const Header = () => {
     ];
 
     const dropdownMenuItems_Account = [
-        {id: 1, title: 'View Business Profile', action: () => {
-            navigate('/create-business'); 
+        {id: 1, title: userHasBusiness() ? 'View Business Dashboard' : 'Create Business', action: () => {
+            userHasBusiness() ? navigate('/dashboard') : navigate('/create-business')
             pageState.previousPage.set(location.pathname)}},
         {id: 2, title: 'Edit Profile', action: () => {}},
         {id: 3, title: 'Logout', action: () => {uState.isLoggedIn.set(false)}}

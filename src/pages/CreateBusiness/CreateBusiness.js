@@ -6,6 +6,7 @@ import MTTextField from '../../components/mui/MTTextField'
 import MTButton from "../../components/mui/MTButton";
 import { createBusiness } from "../../requests/businesses-req";
 import MTSelect from "../../components/mui/MTSelect";
+import { userState } from "../../states/userState";
 
 const useStyles = makeStyles({
     root: {
@@ -49,7 +50,7 @@ export const CreateBusiness = () => {
         try{
             let newUser = {
                 name: businessName,
-                ownerId: "",
+                ownerId: userState.user.get()._id,
                 type: businessType,
                 admins: [],
                 tills: []
