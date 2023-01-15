@@ -73,14 +73,11 @@ router.post('/create', async (req, res) => {
         for(let tillId of business.tills){
             let searchedTill = await Till.findById(tillId).clone(); //.clone() is probably not a good idea
             if(searchedTill.name === new_till.name){
-                //console.log('TEST');
                 dupFound = true;
-                return true;
+                break;
             }
-            
         }
         if(dupFound){
-            //console.log('TEST')
             return res.status(400).send({err: 'Business already has a till with that name', code: 400});
         }
     }
@@ -115,7 +112,7 @@ router.post('/create', async (req, res) => {
 
 /*
     TODO
-    Modify a till's employees
+    Add employees to till
 */
 router.post('/employees', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});

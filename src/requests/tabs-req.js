@@ -1,13 +1,11 @@
 /*
-Create a till document.
-    Pass in a json object with a name and managerPassword field, and the other three fields can be
-    empty as shown below. name is unique.
-    let till = {
+Create a tab document.
+    Ex:
+    let tab = {
+        tillId: ObjectId
         name: 'Fredericton',
-        managerPassword: 69420,
-        employees: [],
-        tabs: [],
-        props: []
+        color: 'red,
+        cards: [ObjectId],
     };
 */
 export async function createTab (obj) {

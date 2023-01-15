@@ -44,12 +44,14 @@ router.post('/get', function(req, res){
 });
 
 /*
-    TODO: format return, link newly created tab to till
-    Posts a tab
+    * DONE
+    Posts a tab and adds it to a Till
 */
 router.post('/create', async (req, res) => {
+    //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
+    //Create temp new tab
     let new_tab = new Tab({
         name: req.body.name,
         color: req.body.color,
@@ -57,15 +59,32 @@ router.post('/create', async (req, res) => {
     });
     let tillId = req.body.tillId;
 
-    let find_tab = await Tab.findOne({name: req.body.name}).exec();
-    if(find_tab) return res.status(403).send({err: 'tab already exists', code: 403});
+    //Find till to link
+    let till = await Till.findById(tillId).catch( err => {return res.status(500).send({err: 'Error finding till to link to tab', code: 500});});
+    if(till === null) return res.status(500).send({err: 'Till not found', code: 500});
 
-    new_tab.save(function(err, savedTab) {
+    //Attempt to save tab 
+    new_tab.save(function(err, tab) {
         if(err) {
             console.log(err);
-            return res.status(500).send();
+            return res.status(500).send({err: 'Unable to create new tab', code: 500});
+        } else {
+            let formattedTab = {
+                id: tab._id,
+                name: tab.name,
+                color: tab.color,
+                cards: tab.cards
+            };
+            //Attempts to update till to include the new tab
+            till.tabs.push(new ObjectId(formattedTab.id));
+            till.save(function(err, till){
+                if(err) {
+                    console.log(err);
+                    return res.status(500).send({err: 'Unable to link tab to till', code: 500});
+                }
+            });
+            return res.status(201).send({formattedTab, code: 201});
         }
-        return res.status(201).send(true);
     });
 });
 
