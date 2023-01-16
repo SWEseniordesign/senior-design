@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const ItemSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true
-    },
     name: {
         type: String,
         required: true
@@ -15,7 +11,9 @@ const ItemSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        required: true
+    },
+    props: {
+        type: [String]
     },
     stock: {
         type: Number,

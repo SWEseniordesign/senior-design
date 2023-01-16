@@ -1,9 +1,16 @@
 /*
-    Creates a new user
+Create a tab document.
+    Ex:
+    let tab = {
+        tillId: ObjectId
+        name: 'Fredericton',
+        color: 'red,
+        cards: [ObjectId],
+    };
 */
-export async function saveUser (obj) {
+export async function createTab (obj) {
     let data;
-    await fetch('http://localhost:8080/user/register', {
+    await fetch('http://localhost:8080/tab/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -16,28 +23,11 @@ export async function saveUser (obj) {
 }
 
 /*
-    Should allow us to log in a user (doesn't really do that rn Jan12)
+Get a Till from its name
 */
-export async function login (obj) {
+export async function getTab (obj) {
     let data;
-    await fetch('http://localhost:8080/user/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(obj)
-    })
-    .then(res => data = res.json())
-    .catch(err => console.log(err));
-    return data;
-}
-
-/*
-    Should allow us to log in a user (doesn't really do that rn Jan12)
-*/
-export async function getUserBusiness (obj) {
-    let data;
-    await fetch('http://localhost:8080/user/business', {
+    await fetch('http://localhost:8080/tab/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -50,12 +40,11 @@ export async function getUserBusiness (obj) {
 }
 
 /*
-    TODO
-    Allows us to update a users password
+modify a Tab's cards
 */
-export async function updatePassword(obj){
+export async function addCards (obj) {
     let data;
-    await fetch('http://localhost:8080/user/', {
+    await fetch('http://localhost:8080/tab/cards', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -63,6 +52,23 @@ export async function updatePassword(obj){
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
+modify a Tab's color
+*/
+export async function changeColor (obj) {
+    let data;
+    await fetch('http://localhost:8080/tab/color', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
     return data;
 }

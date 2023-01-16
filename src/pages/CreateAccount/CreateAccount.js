@@ -72,15 +72,9 @@ export const CreateAccount = () => {
     const [emailError, setEmailError] = useState(false);
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    // const {isLoading: isUserCreated, refetch: refetchUser} = useQuery([{
-    //     fname: firstName,
-    //     lname: lastName,
-    //     email: email,
-    //     password: password
-    // }], saveUser, {enabled: false});
 
     const classes = useStyle();
-    
+
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -111,7 +105,7 @@ export const CreateAccount = () => {
                 formSubmitted_ResetValues();
             }
         } catch(e){
-            console.log('bruh');
+            console.log(e);
         }
 
     }
@@ -125,7 +119,7 @@ export const CreateAccount = () => {
         setConfirmPassword('');
     }
 
-    
+
     useEffect(() => {
         if(password !== confirmPassword){
             setPasswordError(true);
@@ -141,7 +135,7 @@ export const CreateAccount = () => {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper} elevation={5} sx={{
+            <Paper className={classes.paper} square elevation={5} sx={{
                 backgroundColor: COLOR_PALETTE.BABY_BLUE
             }}>
                 <div className={classes.container}>
@@ -165,11 +159,11 @@ export const CreateAccount = () => {
                     <form id="create-account-form" onSubmit={handleSubmit}>
                         <Grid container rowSpacing={3}>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    label='First Name' 
+                                <TextField
+                                    label='First Name'
                                     value={firstName}
-                                    required 
-                                    onChange={(e) => setFirstName(e.target.value)} 
+                                    required
+                                    onChange={(e) => setFirstName(e.target.value)}
                                     helperText=" "
                                     autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
@@ -177,56 +171,56 @@ export const CreateAccount = () => {
                             <Grid item xs={12} md={6}>
                                 <TextField
                                     label='Last Name'
-                                    value={lastName} 
-                                    required 
-                                    onChange={(e) => setLastName(e.target.value)} 
+                                    value={lastName}
+                                    required
+                                    onChange={(e) => setLastName(e.target.value)}
                                     helperText=" "
                                     autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    label='Email' 
+                                <TextField
+                                    label='Email'
                                     value={email}
-                                    required 
-                                    onChange={(e) => setEmail(e.target.value)} 
+                                    required
+                                    onChange={(e) => setEmail(e.target.value)}
                                     error={emailError}
                                     helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
                                     autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    label='Confirm Email' 
+                                <TextField
+                                    label='Confirm Email'
                                     value={confirmEmail}
-                                    required 
-                                    onChange={(e) => setConfirmEmail(e.target.value)} 
+                                    required
+                                    onChange={(e) => setConfirmEmail(e.target.value)}
                                     error={emailError}
                                     helperText=" "
                                     autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    label='Password' 
+                                <TextField
+                                    label='Password'
                                     type='password'
                                     value={password}
-                                    required 
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                    error={passwordError} 
+                                    required
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    error={passwordError}
                                     helperText={passwordError ? "Passwords does not match" : " "}
                                     autoComplete="new-password"
                                     sx={{ width: '80%'}}/>
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    label='Confirm Password' 
-                                    type='password' 
+                                <TextField
+                                    label='Confirm Password'
+                                    type='password'
                                     value={confirmPassword}
-                                    required 
-                                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                                    required
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                     autoComplete="new-password"
-                                    error={passwordError} 
+                                    error={passwordError}
                                     sx={{ width: '80%'}}/>
                             </Grid>
                             <Grid item xs={12} md={6}>
