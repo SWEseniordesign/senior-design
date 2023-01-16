@@ -1,9 +1,12 @@
-import { Button, Grid, Paper, TextField, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import MTButton from "../../components/mui/MTButton";
+import MTTextField from "../../components/mui/MTTextField";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { login } from "../../requests/users-req";
+import { userState } from "../../states/userState";
 
 const useStyle = makeStyles({
     root: {
@@ -20,7 +23,6 @@ const useStyle = makeStyles({
     },
     container: {
         padding: '30px',
-        //display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -29,38 +31,7 @@ const useStyle = makeStyles({
         flexDirection: 'column',
         gap: '5px',
         marginBottom: '24px'
-    },
-    buttons_container: {
-        width: '100%',
-        maxWidth: '300px',
-        display: 'flex',
-        justifyContent: 'center',
-    },
-    create_button: {
-        height: '50px',
-        width: '40%',
-
-        '&.MuiButtonBase-root':{
-            backgroundColor: COLOR_PALETTE.BLUE_GROTTO,
-            '&:hover': {
-                color: COLOR_PALETTE.BABY_BLUE,
-                backgroundColor: COLOR_PALETTE.NAVY_BLUE
-            }
-        }
-    },
-    cancel_button: {
-        height: '50px',
-        width: '40%',
-
-        '&.MuiButtonBase-root':{
-            borderColor: COLOR_PALETTE.NAVY_BLUE,
-            '&:hover': {
-                color: COLOR_PALETTE.BABY_BLUE,
-                backgroundColor: COLOR_PALETTE.NAVY_BLUE
-            }
-        },
     }
-
 });
 
 export const Login = () => {
@@ -68,19 +39,9 @@ export const Login = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
-    const [dbEmail, setDbEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [dBPassword, setdBPassword] = useState('');
-    //const [passwordError, setPasswordError] = useState(false);
-    //const [emailError, setEmailError] = useState(false);
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    // const {isLoading: isUserCreated, refetch: refetchUser} = useQuery([{
-    //     fname: firstName,
-    //     lname: lastName,
-    //     email: email,
-    //     password: password
-    // }], saveUser, {enabled: false});
 
     const classes = useStyle();
 
@@ -101,20 +62,24 @@ export const Login = () => {
                     password: password
                 }
                 let error = await login(userCreds);
+                console.log(error);
 
-                if(error.code === 403){
+                if(!!(error.code)){
                     setAlertMessage({message: error.err, status: 'warning'});
-                } else {
-                    setAlertMessage({message: 'Logged in!', status: 'success'})
+                } else if(!!(error.user)) {
+                    userState.user.set(error.user);
+                    userState.token.set(error.token);
+                    userState.isLoggedIn.set(true);
+                    navigate('/');
                 }
 
                 setOpen(true);
                 formSubmitted_ResetValues();
+
             }
         } catch(e){
             console.log('dn');
         }
-
     }
 
     const formSubmitted_ResetValues = () => {
@@ -122,22 +87,6 @@ export const Login = () => {
         setPassword('');
     }
 
-    //TODO: instead of this check if email/pass exists? Or already done in auth
-    /*useEffect(() => {
-        if(password !== confirmPassword){
-            setPasswordError(true);
-        } else {
-            setPasswordError(false);
-        }
-        if(email !== confirmEmail){
-            setEmailError(true);
-        } else {
-            setEmailError(false);
-        }
-    }, [email, password]);*/
-
-
-    //CHECK: autocompletes and Snackbar
     return (
         <div className={classes.root}>
             <Paper className={classes.paper} elevation={5} sx={{
@@ -164,36 +113,29 @@ export const Login = () => {
                         }}>Enter your credentials</Typography>
                     </div>
                     <form id="login-form" onSubmit={handleSubmit}>
-                        <Grid container rowSpacing={3}>
-                            <Grid item xs={12} md={12}>
-                                <TextField
-                                    label='Email'
-                                    value={email}
-                                    required
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    //error={emailError}
-                                    //helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
-                                    //autoComplete="new-password"
-                                    sx={{ width: '100%', maxWidth: '300px'}}/>
+                            <Grid container rowSpacing={3}>
+                                <Grid item xs={12} md={12}>
+                                    <MTTextField
+                                        label='Email'
+                                        type='email'
+                                        value={email}
+                                        isRequired
+                                        onChangeFunc={setEmail}
+                                        isFullWidth />
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <MTTextField
+                                        label='Password'
+                                        type='password'
+                                        value={password}
+                                        isRequired
+                                        onChangeFunc={setPassword}
+                                        isFullWidth />
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <MTButton variant='contained' label={"LOGIN"} type="submit" isFullWidth />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} md={12}>
-                                <TextField
-                                    label='Password'
-                                    type='password'
-                                    value={password}
-                                    required
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    //error={passwordError}
-                                    //helperText={passwordError ? "Passwords does not match" : " "}
-                                    //autoComplete="new-password"
-                                    sx={{ width: '100%', maxWidth: '300px'}}/>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <div className={classes.buttons_container}>
-                                    <Button variant='contained' type="submit" className={classes.create_button} sx={{width: '100%', justifyContent: 'center'}}>LOGIN</Button>
-                                </div>
-                            </Grid>
-                        </Grid>
                     </form>
                     <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                         <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>

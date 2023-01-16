@@ -19,6 +19,7 @@ export default function MTTextField(props) {
       label={props.label} 
       required={isRequired ? true : false}
       onChange={(e) => onChangeFunc(e.target.value)} 
+      type={!!(props.type) ? props.type : undefined}
       value={props.value}
       fullWidth={isFullWidth ? true: false}>
     </TextField>
