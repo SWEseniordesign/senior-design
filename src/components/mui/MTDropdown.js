@@ -7,9 +7,10 @@ import { userState } from "../../states/userState";
 const MTDropdown = (props) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const {label, menuItems=[], variant, isAccount} = props;
+    const {label, menuItems=[], variant, isAccount, menuOpenAction} = props;
 
     const handleOpenMenu = (e) => {
+        menuOpenAction();
         setAnchorEl(e.currentTarget)
     }
 

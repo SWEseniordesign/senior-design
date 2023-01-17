@@ -91,7 +91,8 @@ export const CreateAccount = () => {
                     fname: firstName,
                     lname: lastName,
                     email: email,
-                    password: password
+                    password: password,
+                    businessId: null
                 }
                 let error = await saveUser(newUser);
 

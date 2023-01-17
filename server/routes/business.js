@@ -52,11 +52,15 @@ router.post('/create', async (req, res) => {
     });
 
     //Check if owner already has a business
-    let find_owner = await Business.findOne({ownerId: req.body.ownerId}).exec();
-    if(find_owner) return res.status(403).send({err: 'User already owns a business', code: 403});
+    let ownerHasBusiness = await Business.findOne({ownerId: req.body.ownerId}).exec();
+    if(ownerHasBusiness !== null) return res.status(403).send({err: 'User already owns a business', code: 403});
     //Check if a business with the same name exists
-    let find_business = await Business.findOne({name: req.body.name}).exec();
-    if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
+    let findBusinessDup = await Business.findOne({name: req.body.name}).exec();
+    if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
+    //Check if a user exist
+    let user = await User.findOne({_id: req.body.ownerId}).exec();
+    if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
+    if(user.businessId !== null) return res.status(403).send({err: 'User has a business ID', code: 403});
 
     //Attempt to save the business
     new_business.save(function(err, business) {
@@ -73,8 +77,8 @@ router.post('/create', async (req, res) => {
             tills: business.tills
         };
         //Update owner to inlcude the businessId
-        find_owner.businessId = formattedBus.id;
-        find_owner.save(function(err, owner){
+        user.businessId = formattedBus.id;
+        user.save(function(err, owner){
             if(err) {
                 console.log(err);
                 return res.status(500).send({err: 'Error updating user', code: 403});

@@ -2,12 +2,13 @@ import { AppBar, Typography, Toolbar } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useLocation, useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
-import React from "react";
+import React, { useState } from "react";
 import MTDropdown from "../mui/MTDropdown";
 import MTButton from '../mui/MTButton';
 import { userState } from "../../states/userState";
 import { pageState } from "../../states/pageState";
 import { useHookstate } from "@hookstate/core";
+import { getUserBusiness } from "../../requests/users-req";
 // import { login } from "../../requests/users-req";
 
 const useStyles = makeStyles({
@@ -53,6 +54,7 @@ const Header = () => {
     const location = useLocation();
 
     const uState = useHookstate(userState);
+    const [hasBusiness, setHasBusiness] = useState(false);
 
     // Might be worth making a new file in routes for redirecting the user to certain pages. Ex. handleAccessTill
 
@@ -70,24 +72,16 @@ const Header = () => {
     }
 
     const handleLogin = async() => {
-        // let loginUser = {
-        //     email: 'bruh@',
-        //     password: 'bruh'
-        // }
-        // let response = await login(loginUser);
-
-        // if((!!response)) {
-        //     uState.user.set(response); //? These two lines will be needed in the login page in order for the header changes to occur
-        //     uState.isLoggedIn.set(true);
-        //     console.log(uState.user.get());
-        //     console.log(uState.isLoggedIn.get());
-        // }
         navigate('/login');
     }
 
-    const userHasBusiness = () => {
-        //? Will make a request to the backend that will determine whether or not the user has a business
-        return false;
+    const userHasBusiness = async() => {
+        let response;
+        if(userState.token.get() !== ''){
+            response = await getUserBusiness({id: userState.user.get()._id});
+        }
+
+        if(!!(response)) setHasBusiness(response.business);
     }
 
     const dropdownMenuItems_ForEmployees = [
@@ -100,8 +94,8 @@ const Header = () => {
     ];
 
     const dropdownMenuItems_Account = [
-        {id: 1, title: userHasBusiness() ? 'View Business Dashboard' : 'Create Business', action: () => {
-            userHasBusiness() ? navigate('/dashboard') : navigate('/create-business')
+        {id: 1, title: hasBusiness ? 'View Business Dashboard' : 'Create Business', action: () => {
+            hasBusiness ? navigate('/dashboard') : navigate('/create-business')
             pageState.previousPage.set(location.pathname)}},
         {id: 2, title: 'Edit Profile', action: () => {}},
         {id: 3, title: 'Logout', action: () => {uState.isLoggedIn.set(false)}}
@@ -114,7 +108,6 @@ const Header = () => {
             <AppBar position="static">
                 <Toolbar className={classes.toolBar}>
                     <div className={classes.logoTitleContainer} onClick={handleHome}>
-                        {/* <img src={logoSD} alt="logo" className={classes.logo}/> */}
                         <Typography sx={{
                             fontSize: '35px',
                             fontFamily: 'Arial',
@@ -138,7 +131,7 @@ const Header = () => {
                         </div>
                         :
                         <div className={classes.signUpLoginContainer}>
-                            <MTDropdown isAccount menuItems={dropdownMenuItems_Account} />
+                            <MTDropdown isAccount menuOpenAction={userHasBusiness} menuItems={dropdownMenuItems_Account} />
                         </div>
                     }
                 </Toolbar>

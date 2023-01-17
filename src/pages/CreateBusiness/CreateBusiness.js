@@ -56,7 +56,6 @@ export const CreateBusiness = () => {
                 tills: []
             }
             let response = await createBusiness(newUser);
-            console.log(response)
 
             if(!(response) || response.code !== 201){
                 setAlertMessage({message: !(response) ? 'Failed to create business.' : response.err, status: 'warning'});

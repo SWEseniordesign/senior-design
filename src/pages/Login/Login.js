@@ -62,7 +62,6 @@ export const Login = () => {
                     password: password
                 }
                 let error = await login(userCreds);
-                console.log(error);
 
                 if(!!(error.code)){
                     setAlertMessage({message: error.err, status: 'warning'});

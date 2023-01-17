@@ -66,10 +66,10 @@ router.post('/business', async (req, res) => {
     if(find_user === null) return res.status(403).send({err: 'User does not exists', code: 403});
 
     //If user has a business
-    if(find_user.businessId){
-        return res.status(201).send({business: 'true', code: 201});
+    if(find_user.businessId !== null){
+        return res.status(201).send({business: true, code: 201});
     } else {
-        return res.status(201).send({business: 'false', code: 201});
+        return res.status(201).send({business: false, code: 201});
     }
 });
 
