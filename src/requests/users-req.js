@@ -1,3 +1,5 @@
+import { userState } from "../states/userState";
+
 /*
     Creates a new user
 */
@@ -40,7 +42,8 @@ export async function getUserBusiness (obj) {
     await fetch('http://localhost:8080/user/business', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
