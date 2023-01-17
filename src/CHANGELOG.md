@@ -5,7 +5,8 @@ Create a new version whenever we update main/master.
 
 Add items closer to the version number so the date go from newest to oldest (top to bottom).
 
-### *Version 0.1.8*
+### *Version 0.1.9*
+ - 2023/01/16 - [Create Login Page](https://sd-onlinepos.atlassian.net/browse/ON-61) 
  - 2023/01/15 - [Implement Password Hashing](https://sd-onlinepos.atlassian.net/browse/ON-83)
  - 2023/01/15 - [Configure Authentication Middleware](https://sd-onlinepos.atlassian.net/browse/ON-43)
  - 2023/01/15 - [Adds data models and fetching and posting to them](https://sd-onlinepos.atlassian.net/browse/ON-19)

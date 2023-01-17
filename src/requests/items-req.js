@@ -12,7 +12,7 @@ export async function createItem(obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => {return err;});
     return data;
 }
 
@@ -30,7 +30,7 @@ export async function getItem (obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => {return err;});
     return data;
 }
 
@@ -48,7 +48,7 @@ export async function changeName(obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => {return err;});
     return data;
 }
 
@@ -66,7 +66,7 @@ export async function changeImage(obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => {return err;});
     return data;
 }
 
@@ -84,7 +84,7 @@ export async function changeProps(obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => {return err;});
     return data;
 }
 
@@ -102,6 +102,6 @@ export async function changeStock(obj) {
         body: JSON.stringify(obj)
     })
     .then(res => data = res.json())
-    .catch(err => {return err;});   
+    .catch(err => {return err;});
     return data;
 }

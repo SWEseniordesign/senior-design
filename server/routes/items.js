@@ -15,7 +15,7 @@ router.post('/get', function(req, res){
 
     //find item by its objectid
     let objectId = req.body.id;
- 
+
     //if objectId is 12 bytes in length, move on to next check
     if(mongoose.isValidObjectId(objectId)){
         //if objectId is an actually objectId, attempt to find it
@@ -96,7 +96,7 @@ router.post('/create', async function(req, res){
 
 /*
     TODO
-    Change an items name 
+    Change an items name
 */
 router.get('/name', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -106,7 +106,7 @@ router.get('/name', async (req, res) => {
 
 /*
     TODO
-    Change an items image 
+    Change an items image
 */
 router.get('/image', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -116,7 +116,7 @@ router.get('/image', async (req, res) => {
 
 /*
     TODO
-    Change an items props 
+    Change an items props
 */
 router.get('/props', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
@@ -126,7 +126,7 @@ router.get('/props', async (req, res) => {
 
 /*
     TODO
-    Change an items stock 
+    Change an items stock
 */
 router.get('/stock', async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});

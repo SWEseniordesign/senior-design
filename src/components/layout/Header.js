@@ -93,7 +93,7 @@ const Header = () => {
     const dropdownMenuItems_ForEmployees = [
         {id: 1, title: 'Open Till', action: () => handleAccessTill()}
     ];
-    
+
     const dropdownMenuItems_Pages = [
         {id: 1, title: 'About', action: () => {}},
         {id: 2, title: 'Contact Us', action: () => {}}
@@ -131,12 +131,12 @@ const Header = () => {
                         <MTDropdown label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
                         <MTDropdown label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
                     </div>
-                    {!uState.isLoggedIn.get() ? 
+                    {!uState.isLoggedIn.get() ?
                         <div className={classes.signUpLoginContainer}>
                             <MTButton variant="contained" onClick={handleLogin} label={'SIGN IN'}/>
                             <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} />
                         </div>
-                        : 
+                        :
                         <div className={classes.signUpLoginContainer}>
                             <MTDropdown isAccount menuItems={dropdownMenuItems_Account} />
                         </div>
