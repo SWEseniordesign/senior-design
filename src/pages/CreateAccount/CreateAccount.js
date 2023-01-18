@@ -1,9 +1,11 @@
-import { Button, Grid, Paper, TextField, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import MTTextField from "../../components/mui/MTTextField";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
+import MTButton from "../../components/mui/MTButton";
 
 const useStyle = makeStyles({
     root: {
@@ -15,7 +17,7 @@ const useStyle = makeStyles({
     },
     paper: {
         height: 'fit-content',
-        width: '60%',
+        width: '30%',
     },
     container: {
         padding: '30px'
@@ -27,33 +29,14 @@ const useStyle = makeStyles({
         marginBottom: '24px'
     },
     buttons_container: {
-        width: '80%',
+        width: '100%',
         display: 'flex',
         justifyContent: 'space-evenly',
+        gap: '24px'
     },
-    create_button: {
-        height: '50px',
-        width: '40%',
-
-        '&.MuiButtonBase-root':{
-            backgroundColor: COLOR_PALETTE.BLUE_GROTTO,
-            '&:hover': {
-                color: COLOR_PALETTE.BABY_BLUE,
-                backgroundColor: COLOR_PALETTE.NAVY_BLUE
-            }
-        }
-    },
-    cancel_button: {
-        height: '50px',
-        width: '40%',
-
-        '&.MuiButtonBase-root':{
-            borderColor: COLOR_PALETTE.NAVY_BLUE,
-            '&:hover': {
-                color: COLOR_PALETTE.BABY_BLUE,
-                backgroundColor: COLOR_PALETTE.NAVY_BLUE
-            }
-        },
+    inputContainer: {
+        display: 'flex',
+        alignItems: 'flex-end',
     }
 
 });
@@ -65,16 +48,15 @@ export const CreateAccount = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [confirmEmail, setConfirmEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
-    const [emailError, setEmailError] = useState(false);
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
     const classes = useStyle();
 
+    //* Closes the alert
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -83,10 +65,11 @@ export const CreateAccount = () => {
         setOpen(false);
     };
 
+    //* Using the name, email, and password inputted by the user, we attempt to create a user.
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            if(!emailError && email.includes("@") && !passwordError){
+            if(!passwordError){
                 let newUser = {
                     fname: firstName,
                     lname: lastName,
@@ -111,28 +94,27 @@ export const CreateAccount = () => {
 
     }
 
+    //* Reset the values in the textfields
     const formSubmitted_ResetValues = () => {
         setFirstName('');
         setLastName('');
         setEmail('');
-        setConfirmEmail('');
         setPassword('');
         setConfirmPassword('');
     }
 
-
+    //* Checks the password and the confirm password to make sure they match
     useEffect(() => {
-        if(password !== confirmPassword){
-            setPasswordError(true);
-        } else {
+        if(password === confirmPassword){
             setPasswordError(false);
         }
-        if(email !== confirmEmail){
-            setEmailError(true);
-        } else {
-            setEmailError(false);
-        }
-    }, [firstName, lastName, email, password, confirmEmail, confirmPassword]);
+        let interval = setInterval(() => {
+            if(password !== confirmPassword){
+                setPasswordError(true);                
+            }
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [password, confirmPassword]);
 
     return (
         <div className={classes.root}>
@@ -158,76 +140,59 @@ export const CreateAccount = () => {
                         }}>Business Owners Only</Typography>
                     </div>
                     <form id="create-account-form" onSubmit={handleSubmit}>
-                        <Grid container rowSpacing={3}>
-                            <Grid item xs={12} md={6}>
-                                <TextField
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} md={12}>
+                                <MTTextField
                                     label='First Name'
                                     value={firstName}
-                                    required
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    helperText=" "
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
+                                    isRequired
+                                    onChangeFunc={setFirstName}
+                                    width={'100%'}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
+                            <Grid item xs={12} md={12}>
+                                <MTTextField
                                     label='Last Name'
                                     value={lastName}
-                                    required
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    helperText=" "
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
+                                    isRequired
+                                    onChangeFunc={setLastName}
+                                    width={'100%'}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
+                            <Grid item xs={12} md={12}>
+                                <MTTextField
                                     label='Email'
                                     value={email}
-                                    required
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    error={emailError}
-                                    helperText={emailError ? "Emails does not match" : (!email.includes("@") && email.length !== 0) ? "Not a valid email" : " " }
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
+                                    variant={'outlined'}
+                                    isRequired
+                                    type={'email'}
+                                    onChangeFunc={setEmail}
+                                    width={'100%'}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label='Confirm Email'
-                                    value={confirmEmail}
-                                    required
-                                    onChange={(e) => setConfirmEmail(e.target.value)}
-                                    error={emailError}
-                                    helperText=" "
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
+                            <Grid item xs={12} md={12}>
+                                <MTTextField
                                     label='Password'
                                     type='password'
                                     value={password}
-                                    required
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    error={passwordError}
-                                    helperText={passwordError ? "Passwords does not match" : " "}
-                                    autoComplete="new-password"
-                                    sx={{ width: '80%'}}/>
+                                    isRequired
+                                    onChangeFunc={setPassword}
+                                    hasError={passwordError}
+                                    hasPasswordHideShow={true}
+                                    width={'100%'}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
+                            <Grid item xs={12} md={12}>
+                                <MTTextField
                                     label='Confirm Password'
                                     type='password'
                                     value={confirmPassword}
-                                    required
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    autoComplete="new-password"
-                                    error={passwordError}
-                                    sx={{ width: '80%'}}/>
+                                    isRequired
+                                    onChangeFunc={setConfirmPassword}
+                                    hasError={passwordError}
+                                    hasPasswordHideShow={true}
+                                    width={'100%'}/>
                             </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={12}>
                                 <div className={classes.buttons_container}>
-                                    <Button variant='contained' type="submit" className={classes.create_button}>Create</Button>
-                                    <Button variant='outlined' onClick={() => navigate('/')} className={classes.cancel_button}>Cancel</Button>
+                                    <MTButton variant='contained' type="submit" label={'Create'} width={'90%'} />
+                                    <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} />
                                 </div>
                             </Grid>
                         </Grid>

@@ -56,25 +56,31 @@ const Header = () => {
     const uState = useHookstate(userState);
     const [hasBusiness, setHasBusiness] = useState(false);
 
-    // Might be worth making a new file in routes for redirecting the user to certain pages. Ex. handleAccessTill
-
+    //* Handles an access till button press. It routes the user to the access till page.
     const handleAccessTill = () => {
         navigate('/access-till');
     }
     
+    //* Handles a sign up button press. It routes the user to the create account page.
     const handleSignUp = () => {
         pageState.previousPage.set(location.pathname);
         navigate('/create-account');
     }
 
+    //* Handles a home button press. It routes the user to the home page.
     const handleHome = () => {
         navigate('/');
     }
 
+    //* Handles a login button press. It routes the user to the login page.
     const handleLogin = async() => {
         navigate('/login');
     }
 
+    /*   
+        * Checks if the user has a business. 
+        * Activated when the user opens the avatar dropdown. 
+    */
     const userHasBusiness = async() => {
         let response;
         if(userState.token.get() !== ''){
@@ -84,21 +90,27 @@ const Header = () => {
         if(!!(response)) setHasBusiness(response.business);
     }
 
+    //* MenuItems that are apart of the for employees dropdown.
     const dropdownMenuItems_ForEmployees = [
         {id: 1, title: 'Open Till', action: () => handleAccessTill()}
     ];
 
+    //* MenuItems that are apart of the pages dropdown.
     const dropdownMenuItems_Pages = [
         {id: 1, title: 'About', action: () => {}},
         {id: 2, title: 'Contact Us', action: () => {}}
     ];
 
+    //* MenuItems that are apart of the avatar dropdown.
     const dropdownMenuItems_Account = [
         {id: 1, title: hasBusiness ? 'View Business Dashboard' : 'Create Business', action: () => {
             hasBusiness ? navigate('/dashboard') : navigate('/create-business')
             pageState.previousPage.set(location.pathname)}},
         {id: 2, title: 'Edit Profile', action: () => {}},
-        {id: 3, title: 'Logout', action: () => {uState.isLoggedIn.set(false)}}
+        {id: 3, title: 'Logout', action: () => {
+            uState.isLoggedIn.set(false);
+            navigate('/');
+        }}
     ];
 
     const classes = useStyles();

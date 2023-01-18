@@ -45,6 +45,7 @@ export const Login = () => {
 
     const classes = useStyle();
 
+    //* Closes the alert that pops up when the user logins or an error occurs.
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -53,37 +54,29 @@ export const Login = () => {
         setOpen(false);
     };
 
+    //* Using the email and password inputted by the user, we attempt to login. We get redirected if successful and an alert if we are not.
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            if(email.includes("@")){
-                let userCreds = {
-                    email: email,
-                    password: password
-                }
-                let error = await login(userCreds);
-
-                if(!!(error.code)){
-                    setAlertMessage({message: error.err, status: 'warning'});
-                } else if(!!(error.user)) {
-                    userState.user.set(error.user);
-                    userState.token.set(error.token);
-                    userState.isLoggedIn.set(true);
-                    navigate('/');
-                }
-
-                setOpen(true);
-                formSubmitted_ResetValues();
-
+            let userCreds = {
+                email: email,
+                password: password
             }
+            let error = await login(userCreds);
+
+            if(!!(error.code)){
+                setAlertMessage({message: error.err, status: 'warning'});
+            } else if(!!(error.user)) {
+                userState.user.set(error.user);
+                userState.token.set(error.token);
+                userState.isLoggedIn.set(true);
+                navigate('/');
+            }
+
+            setOpen(true);
         } catch(e){
             console.log('dn');
         }
-    }
-
-    const formSubmitted_ResetValues = () => {
-        setEmail('');
-        setPassword('');
     }
 
     return (
