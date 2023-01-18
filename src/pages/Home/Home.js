@@ -161,7 +161,7 @@ export const Home = () => {
                 <div className={classes.buttonBox}>
                     <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
                     <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
-                    <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button>
+                    {/* <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> */}
                 </div>
             </div>
             <div className={classes.singleSectionBox}>
