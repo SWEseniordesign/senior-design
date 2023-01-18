@@ -94,8 +94,8 @@ export const Home = () => {
             isManager: false
         };
         let business = {
-            name: 'McDonalds',
-            ownerId: '6377f3e996d92774ba4dcce8',
+            name: 'Larrys Fryss',
+            ownerId: '63c866337fd04bd174567bc1',
             type: 'Wholesale',
             admins: [],
             tills: []
@@ -136,15 +136,19 @@ export const Home = () => {
         };
         let till = {
             businessId: '63c00db199361ea1767b451e',
-            name: 'Fredericton North',
+            name: null,
             managerPassword: '99999',
             employees: [],
             tabs: [],
             props: []
         };
         let userId = {id: '63c450b6f3dcafbb59f7ece5'};
-        let tillId = {id: '63be021d79729847f8035ba9'};
-        let error = await createTill(till);
+
+
+        let tillId = {id: 'yoyoyoyoyoyo'};
+        let error = await createBusiness(business);
+
+        
         console.log(error);
     }
 

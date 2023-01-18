@@ -51,10 +51,6 @@ router.post('/create', async (req, res) => {
         tills: req.body.tills
     });
 
-    //Check if owner already has a business
-    let ownerHasBusiness = await Business.findOne({ownerId: req.body.ownerId}).exec();
-    if(ownerHasBusiness !== null) return res.status(403).send({err: 'User already owns a business', code: 403});
-
     //Check if a business with the same name exists
     let findBusinessDup = await Business.findOne({name: req.body.name}).exec();
     if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
