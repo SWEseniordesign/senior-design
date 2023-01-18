@@ -8,7 +8,7 @@ const Tab = require('../models/Tab');
 
 /*
     * DONE
-    Gets a card
+    Gets a card by the card's Objectid stored in Mongo
 */
 router.post('/get', function(req, res){
     //Check if req body exists
@@ -19,7 +19,7 @@ router.post('/get', function(req, res){
 
     //if objectId is 12 bytes in length, move on to next check
     if(mongoose.isValidObjectId(objectId)){
-        //if objectId is an actually objectId, attempt to find it
+        //if objectId is an actually objectId (i.e., not a bunch of letters 12 bytes in length), attempt to find it
         if((String)(new ObjectId(objectId)) === objectId){
             Card.findById(objectId, function(err, card){
                 if(err){
@@ -39,13 +39,16 @@ router.post('/get', function(req, res){
                     return res.status(201).send({formattedCard, code: 201});
                 }
             });
+        } else{
+            return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
         }
-    } else {
+    } else { //if objectId is not 
         return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
     }
 });
 
 /*
+    * DONE
     Posts a card
 */
 router.post('/create', async (req, res) => {

@@ -4,10 +4,19 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+/*
+    * DONE
+    Logs a user into the system and genertaes a JWT token
+*/
 router.post('/login', async function(req, res) {
+    //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
-    let find_user = await User.findOne({email: req.body.email}).exec();
+
+    //find the user
+    let find_user = await User.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user', code: 500})});
     if(!find_user) return res.status(400).send({err: 'Invalid email or password', code: 400});
+
+    //Compare password hashes, and generate token if correct
     bcrypt.compare(req.body.password, find_user.password, function(err, result) {
         if(err) {
             console.log(err);
@@ -29,9 +38,16 @@ router.post('/login', async function(req, res) {
     });
 })
 
+/*
+    * DONE
+    ? Change the return when a user is created successfully
+    Creates a new user
+*/
 router.post('/register', async function(req, res) {
+    //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Create temp user
     let new_user = new User({
         fname: req.body.fname,
         lname: req.body.lname,
@@ -40,7 +56,7 @@ router.post('/register', async function(req, res) {
         businessId: req.body.businessId
     });
 
-    let find_user = await User.findOne({email: req.body.email}).exec();
+    let find_user = await User.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Error attempting to check if user exists', code: 500})});
     if(find_user) return res.status(403).send({err: 'User already exists', code: 403});
 
     new_user.save(function(err, savedUser) {
@@ -53,6 +69,7 @@ router.post('/register', async function(req, res) {
 })
 
 /*
+    * DONE
     Determines if user has a business
 */
 router.post('/business', async (req, res) => {

@@ -2,7 +2,7 @@
 Create an employee document.
     Pass in a json object with a email and isManager field.
 */
-export async function saveEmployee (obj) {
+export async function createEmployee (obj) {
     let data;
     await fetch('http://localhost:8080/employee/create', {
         method: 'POST',
@@ -22,7 +22,7 @@ Get an employee
 export async function getEmployee (obj) {
     let data;
     await fetch('http://localhost:8080/employee/get', {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },

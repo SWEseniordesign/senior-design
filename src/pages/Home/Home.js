@@ -9,7 +9,7 @@ import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
 
-import { saveEmployee } from "../../requests/employees-req";
+import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill } from "../../requests/tills-req";
 import { createTab, getTab } from "../../requests/tabs-req";
@@ -90,8 +90,8 @@ export const Home = () => {
     //This is temporary to allow me to test creating data
     const handleCreateData = async () => {
         let employee = {
-            email: 'test3@unb.ca',
-            isManager: true
+            email: 'bob@unb.ca',
+            isManager: false
         };
         let business = {
             name: 'McDonalds',
@@ -104,19 +104,11 @@ export const Home = () => {
             name: 'McDonalds',
             admins: ['6377f3e996d92774ba4dcce8']
         }
-        let till = {
-            businessId: '63c00db199361ea1767b451e',
-            name: 'Fredericton',
-            managerPassword: '54321',
-            employees: [],
-            tabs: [],
-            props: []
-        };
-        let tabId = {id: '63c44024140e3d9f771083c8'};
+        
         let tab = {
             tillId: '63be021d79729847f8035ba9',
-            name: 'Sammichs',
-            color: 'green',
+            name: 'Drinks',
+            color: 'blue',
             cards: []
         }
         let card = {
@@ -129,13 +121,12 @@ export const Home = () => {
         let cardId = {id: '63c4454e4ffdaf5afa747913'};
         let item = {
             cardId: '63c44500cc60f58fb8b2b1f3',
-            name: 'Salad',
-            price: 420.69,
+            name: 'test dog',
+            price: 20,
             image: null,
             props: [],
-            stock: 69
+            stock: 55
         }
-        let itemId = {id: '63c44a7891476b0ffbecaa53'};
         let user = {
             fname: 'Colby',
             lname: 'Bruh',
@@ -143,8 +134,17 @@ export const Home = () => {
             password: 'balls',
             businessId: '63c03e39d4e646c1151dd54c'
         };
+        let till = {
+            businessId: '63c00db199361ea1767b451e',
+            name: 'Fredericton North',
+            managerPassword: '99999',
+            employees: [],
+            tabs: [],
+            props: []
+        };
         let userId = {id: '63c450b6f3dcafbb59f7ece5'};
-        let error = await getUserBusiness(userId);
+        let tillId = {id: '63be021d79729847f8035ba9'};
+        let error = await createTill(till);
         console.log(error);
     }
 
