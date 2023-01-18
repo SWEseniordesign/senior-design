@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Card = require('../models/Card');
 
 /*
-    TODO
+    * DONE
     Fetch item based on ObjectId
 */
 router.post('/get', function(req, res){
@@ -38,14 +38,16 @@ router.post('/get', function(req, res){
                     return res.status(201).send({formattedItem, code: 201});
                 }
             });
+        } else {
+            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
         }
     } else {
-        return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
     }
 });
 
 /*
-    TODO
+    * DONE
     Create an item
 */
 router.post('/create', async function(req, res){
@@ -62,8 +64,15 @@ router.post('/create', async function(req, res){
     });
     let cardId = req.body.cardId;
 
-    //console.log();
-    //Find till to link
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(cardId))){
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
+    }
+    if(!((String)(new ObjectId(cardId)) === cardId)){
+        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
+    }
+
+    //Find card to link
     let card = await Card.findById(cardId).catch( err => {return res.status(500).send({err: 'Error finding card to link to item', code: 500});});
     if(card === null) return res.status(500).send({err: 'Card not found', code: 500});
 

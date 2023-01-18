@@ -37,9 +37,11 @@ router.post('/get', function(req, res){
                     return res.status(201).send({formattedTab, code: 201});
                 }
             });
+        } else {
+            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
         }
     } else {
-        return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
     }
 });
 
@@ -58,6 +60,14 @@ router.post('/create', async (req, res) => {
         cards: req.body.cards
     });
     let tillId = req.body.tillId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(tillId))){
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
+    }
+    if(!((String)(new ObjectId(tillId)) === tillId)){
+        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
+    }
 
     //Find till to link
     let till = await Till.findById(tillId).catch( err => {return res.status(500).send({err: 'Error finding till to link to tab', code: 500});});

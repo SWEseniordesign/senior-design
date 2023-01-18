@@ -35,7 +35,7 @@ router.post('/get', function(req, res){
 });
 
 /*
-    TODO: test creating a business an ensure it links to user
+    * DONE
     Posts a business & links it to a user
 */
 router.post('/create', async (req, res) => {
@@ -51,13 +51,11 @@ router.post('/create', async (req, res) => {
         tills: req.body.tills
     });
 
-    //Check if owner already has a business
-    let ownerHasBusiness = await Business.findOne({ownerId: req.body.ownerId}).exec();
-    if(ownerHasBusiness !== null) return res.status(403).send({err: 'User already owns a business', code: 403});
     //Check if a business with the same name exists
     let findBusinessDup = await Business.findOne({name: req.body.name}).exec();
     if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
-    //Check if a user exist
+
+    //Check if a user exist & if they have a businessId assigned to them
     let user = await User.findOne({_id: req.body.ownerId}).exec();
     if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
     if(user.businessId !== null) return res.status(403).send({err: 'User has a business ID', code: 403});

@@ -38,14 +38,16 @@ router.post('/get', function(req, res){
                     return res.status(201).send({formattedTill, code: 201});
                 }
             });
+        } else {
+            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
         }
     } else {
-        return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
     }
 });
 
 /*
-    TODO see below; it works but for me it won't send back a res in certain scenarios
+    * DONE
     Posts a till
 */
 router.post('/create', async (req, res) => {
@@ -62,16 +64,21 @@ router.post('/create', async (req, res) => {
     });
     let businessId = req.body.businessId;
 
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(businessId))){
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
+    }
+    if(!((String)(new ObjectId(businessId)) === businessId)){
+        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
+    }
 
     //Checks if business already has a till with that name, if it does it won't add it
-    //TODO check if this works; currently when a bus has a till in sys with same name it doesn't add it, but it doesnt send back a request?
-    let business = await Business.findById(businessId).catch( err => {return res.status(500).send({err: 'Unable to find business in order to create till', code: 500});});
-    if(business === null) return res.status(500).send({err: 'Unable to create till', code: 500});
+    let business = await Business.findById(businessId).catch( err => {return res.status(500).send({err: 'Error finding business to link to till', code: 500});});
+    if(business === null) return res.status(500).send({err: 'Business not found', code: 500});
     if(business.tills){
-        
         let dupFound = false;
         for(let tillId of business.tills){
-            let searchedTill = await Till.findById(tillId).clone(); //.clone() is probably not a good idea
+            let searchedTill = await Till.findById(tillId).clone(); //!.clone() is probably not a good idea
             if(searchedTill.name === new_till.name){
                 dupFound = true;
                 break;
@@ -81,7 +88,6 @@ router.post('/create', async (req, res) => {
             return res.status(400).send({err: 'Business already has a till with that name', code: 400});
         }
     }
-    
 
     //Attempt to save till and update the businesses tills
     new_till.save(function(err, till) {
