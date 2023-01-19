@@ -50,14 +50,14 @@ export const CreateBusiness = () => {
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            let newUser = {
+            let newBusiness = {
                 name: businessName,
                 ownerId: userState.user.get()._id, //! Must be logged in before creating a business.
                 type: businessType,
                 admins: [],
                 tills: []
             }
-            let response = await createBusiness(newUser);
+            let response = await createBusiness(newBusiness);
 
             if(!(response) || response.code !== 201){
                 setAlertMessage({message: !(response) ? 'Failed to create business.' : response.err, status: 'warning'});

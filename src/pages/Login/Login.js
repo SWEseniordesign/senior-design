@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from "../../components/mui/MTTextField";
@@ -31,6 +31,13 @@ const useStyle = makeStyles({
         flexDirection: 'column',
         gap: '5px',
         marginBottom: '24px'
+    },
+    login: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '6px'
     }
 });
 
@@ -94,7 +101,7 @@ export const Login = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
-                        }}>Login</Typography>
+                        }}>Sign In</Typography>
                         <Typography sx={{
                             fontFamily: FONT_FAMILY,
                             fontSize: '20px',
@@ -121,11 +128,22 @@ export const Login = () => {
                                         type='password'
                                         value={password}
                                         isRequired
+                                        hasPasswordHideShow
                                         onChangeFunc={setPassword}
                                         isFullWidth />
                                 </Grid>
                                 <Grid item xs={12} md={12}>
                                     <MTButton variant='contained' label={"LOGIN"} type="submit" isFullWidth />
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <div className={classes.login}>
+                                        <Typography sx={{
+                                            fontSize: '16px'
+                                        }}>Don't have an account?</Typography>
+                                        <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/login')} sx={{
+                                            fontSize: '16px'
+                                        }}>Create an Account</Link>
+                                    </div>
                                 </Grid>
                             </Grid>
                     </form>

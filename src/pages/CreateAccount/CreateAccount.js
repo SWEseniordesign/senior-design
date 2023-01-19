@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const useStyle = makeStyles({
     },
     paper: {
         height: 'fit-content',
-        width: '30%',
+        width: '25%',
     },
     container: {
         padding: '30px'
@@ -26,7 +26,7 @@ const useStyle = makeStyles({
         display: 'flex',
         flexDirection: 'column',
         gap: '5px',
-        marginBottom: '24px'
+        marginBottom: '50px'
     },
     buttons_container: {
         width: '100%',
@@ -37,6 +37,12 @@ const useStyle = makeStyles({
     inputContainer: {
         display: 'flex',
         alignItems: 'flex-end',
+    },
+    login: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '12px'
     }
 
 });
@@ -141,7 +147,7 @@ export const CreateAccount = () => {
                     </div>
                     <form id="create-account-form" onSubmit={handleSubmit}>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} md={12}>
+                            <Grid item xs={12} md={6}>
                                 <MTTextField
                                     label='First Name'
                                     value={firstName}
@@ -149,7 +155,7 @@ export const CreateAccount = () => {
                                     onChangeFunc={setFirstName}
                                     width={'100%'}/>
                             </Grid>
-                            <Grid item xs={12} md={12}>
+                            <Grid item xs={12} md={6}>
                                 <MTTextField
                                     label='Last Name'
                                     value={lastName}
@@ -193,6 +199,16 @@ export const CreateAccount = () => {
                                 <div className={classes.buttons_container}>
                                     <MTButton variant='contained' type="submit" label={'Create'} width={'90%'} />
                                     <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} />
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <div className={classes.login}>
+                                    <Typography sx={{
+                                            fontSize: '16px'
+                                        }}>Already have an account?</Typography>
+                                    <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/login')} sx={{
+                                        fontSize: '16px'
+                                    }}>Sign In</Link>
                                 </div>
                             </Grid>
                         </Grid>

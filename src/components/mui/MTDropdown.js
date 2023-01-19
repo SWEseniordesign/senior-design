@@ -11,7 +11,9 @@ const MTDropdown = (props) => {
 
     //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {
-        menuOpenAction();
+        if(!!(menuOpenAction)) {
+            menuOpenAction()
+        }
         setAnchorEl(e.currentTarget)
     }
 
