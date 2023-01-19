@@ -10,9 +10,14 @@ const useStyles = makeStyles({
         },
     }
 })
-export default function BasicSwitches(props) {
+export default function MTSwitch(props) {
   const classes = useStyles();
+
+  //* Available props that can be passed into the custom switch. 
+  //? eg. <MTTextField (any_of_these_props)={what_you_want_to_pass_in}/>
+  const { label } = props;
+
   return (
-    <FormControlLabel  control={<Switch color = 'primary' className = {classes.MTSwitch} />} label = {props.label} />
+    <FormControlLabel control={<Switch color = 'primary' className={classes.MTSwitch} />} label={label} />
   );
 }

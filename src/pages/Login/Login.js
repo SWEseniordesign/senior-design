@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from "../../components/mui/MTTextField";
@@ -31,6 +31,13 @@ const useStyle = makeStyles({
         flexDirection: 'column',
         gap: '5px',
         marginBottom: '24px'
+    },
+    login: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '6px'
     }
 });
 
@@ -45,6 +52,7 @@ export const Login = () => {
 
     const classes = useStyle();
 
+    //* Closes the alert that pops up when the user logins or an error occurs.
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -53,37 +61,29 @@ export const Login = () => {
         setOpen(false);
     };
 
+    //* Using the email and password inputted by the user, we attempt to login. We get redirected if successful and an alert if we are not.
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            if(email.includes("@")){
-                let userCreds = {
-                    email: email,
-                    password: password
-                }
-                let error = await login(userCreds);
-
-                if(!!(error.code)){
-                    setAlertMessage({message: error.err, status: 'warning'});
-                } else if(!!(error.user)) {
-                    userState.user.set(error.user);
-                    userState.token.set(error.token);
-                    userState.isLoggedIn.set(true);
-                    navigate('/');
-                }
-
-                setOpen(true);
-                formSubmitted_ResetValues();
-
+            let userCreds = {
+                email: email,
+                password: password
             }
+            let error = await login(userCreds);
+
+            if(!!(error.code)){
+                setAlertMessage({message: error.err, status: 'warning'});
+            } else if(!!(error.user)) {
+                userState.user.set(error.user);
+                userState.token.set(error.token);
+                userState.isLoggedIn.set(true);
+                navigate('/');
+            }
+
+            setOpen(true);
         } catch(e){
             console.log('dn');
         }
-    }
-
-    const formSubmitted_ResetValues = () => {
-        setEmail('');
-        setPassword('');
     }
 
     return (
@@ -101,7 +101,7 @@ export const Login = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
-                        }}>Login</Typography>
+                        }}>Sign In</Typography>
                         <Typography sx={{
                             fontFamily: FONT_FAMILY,
                             fontSize: '20px',
@@ -128,11 +128,22 @@ export const Login = () => {
                                         type='password'
                                         value={password}
                                         isRequired
+                                        hasPasswordHideShow
                                         onChangeFunc={setPassword}
                                         isFullWidth />
                                 </Grid>
                                 <Grid item xs={12} md={12}>
                                     <MTButton variant='contained' label={"LOGIN"} type="submit" isFullWidth />
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <div className={classes.login}>
+                                        <Typography sx={{
+                                            fontSize: '16px'
+                                        }}>Don't have an account?</Typography>
+                                        <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/login')} sx={{
+                                            fontSize: '16px'
+                                        }}>Create an Account</Link>
+                                    </div>
                                 </Grid>
                             </Grid>
                     </form>

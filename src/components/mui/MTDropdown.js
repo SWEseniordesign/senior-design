@@ -7,13 +7,17 @@ import { userState } from "../../states/userState";
 const MTDropdown = (props) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const {label, menuItems=[], variant, isAccount, menuOpenAction} = props;
+    const {label, menuItems=[], variant, isAccount, menuOpenAction} = props; // Parameters that can be passed into the custom dropdown
 
+    //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {
-        menuOpenAction();
+        if(!!(menuOpenAction)) {
+            menuOpenAction()
+        }
         setAnchorEl(e.currentTarget)
     }
 
+    //* Handles when the menu (dropdown) closes
     const handleCloseMenu = () => {
         setAnchorEl(null);
     }

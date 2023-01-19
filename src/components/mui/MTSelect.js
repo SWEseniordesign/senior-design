@@ -7,7 +7,15 @@ import React from "react";
 
 const MTSelect = (props) => {
 
-    const {label, items, value, setValue, isFullWidth, isRequired} = props;
+    //* Available props that can be passed into the custom select. 
+    //? eg. <MTTextField (any_of_these_props)={what_you_want_to_pass_in}/>
+    const { 
+        label, 
+        items, 
+        value, 
+        setValue, 
+        isFullWidth, 
+        isRequired } = props;
 
     const handleChange = (e) => {
         setValue(e.target.value);

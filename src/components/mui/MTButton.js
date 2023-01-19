@@ -8,28 +8,30 @@ const useStyles = makeStyles({
   }
 })
 
-/*
-  Parameters than be passed in:
-   - Label
-   - Variant
-   - OnClick function
-   - Width
-   - Type
-   - isFullWidth
-*/
 export default function MtButton(props) {    
   const classes = useStyles(props);
+
+  //* Available props that can be passed into the custom button. 
+  //? eg. <MTTextField (any_of_these_props)={what_you_want_to_pass_in}/>
+  const { 
+    variant, 
+    onClick, 
+    isFullWidth, 
+    type, 
+    label,
+    width 
+  } = props;
   
   return (
     <Button 
       className={classes.MTButton} 
-      variant={props.variant} 
-      onClick={props.onClick} 
+      variant={variant} 
+      onClick={onClick} 
       sx={{
-        width: !props.isFullWidth ? !!(props.width) ? props.width : 'auto' : '100%'
+        width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
       }}
-      type={!!(props.type) ? props.type : 'button'}>
-        {props.label}
+      type={!!(type) ? type : 'button'}>
+        {label}
       </Button>
   );
 }

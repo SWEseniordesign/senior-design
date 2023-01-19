@@ -37,6 +37,7 @@ export const CreateBusiness = () => {
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
+    //* Closes the alert that shows whenever the user create a business or an error occurs.
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -45,32 +46,34 @@ export const CreateBusiness = () => {
         setOpen(false);
     };
 
+    //* Using the name and type inputted from the user, we attempt to create business.
     const handleSubmit = async(e) => {
         e.preventDefault();
         try{
-            let newUser = {
+            let newBusiness = {
                 name: businessName,
-                ownerId: userState.user.get()._id,
+                ownerId: userState.user.get()._id, //! Must be logged in before creating a business.
                 type: businessType,
                 admins: [],
                 tills: []
             }
-            let response = await createBusiness(newUser);
+            let response = await createBusiness(newBusiness);
 
             if(!(response) || response.code !== 201){
                 setAlertMessage({message: !(response) ? 'Failed to create business.' : response.err, status: 'warning'});
             } else {
-                setAlertMessage({message: 'Business Created!', status: 'success'})
+                setAlertMessage({message: 'Business Created!', status: 'success'});
+                setBusinessName('');
+                setBusinessType('');
             }
 
             setOpen(true);
-            setBusinessName('');
-            setBusinessType('');
         } catch(e){
             console.log(e);
         }
     }
 
+    //* The types of business myTill supports.
     const businessTypes = [
         {id: 1, title: 'Whole Sale', onClick: (e) => setBusinessType(e.target.value)},
         {id: 2, title: 'Quick Service', onClick: (e) => setBusinessType(e.target.value)}
