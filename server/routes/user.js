@@ -3,8 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-
-const verifyJWT= require('../middleware/auth');
+const verifyJWT = require('../middleware/auth');
 
 /*
     * DONE
@@ -74,14 +73,9 @@ router.post('/register', async function(req, res) {
     * DONE
     Determines if user has a business
 */
-router.post('/business', async (req, res) => {
-    //Check if req body 
-    if(!req.body) return res.status(400).send({err: 'No request body'});
-
-    let userId = req.body.id;
-
+router.post('/business', verifyJWT, async (req, res) => {
     //find user by its objectId
-    let find_user = await User.findById(userId).catch( err => {return res.status(500).send({err: 'Error finding user', code: 500});})
+    let find_user = await User.findOne({email: req.user.email}).catch( err => {return res.status(500).send({err: 'Error finding user', code: 500});});
     if(find_user === null) return res.status(403).send({err: 'User does not exists', code: 403});
 
     //If user has a business
@@ -96,7 +90,7 @@ router.post('/business', async (req, res) => {
     TODO
     Update a users password
 */
-router.post('/password', async (req, res) => {
+router.post('/password', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_user = await User.findOne({email: req.body.email}).exec();
     if(!find_user) return res.status(403).send({err: 'User already exists', code: 403});

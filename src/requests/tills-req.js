@@ -1,3 +1,5 @@
+import { userState } from "../states/userState";
+
 /*
 Create a till document.
     Pass in a json object with a name and managerPassword field, and the other three fields can be
@@ -15,7 +17,8 @@ export async function createTill (obj) {
     await fetch('http://localhost:8080/till/create', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -32,7 +35,8 @@ export async function getTill (obj) {
     await fetch('http://localhost:8080/till/get', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -49,7 +53,8 @@ export async function addEmployees (obj) {
     await fetch('http://localhost:8080/till/employees', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -66,7 +71,8 @@ export async function addTabs (obj) {
     await fetch('http://localhost:8080/till/tabs', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -83,7 +89,8 @@ export async function addProps (obj) {
     await fetch('http://localhost:8080/till/props', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
