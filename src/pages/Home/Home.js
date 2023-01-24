@@ -145,8 +145,8 @@ export const Home = () => {
         let userId = {id: '63c450b6f3dcafbb59f7ece5'};
 
 
-        let tillId = {id: 'yoyoyoyoyoyo'};
-        let error = await createBusiness(business);
+        let businessId = {name: 'McDonalds'};
+        let error = await getBusiness(businessId);
 
         
         console.log(error);
@@ -161,7 +161,7 @@ export const Home = () => {
                 <div className={classes.buttonBox}>
                     <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
                     <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
-                    {/* <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> */}
+                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
                 </div>
             </div>
             <div className={classes.singleSectionBox}>
