@@ -27,19 +27,20 @@ describe('/register', () => {
         expect(res.body).toEqual({err: 'User already exists', code: 403});
     });
 
-    it('should return 201 if user is successfully registered', async () => {
-        let testUser = {
-            fname: 'Test',
-            lname: 'User',
-            email: 'run_test@gmail.com',
-            password: 'peanut_butter_baby',
-            businessId: null
-        }
+    //! Include test when we implement a way to delete the user after we have created them. 
+    // it('should return 201 if user is successfully registered', async () => {
+    //     let testUser = {
+    //         fname: 'Test',
+    //         lname: 'User',
+    //         email: 'run_test@gmail.com',
+    //         password: 'peanut_butter_baby',
+    //         businessId: null
+    //     }
 
-        const res = await request(app)
-            .post('/user/register')
-            .expect(201)
-            .send(testUser) 
-        expect(res.body).toEqual(true);
-    }); 					  
+    //     const res = await request(app)
+    //         .post('/user/register')
+    //         .expect(201)
+    //         .send(testUser) 
+    //     expect(res.body).toEqual(true);
+    // }); 					  
 });
