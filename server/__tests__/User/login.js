@@ -1,7 +1,9 @@
-
 const request = require('supertest');
 const app = require('../../server');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+
+afterAll(() => mongoose.disconnect(), 10000);
 
 describe('POST /login', () => {
 
