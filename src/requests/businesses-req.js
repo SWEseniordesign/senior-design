@@ -12,7 +12,7 @@ Create a business document.
 */
 export async function createBusiness (obj) {
     let data;
-    await fetch('http://localhost:8080/business/create', {
+    await fetch('https://localhost:8080/business/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ Get a business from its name
 */
 export async function getBusiness (obj) {
     let data;
-    await fetch('http://localhost:8080/business/get', {
+    await fetch('https://localhost:8080/business/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ Add admins to a business
 */
 export async function addAdmins (obj) {
     let data;
-    await fetch('http://localhost:8080/business/admins', {
+    await fetch('https://localhost:8080/business/admins', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ Add tills to a business
 */
 export async function addTills (obj) {
     let data;
-    await fetch('http://localhost:8080/business/edittills', {
+    await fetch('https://localhost:8080/business/edittills', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -86,7 +86,7 @@ Fetches a businesses' tills
 */
 export async function getTills (obj) {
     let data;
-    await fetch('http://localhost:8080/business/tills', {
+    await fetch('https://localhost:8080/business/tills', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

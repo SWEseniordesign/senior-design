@@ -4,7 +4,8 @@ import { AccessTill } from '../pages/AccessTill/AccessTill';
 import { CreateBusiness } from '../pages/CreateBusiness/CreateBusiness';
 import { AccessBusiness } from '../pages/AccessBusiness/AccessBusiness';
 import { CreateAccount } from '../pages/CreateAccount/CreateAccount';
-import Dashboard from '../pages/Dashboard/Dashboard';
+import { Dashboard } from '../pages/Dashboard/Dashboard';
+import { ViewCreateTill } from '../pages/ViewCreateTill/ViewCreateTill';
 
 const SiteRoutes = [
     {
@@ -29,11 +30,11 @@ const SiteRoutes = [
     },
     {
         path: '/create-till',
-        // component: CreateTill
+        component: <ViewCreateTill/>
     },
     {
         path: '/view-till',
-        // component: ViewTill
+        component: <ViewCreateTill/>
     },
     {
         path: '/access-till',
