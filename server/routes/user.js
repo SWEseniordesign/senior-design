@@ -10,7 +10,7 @@ const router = express.Router();
 */
 router.post('/login', async function(req, res) {
     //Check if there is a body in the request
-    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+    if(Object.keys(req.body).length === 0) return res.status(400).send({err: 'No request body', code: 400});
 
     //find the user
     let find_user = await User.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user', code: 500})});
@@ -44,8 +44,7 @@ router.post('/login', async function(req, res) {
     Creates a new user
 */
 router.post('/register', async function(req, res) {
-    //Check if there is a body in the request
-    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+    if(Object.keys(req.body).length === 0) return res.status(400).send({err: 'No request body', code: 400});
 
     //Create temp user
     let new_user = new User({
