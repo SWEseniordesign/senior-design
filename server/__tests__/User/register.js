@@ -1,5 +1,8 @@
 const request = require('supertest');
 const app = require('../../server');
+const mongoose = require('mongoose');
+
+afterAll(() => mongoose.disconnect(), 10000);
 
 describe('/register', () => {
     it('should return 400 if no request body is sent', async () => {
