@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 /*
- TODO:
- Add verifyJWT function to all routes that require authentication
- Add 'authentication' header to all requests that require authentication 
+    Verifies that a jwt passed in through header is valid
+    If valid, add user to req and continue to backend call thing
+    else return error
 */
-
-function verifyJWT(req, res) {
+function verifyJWT(req, res, next) {
     const bearerToken = req.headers['authorization'];
     if(!bearerToken) return res.status(401).send({err: 'No token provided', code: 401});
     let tokArr = bearerToken.split(' ');
@@ -17,5 +17,6 @@ function verifyJWT(req, res) {
             return res.status(401).send({err: 'Invalid token', code: 401});
         }
         req.user = decoded;
+        next();
     });
 } module.exports = verifyJWT;

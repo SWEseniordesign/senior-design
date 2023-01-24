@@ -1,3 +1,5 @@
+import { userState } from "../states/userState";
+
 /*
 Create an employee document.
     Pass in a json object with a email and isManager field.
@@ -7,7 +9,8 @@ export async function createEmployee (obj) {
     await fetch('http://localhost:8080/employee/create', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -24,7 +27,8 @@ export async function getEmployee (obj) {
     await fetch('http://localhost:8080/employee/get', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })

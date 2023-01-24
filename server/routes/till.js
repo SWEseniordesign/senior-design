@@ -4,12 +4,13 @@ const Till = require('../models/Till');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Business = require('../models/Business');
+const verifyJWT = require('../middleware/auth');
 
 /*
     * DONE
     Gets a till by its objectid, does checks to ensure id is a correct objectid
 */
-router.post('/get', function(req, res){
+router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -50,7 +51,7 @@ router.post('/get', function(req, res){
     * DONE
     Posts a till
 */
-router.post('/create', async (req, res) => {
+router.post('/create', verifyJWT, async (req, res) => {
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -120,7 +121,7 @@ router.post('/create', async (req, res) => {
     TODO
     Add employees to till
 */
-router.post('/employees', async function(req, res){
+router.post('/employees', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_till = await Till.findOne({name: req.body.name}).exec();
@@ -131,7 +132,7 @@ router.post('/employees', async function(req, res){
     TODO    
     Modify a till's tabs
 */
-router.post('/tabs', async function(req, res){
+router.post('/tabs', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_till = await Till.findOne({name: req.body.name}).exec();
@@ -142,7 +143,7 @@ router.post('/tabs', async function(req, res){
     TODO
     Modify a till's props
 */
-router.post('/props', async function(req, res){
+router.post('/props', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_till = await Till.findOne({name: req.body.name}).exec();

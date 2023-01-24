@@ -1,3 +1,5 @@
+import { userState } from "../states/userState";
+
 /*
 Create a tab document.
     Ex:
@@ -13,7 +15,8 @@ export async function createTab (obj) {
     await fetch('http://localhost:8080/tab/create', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -30,7 +33,8 @@ export async function getTab (obj) {
     await fetch('http://localhost:8080/tab/get', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -47,7 +51,8 @@ export async function addCards (obj) {
     await fetch('http://localhost:8080/tab/cards', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -64,7 +69,8 @@ export async function changeColor (obj) {
     await fetch('http://localhost:8080/tab/color', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })

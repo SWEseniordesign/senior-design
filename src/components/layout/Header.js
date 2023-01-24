@@ -84,7 +84,7 @@ const Header = () => {
     const userHasBusiness = async() => {
         let response;
         if(userState.token.get() !== ''){
-            response = await getUserBusiness({id: userState.user.get()._id});
+            response = await getUserBusiness();
         }
 
         if(!!(response)) setHasBusiness(response.business);

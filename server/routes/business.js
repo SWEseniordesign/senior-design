@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const Business = require('../models/Business');
 const User = require('../models/User');
-
+const verifyJWT = require('../middleware/auth');
 
 /*
     * DONE (at least for now)  
     Gets a business based on the businesses name
 */
-router.post('/get', function(req, res){
+router.post('/get', verifyJWT, function(req, res){
     //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
     
@@ -38,14 +38,19 @@ router.post('/get', function(req, res){
     * DONE
     Posts a business & links it to a user
 */
-router.post('/create', async (req, res) => {
+router.post('/create', verifyJWT, async (req, res) => {
     //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Check if a user exist & if they have a businessId assigned to them
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user from jwt', code: 500})});
+    if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
+    if(user.businessId !== null) return res.status(403).send({err: 'User has a business ID', code: 403});
 
     //Create temp new business
     let new_business = new Business({
         name: req.body.name,
-        ownerId: req.body.ownerId,
+        ownerId: user._id,
         type: req.body.type,
         admins: req.body.admins,
         tills: req.body.tills
@@ -54,11 +59,6 @@ router.post('/create', async (req, res) => {
     //Check if a business with the same name exists
     let findBusinessDup = await Business.findOne({name: req.body.name}).exec();
     if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
-
-    //Check if a user exist & if they have a businessId assigned to them
-    let user = await User.findOne({_id: req.body.ownerId}).exec();
-    if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
-    if(user.businessId !== null) return res.status(403).send({err: 'User has a business ID', code: 403});
 
     //Attempt to save the business
     new_business.save(function(err, business) {
@@ -91,7 +91,7 @@ router.post('/create', async (req, res) => {
     * NOT WORKING 100%
     Modify a businesses' admins
 */
-router.post('/admins', async function(req, res){
+router.post('/admins', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //checks if the users exist
@@ -137,7 +137,7 @@ router.post('/admins', async function(req, res){
    TODO 
     Modify a businesses' tills
 */
-router.post('/edittills', async function(req, res){
+router.post('/edittills', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_business = await Business.findOne({email: req.body.name}).exec();
@@ -148,7 +148,7 @@ router.post('/edittills', async function(req, res){
    TODO 
     fetch a businesses' tills
 */
-router.post('/tills', async function(req, res){
+router.post('/tills', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_business = await Business.findOne({email: req.body.name}).exec();

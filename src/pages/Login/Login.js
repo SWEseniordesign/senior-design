@@ -73,8 +73,7 @@ export const Login = () => {
 
             if(!!(error.code)){
                 setAlertMessage({message: error.err, status: 'warning'});
-            } else if(!!(error.user)) {
-                userState.user.set(error.user);
+            } else if(!!(error.token)) {
                 userState.token.set(error.token);
                 userState.isLoggedIn.set(true);
                 navigate('/');

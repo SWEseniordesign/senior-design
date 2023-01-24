@@ -4,12 +4,13 @@ const Item = require('../models/Item');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Card = require('../models/Card');
+const verifyJWT = require('../middleware/auth');
 
 /*
     * DONE
     Fetch item based on ObjectId
 */
-router.post('/get', function(req, res){
+router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -50,7 +51,7 @@ router.post('/get', function(req, res){
     * DONE
     Create an item
 */
-router.post('/create', async function(req, res){
+router.post('/create', verifyJWT, async function(req, res){
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -107,7 +108,7 @@ router.post('/create', async function(req, res){
     TODO
     Change an items name
 */
-router.get('/name', async (req, res) => {
+router.get('/name', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
@@ -117,7 +118,7 @@ router.get('/name', async (req, res) => {
     TODO
     Change an items image
 */
-router.get('/image', async (req, res) => {
+router.get('/image', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
@@ -127,7 +128,7 @@ router.get('/image', async (req, res) => {
     TODO
     Change an items props
 */
-router.get('/props', async (req, res) => {
+router.get('/props', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
@@ -137,7 +138,7 @@ router.get('/props', async (req, res) => {
     TODO
     Change an items stock
 */
-router.get('/stock', async (req, res) => {
+router.get('/stock', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});

@@ -52,7 +52,6 @@ export const CreateBusiness = () => {
         try{
             let newBusiness = {
                 name: businessName,
-                ownerId: userState.user.get()._id, //! Must be logged in before creating a business.
                 type: businessType,
                 admins: [],
                 tills: []

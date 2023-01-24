@@ -61,7 +61,8 @@ export async function updatePassword(obj){
     await fetch('http://localhost:8080/user/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
