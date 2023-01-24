@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
+const verifyJWT= require('../middleware/auth');
+
 /*
     * DONE
     Logs a user into the system and genertaes a JWT token
@@ -30,7 +32,7 @@ router.post('/login', async function(req, res) {
             };
             const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '1h'});
             if(!token) return res.status(500).send({err: 'Internal server error', code: 500})
-            return res.status(200).send({user: find_user, token: "Bearer " + token}); //TODO: remove user from response
+            return res.status(200).send({token: "Bearer " + token}); 
         }
         else {
             return res.status(400).send({err: 'Invalid email or password', code: 400});
