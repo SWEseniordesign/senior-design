@@ -49,7 +49,7 @@ afterAll(async () => {
 describe('POST /get', () => {
     it('should return 201 and business', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
-
+        
         const login = await request(app)
             .post('/user/login')
             .expect(200)
@@ -63,27 +63,17 @@ describe('POST /get', () => {
             .send(testBusiness)
         expect(business._body.formattedBus).toBeDefined();
         expect(business._body.code).toBe(201);
-    });
 
-    it('should return 403 for attempting to create another business for user', async () => {
-        const userData = { email: testUser.email, password: testUser.password }; 
-
-        const login = await request(app)
-            .post('/user/login')
-            .expect(200)
-            .send(userData) 
-        expect(login.body.token).toBeDefined();  
-
-        const business = await request(app)
-            .post('/business/create')
+        const getBusiness = await request(app)
+            .post('/business/get')
             .set('authorization', login.body.token) 
-            .expect(403)
-            .send(testBusiness)
-        expect(business._body.err).toBe('User has a business ID');
-        expect(business._body.code).toBe(403);
+            .expect(201)
+            .send()
+        expect(getBusiness._body.formattedBus).toBeDefined();
+        expect(getBusiness._body.code).toBe(201);
     });
 
-    it('should return 403 for attempting to create duplicate business', async () => {
+    it('should return 404 for attempting to find Business which doesn\'t exist', async () => {
         const userData = { email: testUser1.email, password: testUser1.password }; 
 
         const login = await request(app)
@@ -93,11 +83,11 @@ describe('POST /get', () => {
         expect(login.body.token).toBeDefined();  
 
         const business = await request(app)
-            .post('/business/create')
+            .post('/business/get')
             .set('authorization', login.body.token) 
-            .expect(403)
-            .send(testBusiness)
-        expect(business._body.err).toBe('Business already exists');
-        expect(business._body.code).toBe(403);
+            .expect(404)
+            .send()
+        expect(business._body.err).toBe('Business associated to User does not exist');
+        expect(business._body.code).toBe(404);
     });
 });
