@@ -8,13 +8,16 @@ const verifyJWT = require('../middleware/auth');
     * DONE (at least for now)  
     Gets a business based on the businesses name
 */
-router.post('/get', verifyJWT, function(req, res){
+router.post('/get', verifyJWT, async function(req, res){
     //Check if there is a body in the request
-    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+    //if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
     
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user from jwt', code: 500})});
+    if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
+
     //Find the business then format it and return
     let name = req.body.name;
-    Business.findOne({name: name}, function(err, business){
+    Business.findOne({ownerId: user._id}, function(err, business){
         if(err){
             console.log(err);
             return res.status(500).send({err: 'Unable to get business', code: 500});
