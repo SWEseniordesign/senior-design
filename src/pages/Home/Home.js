@@ -177,7 +177,7 @@ export const Home = () => {
 
         let id = {email: 'test@unb.ca'};
         
-        let error = await getEmployee(id);
+        let error = await getBusiness();
 
         
         console.log(error);
