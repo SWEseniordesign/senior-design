@@ -1,9 +1,30 @@
+const deleteDocuments = require("../../dbhelper/deletedocs");
 const request = require('supertest');
 const app = require('../../server');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
-afterAll(() => mongoose.disconnect(), 10000);
+const testUser = {
+    fname: 'Test',
+    lname: 'User',
+    email: 'run_test@gmail.com',
+    password: 'peanut_butter_baby',
+    businessId: null
+}
+
+beforeAll(async () => {
+    const res = await request(app)
+        .post('/user/register')
+        .expect(201)
+        .send(testUser) 
+    expect(res.body).toEqual(true);
+})
+
+afterAll(async () => {
+    const result = await deleteDocuments();
+    console.log(result);
+    mongoose.disconnect();
+}, 10000);
 
 describe('POST /login', () => {
 
@@ -15,9 +36,17 @@ describe('POST /login', () => {
         expect(res.body).toEqual({err: 'No request body', code: 400});
     });
 
-    it('should return 400 if invalid email or password is sent', async () => {
-        const userData = { email: 'invalid@email.com', password: 'invalid' };
+    it('should return 400 if invalid password is sent', async () => {
+        const userData = { email: testUser.email, password: 'incorrectPass' };
+        const res = await request(app)
+            .post('/user/login')
+            .expect(400)
+            .send(userData) 
+        expect(res.body).toEqual({err: 'Invalid email or password', code: 400});
+    });
 
+    it('should return 400 if invalid email is sent', async () => {
+        const userData = { email: 'incorrect@email.ca', password: testUser.password };
         const res = await request(app)
             .post('/user/login')
             .expect(400)
@@ -26,8 +55,7 @@ describe('POST /login', () => {
     });
 
     it('should return 200 and token if valid credentials are sent', async () => {
-        const userData = { email: 'dcampb13@unb.ca', password: 'mainaccount' }; 
-
+        const userData = { email: testUser.email, password: testUser.password }; 
         const res = await request(app)
             .post('/user/login')
             .expect(200)

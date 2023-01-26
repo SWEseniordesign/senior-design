@@ -6,11 +6,14 @@ const Item = require('../models/Item');
 const Tab = require('../models/Tab');
 const Till = require('../models/Till');
 
-export async function deleteDocuments(){
+/*
+    ! DO NOT RUN THIS FUNCTION OUTSIDE OF WIPING THE TEST DB
+*/
+async function deleteDocuments(){
     if(process.env.npm_lifecycle_event === 'test'){
         console.log('Cleaning db test...');
-        await User.deleteMany({}).exec().catch( err => {return {err: 'Error deleting Users'}});
-        await Business.deleteMany({}).exec().catch( err => {return {err: 'Error deleting Businesses'}});
+        await User.deleteMany({}).catch( err => {return {err: 'Error deleting Users'}});
+        await Business.deleteMany({}).catch( err => {return {err: 'Error deleting Businesses'}});
         await Card.deleteMany({}).exec().catch( err => {return {err: 'Error deleting Cards'}});
         await Employee.deleteMany({}).exec().catch( err => {return {err: 'Error deleting Employee'}});
         await Item.deleteMany({}).exec().catch( err => {return {err: 'Error deleting Items'}});
@@ -22,3 +25,4 @@ export async function deleteDocuments(){
         return {err: 'DONT RUN THIS IN DEV OR MYTILL!!!!'}
     }
 }
+module.exports = deleteDocuments;

@@ -1,9 +1,9 @@
-//const { deleteDocuments } from "../dbhelper/deletedocs";
+const deleteDocuments = require("../../dbhelper/deletedocs");
 const request = require('supertest');
 const app = require('../../server');
 const mongoose = require('mongoose');
 
-let testUser = {
+const testUser = {
     fname: 'Test',
     lname: 'User',
     email: 'run_test@gmail.com',
@@ -11,9 +11,9 @@ let testUser = {
     businessId: null
 }
 
-afterAll(() => {
-    //const result = deleteDocuments();
-    //console.log(result);
+afterAll(async () => {
+    const result = await deleteDocuments();
+    console.log(result);
     mongoose.disconnect();
 }, 10000);
 

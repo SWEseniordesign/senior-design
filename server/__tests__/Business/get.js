@@ -8,15 +8,23 @@ const testUser = {
     lname: 'User',
     email: 'run_test@gmail.com',
     password: 'peanut_butter_baby',
-    businessId: '63d2b33a2a75670dbd74fb3b'
-}
+    businessId: null
+};
+
 const testUser1 = {
     fname: 'Test',
     lname: 'User',
     email: 'run_test1@gmail.com',
     password: 'peanut_butter_baby',
     businessId: null
-}
+};
+
+const testBusiness = {
+    name: 'Walmart',
+    type: 'Wholesale',
+    admins: [],
+    tills: []
+};
 
 beforeAll(async () => {
     const res = await request(app)
@@ -30,7 +38,7 @@ beforeAll(async () => {
         .expect(201)
         .send(testUser1) 
     expect(res1.body).toEqual(true);
-})
+});
 
 afterAll(async () => {
     const result = await deleteDocuments();
@@ -38,8 +46,8 @@ afterAll(async () => {
     mongoose.disconnect()
 }, 10000);
 
-describe('POST /business', () => {
-    it('should return 201 and true if valid credentials are sent & user has business', async () => {
+describe('POST /get', () => {
+    it('should return 201 and business', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
@@ -49,16 +57,16 @@ describe('POST /business', () => {
         expect(login.body.token).toBeDefined();  
 
         const business = await request(app)
-            .post('/user/business')
+            .post('/business/create')
             .set('authorization', login.body.token) 
             .expect(201)
-            .send()
-        expect(business._body.business).toBe(true);
+            .send(testBusiness)
+        expect(business._body.formattedBus).toBeDefined();
         expect(business._body.code).toBe(201);
     });
 
-    it('should return 201 and false if valid credentials are sent & user does not have a business', async () => {
-        const userData = { email: testUser1.email, password: testUser1.password };  
+    it('should return 403 for attempting to create another business for user', async () => {
+        const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
             .post('/user/login')
@@ -67,11 +75,29 @@ describe('POST /business', () => {
         expect(login.body.token).toBeDefined();  
 
         const business = await request(app)
-            .post('/user/business')
+            .post('/business/create')
             .set('authorization', login.body.token) 
-            .expect(201)
-            .send()
-        expect(business._body.business).toBe(false);
-        expect(business._body.code).toBe(201);
-    }); 
+            .expect(403)
+            .send(testBusiness)
+        expect(business._body.err).toBe('User has a business ID');
+        expect(business._body.code).toBe(403);
+    });
+
+    it('should return 403 for attempting to create duplicate business', async () => {
+        const userData = { email: testUser1.email, password: testUser1.password }; 
+
+        const login = await request(app)
+            .post('/user/login')
+            .expect(200)
+            .send(userData) 
+        expect(login.body.token).toBeDefined();  
+
+        const business = await request(app)
+            .post('/business/create')
+            .set('authorization', login.body.token) 
+            .expect(403)
+            .send(testBusiness)
+        expect(business._body.err).toBe('Business already exists');
+        expect(business._body.code).toBe(403);
+    });
 });
