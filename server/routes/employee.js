@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Employee = require('../models/Employee');
+const verifyJWT = require('../middleware/auth');
 
 /*
     * DONE
     ? Does the implementation of employee need to change when we start logging them into tills? Should we should their objectId?
     Gets an employee from an email
 */
-router.post('/get', function(req, res){
+router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -33,10 +34,10 @@ router.post('/get', function(req, res){
 });
 
 /*
-    * DONE
+    TODO update this to link employees to tills
     Posts an employee with an email and isManager
 */
-router.post('/create', async (req, res) => {
+router.post('/create', verifyJWT, async (req, res) => {
     //check if req body exists 
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -73,7 +74,7 @@ router.post('/create', async (req, res) => {
     TODO
     Modify an employees isManager field
 */
-router.post('/manager', async (req, res) => {
+router.post('/manager', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_employee = await Employee.findOne({email: req.body.email}).exec();

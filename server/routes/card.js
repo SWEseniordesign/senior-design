@@ -4,13 +4,14 @@ const Card = require('../models/Card');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Tab = require('../models/Tab');
+const verifyJWT = require('../middleware/auth');
 
 
 /*
     * DONE
     Gets a card by the card's Objectid stored in Mongo
 */
-router.post('/get', function(req, res){
+router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -51,7 +52,7 @@ router.post('/get', function(req, res){
     * DONE
     Posts a card
 */
-router.post('/create', async (req, res) => {
+router.post('/create', verifyJWT, async (req, res) => {
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -99,7 +100,7 @@ router.post('/create', async (req, res) => {
     TODO
     Modify a card's dimensions
 */
-router.post('/dimensions', async function(req, res){
+router.post('/dimensions', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_card = await Card.findOne({name: req.body.name}).exec();
@@ -110,7 +111,7 @@ router.post('/dimensions', async function(req, res){
     TODO
     Modify a card's items
 */
-router.post('/items', async function(req, res){
+router.post('/items', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_card = await Card.findOne({name: req.body.name}).exec();
@@ -121,7 +122,7 @@ router.post('/items', async function(req, res){
     TODO
     Modify a card's color
 */
-router.post('/color', async function(req, res){
+router.post('/color', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_card = await Card.findOne({name: req.body.name}).exec();

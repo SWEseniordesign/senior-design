@@ -1,3 +1,5 @@
+import { userState } from "../states/userState";
+
 /*
 Create a business document.
     Pass in a json object with a email and isManager field, and the other two fields can be
@@ -15,7 +17,8 @@ export async function createBusiness (obj) {
     await fetch('http://localhost:8080/business/create', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -33,7 +36,8 @@ export async function getBusiness (obj) {
     await fetch('http://localhost:8080/business/get', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -52,7 +56,8 @@ export async function addAdmins (obj) {
     await fetch('http://localhost:8080/business/admins', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -71,7 +76,8 @@ export async function addTills (obj) {
     await fetch('http://localhost:8080/business/edittills', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -89,7 +95,8 @@ export async function getTills (obj) {
     await fetch('http://localhost:8080/business/tills', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
