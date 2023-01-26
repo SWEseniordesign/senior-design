@@ -46,9 +46,30 @@ const Dashboard = () => {
     return (
         <div>
             <Typography>Dashboard</Typography>
-            <Typography>{busName}</Typography>
-            <Typography>{ownerName}</Typography>
-            <Typography>{busType}</Typography>
+            <Typography sx={{
+                            fontFamily: FONT_FAMILY,
+                            fontWeight: '600',
+                            fontSize: '48px',
+                            lineHeight: '56px',
+                            display: 'flex'}}>
+                {busName}
+            </Typography>
+            <Typography sx={{
+                            fontFamily: FONT_FAMILY,
+                            fontWeight: '600',
+                            fontSize: '36px',
+                            lineHeight: '44px',
+                            display: 'flex'}}>
+                {ownerName}
+            </Typography>
+            <Typography sx={{
+                            fontFamily: FONT_FAMILY,
+                            fontWeight: '200',
+                            fontSize: '28px',
+                            lineHeight: '36px',
+                            display: 'flex'}}>
+                {busType}
+            </Typography>
         </div>
             
         
