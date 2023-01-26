@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 import React, { useEffect, useState } from "react";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { getBusiness } from "../../requests/businesses-req";
-import { userState } from "../../states/userState";
+import { getUserName } from "../../requests/users-req";
 
 
 /*const useStyle = makeStyles({
@@ -26,68 +26,29 @@ import { userState } from "../../states/userState";
 const Dashboard = () => {
     //const classes = useStyle();
     const [busName, setBusName] = useState("")
-
-    /*async function getBus() {
-
-        const bus = await getBusiness()
-        console.log(bus)
-        console.log(bus.formattedBus.name)
-        setBusName(bus.formattedBus.name)
-    }*/
+    const [busType, setBusType] = useState("")
+    const [ownerName, setOwnerName] = useState("")
 
     useEffect(() => {
         async function getBus() {
-
             const bus = await getBusiness()
-            console.log(bus)
-            console.log(bus.formattedBus.name)
             setBusName(bus.formattedBus.name)
+            setBusType(bus.formattedBus.type)
         }
-        console.log("in use effect")
+        async function getOwner() {
+            const owner = await getUserName()
+            setOwnerName(owner.formattedUser.fname + " " + owner.formattedUser.lname)
+        }
         getBus();
+        getOwner();
       }, []);
-
-    /*const handleGetBus = async() => {
-        const bus = await getBusiness()
-        console.log(bus)
-        console.log(bus.formattedBus.name)
-    }*/
-
-    /*const bus = getBusiness()
-        console.log(bus)
-        console.log(bus.formattedBus.name)*/
-
-    /*render() {
-        console.log("inside render")
-        return (
-            <Typography>hello</Typography>
-        )
-    }*/
-
-    
-    
-    /*useEffect(() => {
-        async function getBus() {
-            const bus = await getBusiness()
-            return bus
-        }
-        const bus2 = getBus()
-        console.log(bus2)
-        //console.log(getUserBusiness(userState.token.get()))
-        /*getUserBusiness(userState.token.get()).then(data => {
-          setBusName(data)
-          console.log(data)
-        })*/
-      //}, []);*/
     
     return (
         <div>
             <Typography>Dashboard</Typography>
             <Typography>{busName}</Typography>
-            
-            
-            
-            
+            <Typography>{ownerName}</Typography>
+            <Typography>{busType}</Typography>
         </div>
             
         
