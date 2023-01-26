@@ -1,8 +1,21 @@
+//const { deleteDocuments } from "../dbhelper/deletedocs";
 const request = require('supertest');
 const app = require('../../server');
 const mongoose = require('mongoose');
 
-afterAll(() => mongoose.disconnect(), 10000);
+let testUser = {
+    fname: 'Test',
+    lname: 'User',
+    email: 'run_test@gmail.com',
+    password: 'peanut_butter_baby',
+    businessId: null
+}
+
+afterAll(() => {
+    //const result = deleteDocuments();
+    //console.log(result);
+    mongoose.disconnect();
+}, 10000);
 
 describe('/register', () => {
     it('should return 400 if no request body is sent', async () => {
@@ -13,16 +26,15 @@ describe('/register', () => {
         expect(res.body).toEqual({err: 'No request body', code: 400});
     });
 
+    it('should return 201 if user is successfully registered', async () => {
+            const res = await request(app)
+                .post('/user/register')
+                .expect(201)
+                .send(testUser) 
+            expect(res.body).toEqual(true);
+    });
+
     it('should return 403 if user already exists', async () => {
-
-        let testUser = {
-            fname: 'Test',
-            lname: 'User',
-            email: 'dcampb13@unb.ca',
-            password: '',
-            businessId: null
-        }
-
         const res = await request(app)
             .post('/user/register')
             .expect(403)
@@ -30,20 +42,6 @@ describe('/register', () => {
         expect(res.body).toEqual({err: 'User already exists', code: 403});
     });
 
-    //! Include test when we implement a way to delete the user after we have created them. 
-    // it('should return 201 if user is successfully registered', async () => {
-    //     let testUser = {
-    //         fname: 'Test',
-    //         lname: 'User',
-    //         email: 'run_test@gmail.com',
-    //         password: 'peanut_butter_baby',
-    //         businessId: null
-    //     }
-
-    //     const res = await request(app)
-    //         .post('/user/register')
-    //         .expect(201)
-    //         .send(testUser) 
-    //     expect(res.body).toEqual(true);
-    // }); 					  
+    
+    					  
 });
