@@ -1,9 +1,10 @@
 import { Typography, Paper } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
-//import { getBusiness } from "../../requests/users-req";
+import { getBusiness } from "../../requests/businesses-req";
 import { userState } from "../../states/userState";
+
 
 const useStyle = makeStyles({
     root: {
@@ -23,16 +24,20 @@ const useStyle = makeStyles({
 
 const Dashboard = () => {
     const classes = useStyle();
+    const [busName, setBusName] = useState({})
+
+    useEffect(() => {
+        getBusiness("DQ")
+        //console.log(getUserBusiness(userState.token.get()))
+        /*getUserBusiness(userState.token.get()).then(data => {
+          setBusName(data)
+          console.log(data)
+        })*/
+      }, []);
     
     return (
         <div>
             <Typography>Dashboard</Typography>
-            <div className={classes.root}>
-                <Paper className={classes.paper} elevation={5} sx={{
-                    backgroundColor: COLOR_PALETTE.BABY_BLUE
-                }}>
-                </Paper>
-            </div>
         </div>
             
         
