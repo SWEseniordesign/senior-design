@@ -1,8 +1,15 @@
+import { deleteDocuments } from "../dbhelper/deletedocs";
 const request = require('supertest');
 const app = require('../../server');
 const mongoose = require('mongoose');
 
-afterAll(() => mongoose.disconnect(), 10000);
+
+
+afterAll(() => {
+    const result = deleteDocuments();
+    console.log(result);
+    mongoose.disconnect()
+}, 10000);
 
 describe('POST /business', () => {
     it('should return 201 and true if valid credentials are sent & user has business', async () => {
