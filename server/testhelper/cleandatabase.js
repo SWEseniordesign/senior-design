@@ -9,7 +9,7 @@ const Till = require('../models/Till');
 /*
     ! DO NOT RUN THIS FUNCTION OUTSIDE OF WIPING THE TEST DB
 */
-async function deleteDocuments(){
+async function cleanDatabase(){
     if(process.env.npm_lifecycle_event === 'test'){
         console.log('Cleaning db test...');
         await User.deleteMany({}).catch( err => {return {err: 'Error deleting Users'}});
@@ -25,4 +25,4 @@ async function deleteDocuments(){
         return {err: 'DONT RUN THIS IN DEV OR MYTILL!!!!'}
     }
 }
-module.exports = deleteDocuments;
+module.exports = cleanDatabase;

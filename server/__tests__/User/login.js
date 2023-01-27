@@ -1,28 +1,16 @@
-const deleteDocuments = require("../../dbhelper/deletedocs");
+const {testUser} =  require('../../testhelper/variables');
+const initializeDatabase = require("../../testhelper/initializedatabase");
+const cleanDatabase = require("../../testhelper/cleandatabase");
 const request = require('supertest');
 const app = require('../../server');
-const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
-const testUser = {
-    fname: 'Test',
-    lname: 'User',
-    email: 'run_test@gmail.com',
-    password: 'peanut_butter_baby',
-    businessId: null
-}
-
 beforeAll(async () => {
-    const res = await request(app)
-        .post('/user/register')
-        .expect(201)
-        .send(testUser) 
-    expect(res.body).toEqual(true);
-})
+    await initializeDatabase();
+});
 
 afterAll(async () => {
-    const result = await deleteDocuments();
-    console.log(result);
+    const res = await cleanDatabase();
     mongoose.disconnect();
 }, 10000);
 

@@ -1,58 +1,17 @@
-const deleteDocuments = require("../../dbhelper/deletedocs");
+const {testUser, testUser1, testBusiness, testTill, fakeObjectId, fakeObjectIdType1, fakeObjectIdType2} =  require('../../testhelper/variables');
+const initializeDatabase = require("../../testhelper/initializedatabase");
+const cleanDatabase = require("../../testhelper/cleandatabase");
 const request = require('supertest');
 const app = require('../../server');
 const mongoose = require('mongoose');
 
-const testUser = {
-    fname: 'Test',
-    lname: 'User',
-    email: 'run_test@gmail.com',
-    password: 'peanut_butter_baby',
-    businessId: null
-};
-
-const testUser1 = {
-    fname: 'Test',
-    lname: 'User',
-    email: 'run_test1@gmail.com',
-    password: 'peanut_butter_baby',
-    businessId: null
-};
-
-const testBusiness = {
-    name: 'Walmart',
-    type: 'Wholesale',
-    admins: [],
-    tills: []
-};
-
-const testTill = {
-    name: 'Sandwiches',
-    managerPassword: 123,
-    employees: [],
-    tabs: [],
-    props: [],
-    businessId: ''
-};
-
 beforeAll(async () => {
-    const res = await request(app)
-        .post('/user/register')
-        .expect(201)
-        .send(testUser) 
-    expect(res.body).toEqual(true);
-
-    const res1 = await request(app)
-        .post('/user/register')
-        .expect(201)
-        .send(testUser1) 
-    expect(res1.body).toEqual(true);
+    await initializeDatabase();
 });
 
 afterAll(async () => {
-    const result = await deleteDocuments();
-    console.log(result);
-    mongoose.disconnect()
+    const res = await cleanDatabase();
+    mongoose.disconnect();
 }, 10000);
 
 describe('POST /create', () => {
@@ -111,7 +70,7 @@ describe('POST /create', () => {
             .send(userData) 
         expect(login.body.token).toBeDefined();  
 
-        testTill.businessId = 'fakeId';
+        testTill.businessId = fakeObjectIdType1;
 
         const till = await request(app)
             .post('/till/create')
@@ -131,7 +90,7 @@ describe('POST /create', () => {
             .send(userData) 
         expect(login.body.token).toBeDefined();  
 
-        testTill.businessId = 'yoyoyoyoyoyo';
+        testTill.businessId = fakeObjectIdType2;
 
         const till = await request(app)
             .post('/till/create')
@@ -151,7 +110,7 @@ describe('POST /create', () => {
             .send(userData) 
         expect(login.body.token).toBeDefined();  
 
-        testTill.businessId = '63d2b33a2a75670dbd74fb3b';
+        testTill.businessId = fakeObjectId;
 
         const till = await request(app)
             .post('/till/create')

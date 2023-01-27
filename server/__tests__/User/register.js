@@ -1,19 +1,11 @@
-const deleteDocuments = require("../../dbhelper/deletedocs");
+const {testUser} =  require('../../testhelper/variables');
+const cleanDatabase = require("../../testhelper/cleandatabase");
 const request = require('supertest');
 const app = require('../../server');
 const mongoose = require('mongoose');
 
-const testUser = {
-    fname: 'Test',
-    lname: 'User',
-    email: 'run_test@gmail.com',
-    password: 'peanut_butter_baby',
-    businessId: null
-}
-
 afterAll(async () => {
-    const result = await deleteDocuments();
-    console.log(result);
+    const res = await cleanDatabase();
     mongoose.disconnect();
 }, 10000);
 
@@ -41,7 +33,4 @@ describe('/register', () => {
             .send(testUser) 
         expect(res.body).toEqual({err: 'User already exists', code: 403});
     });
-
-    
-    					  
 });
