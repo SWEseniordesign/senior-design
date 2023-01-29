@@ -1,4 +1,4 @@
-const {testUser, testUser1, testBusiness, testTill, testTab, fakeObjectId, fakeObjectIdType1, fakeObjectIdType2} =  require('../../testhelper/variables');
+const {testUser, testBusiness, testTill, testTab, testCard, testItem, fakeObjectId, fakeObjectIdType1, fakeObjectIdType2} =  require('../../testhelper/variables');
 const initializeDatabase = require("../../testhelper/initializedatabase");
 const cleanDatabase = require("../../testhelper/cleandatabase");
 const request = require('supertest');
@@ -16,7 +16,7 @@ afterAll(async () => {
 
 
 describe('POST /create', () => {
-    it('should return 201 and tab', async () => {
+    it('should return 201 and item', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
@@ -52,10 +52,30 @@ describe('POST /create', () => {
             .send(testTab)
         expect(tab._body.formattedTab).toBeDefined();
         expect(tab._body.code).toBe(201);
+
+        testCard.tabId = tab._body.formattedTab.id;
+
+        const card = await request(app)
+            .post('/card/create')
+            .set('authorization', login.body.token) 
+            .expect(201)
+            .send(testCard)
+        expect(card._body.formattedCard).toBeDefined();
+        expect(card._body.code).toBe(201);
+
+        testItem.cardId = card._body.formattedCard.id;
+
+        const item = await request(app)
+            .post('/items/create')
+            .set('authorization', login.body.token) 
+            .expect(201)
+            .send(testItem)
+        expect(item._body.formattedItem).toBeDefined();
+        expect(item._body.code).toBe(201);
     });
 
-    it('should return 400 for attempting to create a tab with a less than 12B tillId', async () => {
-        const userData = { email: testUser1.email, password: testUser1.password }; 
+    it('should return 400 for attempting to create an item with a less than 12B cardId', async () => {
+        const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
             .post('/user/login')
@@ -63,19 +83,19 @@ describe('POST /create', () => {
             .send(userData) 
         expect(login.body.token).toBeDefined();  
 
-        testTab.tillId = fakeObjectIdType1;
+        testItem.cardId = fakeObjectIdType1;
 
-        const tab = await request(app)
-            .post('/tab/create')
+        const item = await request(app)
+            .post('/items/create')
             .set('authorization', login.body.token) 
             .expect(400)
-            .send(testTab)
-        expect(tab._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(tab._body.code).toBe(403);
+            .send(testCard)
+        expect(item._body.err).toBe('Type 1: Id is not a valid ObjectId');
+        expect(item._body.code).toBe(403);
     });
 
-    it('should return 400 for attempting to create a tab with a improper string tillId of length 12B', async () => {
-        const userData = { email: testUser1.email, password: testUser1.password }; 
+    it('should return 400 for attempting to create an iten with a improper string cardId of length 12B', async () => {
+        const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
             .post('/user/login')
@@ -83,19 +103,19 @@ describe('POST /create', () => {
             .send(userData) 
         expect(login.body.token).toBeDefined();  
 
-        testTab.tillId = fakeObjectIdType2;
+        testItem.cardId = fakeObjectIdType2;
 
-        const tab = await request(app)
-            .post('/tab/create')
+        const item = await request(app)
+            .post('/items/create')
             .set('authorization', login.body.token) 
             .expect(400)
-            .send(testTab)
-        expect(tab._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(tab._body.code).toBe(403);
+            .send(testItem)
+        expect(item._body.err).toBe('Type 2: Id is not a valid ObjectId');
+        expect(item._body.code).toBe(403);
     });
 
-    it('should return 500 for attempting to create a tab with a fake tillId of length 12B', async () => {
-        const userData = { email: testUser1.email, password: testUser1.password }; 
+    it('should return 500 for attempting to create an item with a fake cardId of length 12B', async () => {
+        const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
             .post('/user/login')
@@ -103,14 +123,14 @@ describe('POST /create', () => {
             .send(userData) 
         expect(login.body.token).toBeDefined();  
 
-        testTab.tillId = fakeObjectId;
+        testItem.cardId = fakeObjectId;
 
-        const tab = await request(app)
-            .post('/tab/create')
+        const item = await request(app)
+            .post('/items/create')
             .set('authorization', login.body.token) 
             .expect(500)
-            .send(testTab)
-        expect(tab._body.err).toBe('Till not found');
-        expect(tab._body.code).toBe(500);
+            .send(testItem)
+        expect(item._body.err).toBe('Card not found');
+        expect(item._body.code).toBe(500);
     });
 });
