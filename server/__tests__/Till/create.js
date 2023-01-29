@@ -10,7 +10,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    const res = await cleanDatabase();
+    await cleanDatabase();
     mongoose.disconnect();
 }, 10000);
 

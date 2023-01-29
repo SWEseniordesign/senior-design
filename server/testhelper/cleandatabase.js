@@ -11,7 +11,6 @@ const Till = require('../models/Till');
 */
 async function cleanDatabase(){
     if(process.env.npm_lifecycle_event === 'test'){
-        console.log('Cleaning db test...');
         await User.deleteMany({}).catch( err => {return {err: 'Error deleting Users'}});
         await Business.deleteMany({}).catch( err => {return {err: 'Error deleting Businesses'}});
         await Card.deleteMany({}).exec().catch( err => {return {err: 'Error deleting Cards'}});

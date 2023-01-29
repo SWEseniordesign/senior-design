@@ -5,7 +5,7 @@ const app = require('../../server');
 const mongoose = require('mongoose');
 
 afterAll(async () => {
-    const res = await cleanDatabase();
+    await cleanDatabase();
     mongoose.disconnect();
 }, 10000);
 

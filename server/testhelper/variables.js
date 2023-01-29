@@ -55,6 +55,19 @@ let testCard = {
     tabId: ''
 };
 
+let testItem = {
+    name: 'BigMac',
+    price: 69.09,
+    image: '',
+    props: [],
+    stock: 4
+};
+
+let testEmployee = {
+    email: 'test@test.ca',
+    isManager: true
+};
+
  const fakeObjectIdType1 = 'yo';
  const fakeObjectIdType2 = 'yoyoyoyoyoyo';
  const fakeObjectId = '63d2b33a2a75670dbd74fb3b';
@@ -67,6 +80,8 @@ module.exports = {
     testTill,
     testTab,
     testCard,
+    testItem,
+    testEmployee,
     fakeObjectIdType1,
     fakeObjectIdType2,
     fakeObjectId
