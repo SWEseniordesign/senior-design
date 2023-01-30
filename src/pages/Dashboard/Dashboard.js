@@ -24,7 +24,7 @@ import { getUserName } from "../../requests/users-req";
 
 
 const Dashboard = () => {
-    const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "white"];
+    const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
 
     const pieData = [
         {name: 'Food', orders: 40},
