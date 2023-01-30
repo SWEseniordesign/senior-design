@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
+import { COLOR_PALETTE, FONT_FAMILY, FONT_FAMILY_BOLD } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
@@ -104,22 +104,24 @@ const Dashboard = () => {
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
                                 <Grid2 id='grid-left-top' xs={12} md={12} sx={{position: 'absolute', top:0, left: 0, height: '40%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={8}>
+                                        <Box ml={4} mt={4}>
+                                            <Box mb={2}>
+                                                <Typography sx={{
+                                                                fontFamily: FONT_FAMILY,
+                                                                fontWeight: '400',
+                                                                fontSize: '36px',
+                                                                lineHeight: '40px',
+                                                                display: 'flex'}}>
+                                                    Welcome, {ownerName}!
+                                                </Typography>
+                                            </Box>
                                             <Typography sx={{
-                                                            fontFamily: FONT_FAMILY,
-                                                            fontWeight: '600',
+                                                            fontFamily: FONT_FAMILY_BOLD,
+                                                            fontWeight: '800',
                                                             fontSize: '48px',
-                                                            lineHeight: '56px',
+                                                            lineHeight: '60px',
                                                             display: 'flex'}}>
                                                 {busName}
-                                            </Typography>
-                                            <Typography sx={{
-                                                            fontFamily: FONT_FAMILY,
-                                                            fontWeight: '600',
-                                                            fontSize: '36px',
-                                                            lineHeight: '44px',
-                                                            display: 'flex'}}>
-                                                {ownerName}
                                             </Typography>
                                             <Typography sx={{
                                                             fontFamily: FONT_FAMILY,
@@ -134,7 +136,7 @@ const Dashboard = () => {
                                 </Grid2>
                                 <Grid2 id='grid-left-bottom' xs={12} md={12} sx={{position: 'absolute', bottom: 0, left: 0, height: '60%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={8}>
+                                        <Box ml={4} mt={4}>
                                             <Typography sx={{
                                                             fontFamily: FONT_FAMILY,
                                                             fontWeight: '600',
@@ -143,18 +145,20 @@ const Dashboard = () => {
                                                             display: 'flex'}}>
                                                 Monthly Report
                                             </Typography>
-                                            <PieChart width={400} height={400}>
-                                                <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={140} >
-                                                    {pieData.map((entry, index) => (
-                                                        <Cell
-                                                        key={`cell-${index}`}
-                                                        fill={PIE_COLORS[index % PIE_COLORS.length]}
-                                                        />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip content={<CustomTooltip />} />
-                                                <Legend />
-                                            </PieChart>
+                                            <Box width="80%" height="80%" sx={{display:"flex", justifyContent: "center"}}>
+                                                <PieChart width={300} height={300} >
+                                                    <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={100} >
+                                                        {pieData.map((entry, index) => (
+                                                            <Cell
+                                                            key={`cell-${index}`}
+                                                            fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                                            />
+                                                        ))}
+                                                    </Pie>
+                                                    <Tooltip content={<CustomTooltip />} />
+                                                    <Legend />
+                                                </PieChart>
+                                            </Box>
                                         </Box>
                                     </Card>
                                 </Grid2>

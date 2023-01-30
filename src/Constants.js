@@ -7,3 +7,4 @@ export const COLOR_PALETTE = {
 
 export const FONT_FAMILY = 'Arial';
 
+export const FONT_FAMILY_BOLD = 'Arial-BoldMT';
