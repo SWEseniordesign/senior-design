@@ -1,8 +1,9 @@
-import { Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const useStyles = makeStyles({
     root: {
@@ -25,24 +26,22 @@ const useStyles = makeStyles({
         display: 'flex',
         gap: '24px'
     },
-    tabs: {
+    tabbar: {
         width: '95%',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        // border: '2px solid black'
     }
 })
 
-export const ViewCreateTill = () => {
+export const ViewEditTill = () => {
 
     const [isEdit, setIsEdit] = useState(true);
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [tabs, setTabs] = useState([{}]);
-    
+    const [openEditModel, setOpenEditModal] = useState(false);
+    const [tabs, setTabs] = useState([{id: 0, label: 'OVERVIEW'}, {id: -1, label: '+', canAdd: true}]);
 
-    useEffect(() => {
-        setTabs([{id: 0, label: 'OVERVIEW'}, {id: -1, label: '+'}])
-    }, [])
     
 
     const classes = useStyles();
@@ -62,8 +61,11 @@ export const ViewCreateTill = () => {
                         <MtButton label={'SAVE'} variant={'contained'} />
                     </div>
                 </div>
-                <div className={classes.tabs}>
-                    <MTTabs tabs={tabs} addTabsFunc={setTabs} />
+                <div className={classes.tabbar}>
+                    <MTTabs tabs={tabs} addTabsFunc={setTabs} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}><Typography>Yo</Typography></MTTabs>
+                    <IconButton size="large" onClick={() => setOpenEditModal((editModal) => !editModal)}>
+                        <SettingsIcon fontSize="large" />
+                    </IconButton>
                 </div>
             </div>
             :
