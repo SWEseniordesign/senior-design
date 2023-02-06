@@ -41,10 +41,10 @@ router.post('/get', verifyJWT, function(req, res){
                 }
             });
         } else{
-            return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
+            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
         }
     } else { //if objectId is not 
-        return res.status(400).send({err: 'Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
     }
 });
 
@@ -64,6 +64,14 @@ router.post('/create', verifyJWT, async (req, res) => {
         items: req.body.items,
     });
     let tabId = req.body.tabId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(tabId))){
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
+    }
+    if(!((String)(new ObjectId(tabId)) === tabId)){
+        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
+    }
 
     //Find tab to link
     let tab = await Tab.findById(tabId).catch( err => {return res.status(500).send({err: 'Error finding tab to link to card', code: 500});});

@@ -16,14 +16,13 @@ router.post('/get', verifyJWT, async function(req, res){
     if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
 
     //Find the business then format it and return
-    let name = req.body.name;
     Business.findOne({ownerId: user._id}, function(err, business){
         if(err){
             console.log(err);
             return res.status(500).send({err: 'Unable to get business', code: 500});
         } else {
             //If business is not found
-            if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
+            if(business === null) return res.status(404).send({err: `Business associated to User does not exist`, code: 404});
             let formattedBus = {
                 id: business._id,
                 name: business.name,
@@ -99,7 +98,7 @@ router.post('/admins', verifyJWT, async function(req, res){
 
     //checks if the users exist
     let result = await User.find({ '_id': { $in: req.body.admins } });
-    if(result.length != req.body.admins.length) return res.status(400).send({err: 'Unable to find admin(s)', code: 403});
+    if(result.length !== req.body.admins.length) return res.status(400).send({err: 'Unable to find admin(s)', code: 403});
     
     //checks if the admin to be added is already an admin of that business
     Business.findOne({name: req.body.name}, function(err, business){
