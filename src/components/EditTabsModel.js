@@ -1,6 +1,7 @@
 import { Modal, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
+import { MTTable } from "./mui/MTTable";
 
 const useStyles = makeStyles({
     paper: {
@@ -26,6 +27,11 @@ export const EditTabsModel = (props) => {
         setOpen(false);
     }
 
+    const tableColumns = [
+        {id: 0, label: 'Name', width: '100%'},
+        {id: 1, label: 'Color', width: '100%'}
+    ]
+
     const classes = useStyles();
 
     return (
@@ -35,6 +41,7 @@ export const EditTabsModel = (props) => {
         >
             <Paper className={classes.paper}>
                 <Typography>Hello</Typography>
+                <MTTable columns={tableColumns} rows={tabList} />
             </Paper>
         </Modal>
     )

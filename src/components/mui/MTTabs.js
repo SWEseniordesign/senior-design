@@ -24,12 +24,13 @@ const useStyle = makeStyles({
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '20%',
-        height: '30%',
+        height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '12px'
+        gap: '12px',
+        padding: '24px'
     }
 })
 
