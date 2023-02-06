@@ -95,4 +95,21 @@ router.post('/password', verifyJWT, async (req, res) => {
     if(!find_user) return res.status(403).send({err: 'User already exists', code: 403});
 });
 
+/*
+    REVIEW?
+    Gets a user's first and last name
+*/
+router.post('/name', verifyJWT, async (req, res) => {
+    //find user by its objectId
+    let find_user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user', code: 500})});
+    if(find_user === null) return res.status(403).send({err: 'User does not exists', code: 403});
+    let formattedUser = {
+        fname: find_user.fname,
+        lname: find_user.lname
+    };
+
+    //TODO if else or error catch?
+    return res.status(201).send({formattedUser, code: 201});
+});
+
 module.exports = router;

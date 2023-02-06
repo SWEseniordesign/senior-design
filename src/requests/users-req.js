@@ -53,6 +53,24 @@ export async function getUserBusiness (obj) {
 }
 
 /*
+    REVIEW? Gets a user's first and last name
+*/
+export async function getUserName (obj) {
+    let data;
+    await fetch('http://localhost:8080/user/name', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
     TODO
     Allows us to update a users password
 */
