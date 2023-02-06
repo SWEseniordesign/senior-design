@@ -3,8 +3,11 @@ import { Modal, Paper, Tab, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { CompactPicker } from "react-color";
-import { EditTabsModel } from "../EditTabsModel";
+import { COLOR_PALETTE } from "../../Constants";
+import { ListTabsModel } from "../ListTabsModel";
+import { AddTabModal } from "../AddTabModal";
 import MtButton from "./MTButton";
+import { MTModal } from "./MTModal";
 import MTTextField from "./MTTextField";
 
 const useStyle = makeStyles({
@@ -39,31 +42,14 @@ export const MTTabs = (props) => {
     const {tabs, addTabsFunc, openEditModal, setOpenEditModal, children} = props;
 
     const [value, setValue] = useState(0);
-    const [isAddingTab, setIsAddingTab] = useState(false);
-    const [newTabName, setNewTabName] = useState('');
-    const [newTabColor, setNewTabColor] = useState('#FFFFFF');
+    const [openAddModal, setOpenAddModal] = useState(false);
 
     const tabChange = (event, newValue) => {
         setValue(newValue)
     }
 
-    const handleAddTab = (e) => {
-        setIsAddingTab(false);
-        let plusTab = tabs.slice(-1);
-        let newList = tabs.filter((tab) => !tab.canAdd);
-
-        newList = newList.concat({id: newList[newList.length - 1].id + 1, label: newTabName, color: newTabColor.hex});
-        newList = newList.concat(plusTab);
-        addTabsFunc(newList);
-        setNewTabColor('#FFFFFF');
-    }
-
     const handleOpenAddModal = () => {
-        setIsAddingTab(true);
-    }
-
-    const handleCloseAddModal = () => {
-        setIsAddingTab(false);
+        setOpenAddModal(true);
     }
 
     const addTabStyle = {
@@ -74,8 +60,6 @@ export const MTTabs = (props) => {
 
 
     const classes = useStyle();
-
-    console.log(openEditModal)
 
     return (
         <div className={classes.root}>
@@ -102,19 +86,8 @@ export const MTTabs = (props) => {
                 </div>
                 <TabPanel value={value} index={value}>{children}</TabPanel>
             </TabContext>
-            {/* Need to make a custom component for the MODELs */}
-            <Modal
-                open={isAddingTab}
-                onClose={handleCloseAddModal}
-            >
-                <Paper className={classes.paper}>
-                        <Typography variant="h5">Add Tab</Typography>
-                        <MTTextField label={'Title'} value={newTabName} onChangeFunc={setNewTabName}/>
-                        <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
-                        <MtButton label={'ADD'} variant={'contained'} onClick={handleAddTab} />
-                </Paper>
-            </Modal>
-            <EditTabsModel tabList={tabs} open={openEditModal} setOpen={setOpenEditModal} />
+            <AddTabModal tabs={tabs} setTabsFunction={addTabsFunc} open={openAddModal} setOpen={setOpenAddModal} />
+            <ListTabsModel tabList={tabs} setTabsList={addTabsFunc} open={openEditModal} setOpen={setOpenEditModal} />
         </div>
     )
 }
