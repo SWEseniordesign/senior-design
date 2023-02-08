@@ -70,7 +70,7 @@ const Dashboard = () => {
         getBus();
         getOwner();
       }, []);
-    
+
     return (
         <div>
             <div>
@@ -123,8 +123,8 @@ const Dashboard = () => {
                 </PieChart>
             </div>
         </div>
-            
-        
+
+
     );
 }
 
