@@ -28,7 +28,7 @@ export const MTTable = (props) => {
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
     const [openEditModal, setOpenEditModal] = useState(false);
-    const [editRowId, setEditRowId] = useState(0);
+    const [editRowId, setEditRowId] = useState();
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);

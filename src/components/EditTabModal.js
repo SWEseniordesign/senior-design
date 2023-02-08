@@ -42,7 +42,6 @@ export const EditTabModal = (props) => {
         })
         
         setTabsFunction(newList);
-        setNewTabColor('#FFFFFF');
     }
 
     const handleCloseModal = () => {
@@ -57,10 +56,10 @@ export const EditTabModal = (props) => {
             handleOnClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
-                    <Typography variant="h5">Add Tab</Typography>
-                    <MTTextField label={'Title'} value={newTabName} onChangeFunc={setNewTabName}/>
+                    <Typography variant="h5">Edit Tab: {tabs.filter((tab) => tab.id === tabEditId)[0]?.label}</Typography>
+                    <MTTextField label={'New Title'} value={newTabName} onChangeFunc={setNewTabName}/>
                     <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
-                    <MtButton label={'ADD'} variant={'contained'} onClick={handleAddTab} width={'64%'} />
+                    <MtButton label={'SAVE'} variant={'contained'} onClick={handleAddTab} width={'64%'} />
             </Paper>
         </MTModal>
     )

@@ -63,8 +63,8 @@ export const ViewEditTill = () => {
                 </div>
                 <div className={classes.tabbar}>
                     <MTTabs tabs={tabs} addTabsFunc={setTabs} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}><Typography>Yo</Typography></MTTabs>
-                    <IconButton size="large" onClick={() => setOpenEditModal((editModal) => !editModal)}>
-                        <SettingsIcon fontSize="large" />
+                    <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
+                        <SettingsIcon fontSize="medium" />
                     </IconButton>
                 </div>
             </div>
