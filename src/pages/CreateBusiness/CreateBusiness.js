@@ -1,6 +1,7 @@
-import { Alert, Grid, Paper, Snackbar, Typography } from "@mui/material";
+import { Alert, Grid, Paper, Snackbar, Typography, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import MTTextField from '../../components/mui/MTTextField' 
 import MTButton from "../../components/mui/MTButton";
@@ -30,6 +31,7 @@ const useStyles = makeStyles({
 
 export const CreateBusiness = () => {
 
+    const navigate = useNavigate();
     const classes = useStyles();
 
     const [businessName, setBusinessName] = useState('');
@@ -52,7 +54,6 @@ export const CreateBusiness = () => {
         try{
             let newBusiness = {
                 name: businessName,
-                ownerId: userState.user.get()._id, //! Must be logged in before creating a business.
                 type: businessType,
                 admins: [],
                 tills: []
@@ -105,6 +106,13 @@ export const CreateBusiness = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <MTButton label={'CREATE'} variant={'contained'} type={'submit'} isFullWidth></MTButton>
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <div>
+                                    <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/')} sx={{
+                                        fontSize: '16px'
+                                    }}>I don't want to create my business right now.</Link>
+                                </div>
                             </Grid>
                         </Grid>
                     </form>

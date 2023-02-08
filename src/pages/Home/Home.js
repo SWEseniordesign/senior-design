@@ -145,8 +145,9 @@ export const Home = () => {
         let userId = {id: '63c450b6f3dcafbb59f7ece5'};
 
 
-        let businessId = {name: 'McDonalds'};
-        let error = await getBusiness(businessId);
+        let id = {email: 'test@unb.ca'};
+        
+        let error = await getBusiness();
 
         
         console.log(error);

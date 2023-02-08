@@ -1,5 +1,6 @@
+import { userState } from "../states/userState";
+
 /*
-    TODO test
     Creates an item
 */
 export async function createItem(obj) {
@@ -7,7 +8,8 @@ export async function createItem(obj) {
     await fetch('https://localhost:8080/items/create', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -17,7 +19,6 @@ export async function createItem(obj) {
 }
 
 /*
-    TODO test & change accessing
     Gets a specific item
 */
 export async function getItem (obj) {
@@ -25,7 +26,8 @@ export async function getItem (obj) {
     await fetch('https://localhost:8080/items/get', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -35,7 +37,7 @@ export async function getItem (obj) {
 }
 
 /*
-    TODO test
+    TODO
     Changes a items name
 */
 export async function changeName(obj) {
@@ -43,7 +45,8 @@ export async function changeName(obj) {
     await fetch('https://localhost:8080/items/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -53,7 +56,7 @@ export async function changeName(obj) {
 }
 
 /*
-    TODO test
+    TODO
     Changes a items image
 */
 export async function changeImage(obj) {
@@ -61,7 +64,8 @@ export async function changeImage(obj) {
     await fetch('https://localhost:8080/items/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -71,7 +75,7 @@ export async function changeImage(obj) {
 }
 
 /*
-    TODO test
+    TODO
     Changes a items props
 */
 export async function changeProps(obj) {
@@ -79,7 +83,8 @@ export async function changeProps(obj) {
     await fetch('https://localhost:8080/items/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -89,7 +94,7 @@ export async function changeProps(obj) {
 }
 
 /*
-    TODO test
+    TODO
     Changes a items stock
 */
 export async function changeStock(obj) {
@@ -97,7 +102,8 @@ export async function changeStock(obj) {
     await fetch('https://localhost:8080/items/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })

@@ -56,7 +56,8 @@ const MTDropdown = (props) => {
                 <div>
                     <Tooltip title={'Account Settings'}>
                         <IconButton onClick={handleOpenMenu}>
-                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>{userState.user.get().fname.charAt(0).toUpperCase()}</Avatar>
+                            {/* Update the avatar once we have a update backend fn to get user info */}
+                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>O</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu 

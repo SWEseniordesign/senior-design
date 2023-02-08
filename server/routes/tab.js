@@ -4,13 +4,14 @@ const Tab = require('../models/Tab');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Till = require('../models/Till');
+const verifyJWT = require('../middleware/auth');
 
 
 /*
     * DONE
     Gets a tab by the tabs objectid (stored in the till)
 */
-router.post('/get', function(req, res){
+router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -49,7 +50,7 @@ router.post('/get', function(req, res){
     * DONE
     Posts a tab and adds it to a Till
 */
-router.post('/create', async (req, res) => {
+router.post('/create', verifyJWT, async (req, res) => {
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -102,7 +103,7 @@ router.post('/create', async (req, res) => {
     TODO
     Modify a tabs's color
 */
-router.post('/color', async function(req, res){
+router.post('/color', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_tab = await Tab.findOne({name: req.body.name}).exec();
@@ -113,7 +114,7 @@ router.post('/color', async function(req, res){
     TODO
     Modify a tabs's cards
 */
-router.post('/cards', async function(req, res){
+router.post('/cards', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_tab = await Tab.findOne({name: req.body.name}).exec();

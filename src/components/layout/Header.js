@@ -84,7 +84,7 @@ const Header = () => {
     const userHasBusiness = async() => {
         let response;
         if(userState.token.get() !== ''){
-            response = await getUserBusiness({id: userState.user.get()._id});
+            response = await getUserBusiness();
         }
 
         if(!!(response)) setHasBusiness(response.business);
@@ -108,8 +108,10 @@ const Header = () => {
             pageState.previousPage.set(location.pathname)}},
         {id: 2, title: 'Edit Profile', action: () => {}},
         {id: 3, title: 'Logout', action: () => {
-            uState.isLoggedIn.set(false);
+            uState.token.set("");
             navigate('/');
+            // uState.isLoggedIn.set(false);
+            // navigate('/');
         }}
     ];
 
@@ -136,7 +138,7 @@ const Header = () => {
                         <MTDropdown label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
                         <MTDropdown label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
                     </div>
-                    {!uState.isLoggedIn.get() ?
+                    {uState.token.get() === "" ?
                         <div className={classes.signUpLoginContainer}>
                             <MTButton variant="contained" onClick={handleLogin} label={'SIGN IN'}/>
                             <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} />

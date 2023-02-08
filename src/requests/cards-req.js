@@ -1,6 +1,4 @@
-/*
-    I have not tested anything in this file
-*/
+import { userState } from "../states/userState";
 
 /*
 Create a card document.
@@ -18,7 +16,8 @@ export async function createCard (obj) {
     await fetch('https://localhost:8080/card/create', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -35,7 +34,8 @@ export async function getCard (obj) {
     await fetch('https://localhost:8080/card/get', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -52,7 +52,8 @@ export async function changeDimensions (obj) {
     await fetch('https://localhost:8080/card/dimensions', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -69,7 +70,8 @@ export async function changeColor (obj) {
     await fetch('https://localhost:8080/card/color', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
@@ -86,7 +88,8 @@ export async function changeItems (obj) {
     await fetch('https://localhost:8080/card/items', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
         },
         body: JSON.stringify(obj)
     })
