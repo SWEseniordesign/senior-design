@@ -12,8 +12,7 @@ import {
     Box, 
     TablePagination} from '@mui/material';
 import MtButton from './MTButton';
-import { AddTabModal } from '../AddTabModal';
-import { EditTabModal } from '../EditTabModal';
+import { EditTabModal } from '../till/EditTabModal';
 
 const useStyles = makeStyles({
     root: {
@@ -23,7 +22,7 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, setRows, rowsPerPageOptions, hasPagination, action, actionIsEdit} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionIsEdit} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
@@ -106,7 +105,7 @@ export const MTTable = (props) => {
                     }}
                 />
             }
-            <EditTabModal tabs={rows} setTabsFunction={setRows} open={openEditModal} setOpen={setOpenEditModal} tabEditId={editRowId} />
+            {openEditModal && <EditTabModal open={openEditModal} setOpen={setOpenEditModal} tabEditId={editRowId} />}
         </div>
     )
 }

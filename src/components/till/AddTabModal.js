@@ -1,11 +1,13 @@
+import { none, useHookstate } from "@hookstate/core";
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { CompactPicker } from "react-color";
-import { COLOR_PALETTE } from "../Constants";
-import MtButton from "./mui/MTButton";
-import { MTModal } from "./mui/MTModal";
-import MTTextField from "./mui/MTTextField";
+import { COLOR_PALETTE } from "../../Constants";
+import { tabState } from "../../states/tabState";
+import MtButton from "../mui/MTButton";
+import { MTModal } from "../mui/MTModal";
+import MTTextField from "../mui/MTTextField";
 
 const useStyle = makeStyles({
     paper: {
@@ -26,19 +28,21 @@ const useStyle = makeStyles({
 
 export const AddTabModal = (props) => {
 
-    const {tabs, setTabsFunction, open, setOpen} = props;
+    const {open, setOpen} = props;
+    const localTabState = useHookstate(tabState);
 
     const [newTabName, setNewTabName] = useState('');
     const [newTabColor, setNewTabColor] = useState('#FFFFFF');
 
     const handleAddTab = (e) => {
         setOpen(false);
-        let plusTab = tabs.slice(-1);
-        let newList = tabs.filter((tab) => !tab.canAdd);
+        localTabState.tabs[localTabState.tabs.get().length-1].set(none);
 
-        newList = newList.concat({id: newList[newList.length - 1].id + 1, label: newTabName, color: newTabColor.hex});
-        newList = newList.concat(plusTab);
-        setTabsFunction(newList);
+        let tabs = localTabState.tabs.get();
+
+        localTabState.tabs.merge([{id: tabs[tabs.length - 1].id + 1, label: newTabName, color: newTabColor.hex}]);
+        localTabState.tabs.merge([{id: -1, label: '+', canAdd: true}]);
+
         setNewTabColor('#FFFFFF');
     }
 
@@ -57,7 +61,7 @@ export const AddTabModal = (props) => {
                     <Typography variant="h5">Add Tab</Typography>
                     <MTTextField label={'Title'} value={newTabName} onChangeFunc={setNewTabName}/>
                     <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
-                    <MtButton label={'ADD'} variant={'contained'} onClick={handleAddTab} width={'64%'} />
+                    <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddTab()} width={'64%'} />
             </Paper>
         </MTModal>
     )

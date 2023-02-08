@@ -23,7 +23,7 @@ import { getUserName } from "../../requests/users-req";
 });*/
 
 
-const Dashboard = () => {
+export const Dashboard = () => {
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "white"];
 
     const pieData = [
@@ -127,5 +127,3 @@ const Dashboard = () => {
 
     );
 }
-
-export default Dashboard;
