@@ -12,7 +12,7 @@ Create a tab document.
 */
 export async function createTab (obj) {
     let data;
-    await fetch('http://localhost:8080/tab/create', {
+    await fetch('https://localhost:8080/tab/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ Get a Till from its name
 */
 export async function getTab (obj) {
     let data;
-    await fetch('http://localhost:8080/tab/get', {
+    await fetch('https://localhost:8080/tab/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ modify a Tab's cards
 */
 export async function addCards (obj) {
     let data;
-    await fetch('http://localhost:8080/tab/cards', {
+    await fetch('https://localhost:8080/tab/cards', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ modify a Tab's color
 */
 export async function changeColor (obj) {
     let data;
-    await fetch('http://localhost:8080/tab/color', {
+    await fetch('https://localhost:8080/tab/color', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

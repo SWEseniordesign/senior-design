@@ -5,7 +5,7 @@ import { userState } from "../states/userState";
 */
 export async function saveUser (obj) {
     let data;
-    await fetch('http://localhost:8080/user/register', {
+    await fetch('https://localhost:8080/user/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -22,7 +22,7 @@ export async function saveUser (obj) {
 */
 export async function login (obj) {
     let data;
-    await fetch('http://localhost:8080/user/login', {
+    await fetch('https://localhost:8080/user/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ export async function login (obj) {
 */
 export async function getUserBusiness (obj) {
     let data;
-    await fetch('http://localhost:8080/user/business', {
+    await fetch('https://localhost:8080/user/business', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export async function getUserName (obj) {
 */
 export async function updatePassword(obj){
     let data;
-    await fetch('http://localhost:8080/user/', {
+    await fetch('https://localhost:8080/user/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
