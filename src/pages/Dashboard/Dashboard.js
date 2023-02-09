@@ -1,10 +1,10 @@
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Paper, Card, Typography, Box, Fab, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { COLOR_PALETTE, FONT_FAMILY, FONT_FAMILY_BOLD } from "../../Constants";
+import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
@@ -104,7 +104,7 @@ const Dashboard = () => {
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
                                 <Grid2 id='grid-left-top' xs={12} md={12} sx={{position: 'absolute', top:0, left: 0, height: '40%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={4}>
+                                        <Box ml={4} mt={8}>
                                             <Box mb={2}>
                                                 <Typography sx={{
                                                                 fontFamily: FONT_FAMILY,
@@ -116,8 +116,8 @@ const Dashboard = () => {
                                                 </Typography>
                                             </Box>
                                             <Typography sx={{
-                                                            fontFamily: FONT_FAMILY_BOLD,
-                                                            fontWeight: '800',
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '600',
                                                             fontSize: '48px',
                                                             lineHeight: '60px',
                                                             display: 'flex'}}>
@@ -136,7 +136,7 @@ const Dashboard = () => {
                                 </Grid2>
                                 <Grid2 id='grid-left-bottom' xs={12} md={12} sx={{position: 'absolute', bottom: 0, left: 0, height: '60%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={4}>
+                                        <Box ml={4} mt={4} mr={4}>
                                             <Typography sx={{
                                                             fontFamily: FONT_FAMILY,
                                                             fontWeight: '600',
@@ -145,9 +145,9 @@ const Dashboard = () => {
                                                             display: 'flex'}}>
                                                 Monthly Report
                                             </Typography>
-                                            <Box width="80%" height="80%" sx={{display:"flex", justifyContent: "center"}}>
-                                                <PieChart width={300} height={300} >
-                                                    <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={100} >
+                                            <ResponsiveContainer height={400} width={"100%"}>
+                                                <PieChart>
+                                                    <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={"80%"} >
                                                         {pieData.map((entry, index) => (
                                                             <Cell
                                                             key={`cell-${index}`}
@@ -158,7 +158,7 @@ const Dashboard = () => {
                                                     <Tooltip content={<CustomTooltip />} />
                                                     <Legend />
                                                 </PieChart>
-                                            </Box>
+                                            </ResponsiveContainer>
                                         </Box>
                                     </Card>
                                 </Grid2>
