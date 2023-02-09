@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
-import { tabState } from "../../states/tabState";
 import ReactGridLayout from "react-grid-layout";
+import { Card } from "../../components/till/Card";
 
 const useStyles = makeStyles({
     root: {
@@ -45,8 +45,8 @@ const useStyles = makeStyles({
 })
 
 const testCards = [
-    {id: 0, label: 'Test1'},
-    {id: 1, label: "Test2"}
+    {id: 0, label: 'Test1', dimensions: { x: 0, y: 0, w: 1, h: 2 }, color: 'beige', items: [{id: 0, label: 'ITEM'}], static: true},
+    {id: 1, label: "Test2", dimensions: { x: 1, y: 1, w: 2, h: 3 }, color: 'beige', items: [{id: 0, label: 'ITEM'}], static: true}
 ]
 
 export const ViewEditTill = () => {
@@ -76,15 +76,28 @@ export const ViewEditTill = () => {
                     </div>
                     <div className={classes.tabbar}>
                         <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                            <ReactGridLayout className={classes.layout} cols={12} rows={12} width={1200}>
-                                <div key='a' data-grid={{ x: 0, y: 0, w: 1, h: 2 }} className={classes.test}>
-                                    <Typography>BRUH</Typography>
-                                </div>
-                                {/**
-                                 * till.card.map((card) => {
-                                 *  return <Card label={card.name} dimensions={card.dimension} color={card.color} items={card.items} />
-                                 * })
-                                 */}
+                            <ReactGridLayout className={classes.layout} cols={12} rows={12} width={1920}>
+                                
+                                {testCards.map((card, index) => {
+                                    // return <Card key={index} label={card.label} dimensions={card.dimensions} color={card.color} items={card.items} />
+                                    return (
+                                        <div key={index} data-grid={{ x: card.dimensions.x, y: card.dimensions.y, w: card.dimensions.w, h: card.dimensions.h, static: card.static }} className={classes.test}>
+                                            <Typography>{card.label}</Typography>
+                                            {card.items.map((item) => {
+                                                return (
+                                                    <ReactGridLayout className={classes.layout} cols={3} rows={6} width={1920 / 13}>
+                                                        <div key={index} data-grid={{ x: 0, y: 0, w: 1, h: 0.5 }} className={classes.test}>
+                                                            <Typography>{item.label}</Typography>
+                                                        </div>
+                                                    </ReactGridLayout>
+                                                )
+                                            })}
+                                            {/* Need a separate function to set the static variable in the correct card. */}
+                                            <MtButton label={'LOCK'} />
+                                        </div>
+                                    )
+                                })}
+                                
                             </ReactGridLayout>
                         </MTTabs>
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
