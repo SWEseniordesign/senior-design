@@ -197,8 +197,8 @@ export const CreateAccount = () => {
                             </Grid>
                             <Grid item xs={12} md={12}>
                                 <div className={classes.buttons_container}>
-                                    <MTButton variant='contained' type="submit" label={'Create'} width={'90%'} />
-                                    <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} />
+                                    <MTButton variant='contained' type="submit" label={'Create'} width={'100%'} />
+                                    {/* <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} /> */}
                                 </div>
                             </Grid>
                             <Grid item xs={12} md={12}>

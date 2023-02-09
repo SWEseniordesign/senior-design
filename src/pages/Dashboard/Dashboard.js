@@ -1,13 +1,16 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { Typography, Paper } from "@mui/material";
+import { Paper, Card, Typography, Box, Fab, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import AddIcon from '@mui/icons-material/Add';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Grid2 from "@mui/material/Unstable_Grid2";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
+import React, { useEffect, useState } from "react";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
 
 
-/*const useStyle = makeStyles({
+const useStyle = makeStyles({
     root: {
         height: 'calc(100vh - 101px)',
         width: '100%',
@@ -15,15 +18,34 @@ import { getUserName } from "../../requests/users-req";
         justifyContent: 'center',
         alignItems: 'center'
     },
-    paper: {
-        height: 'fit-content',
-        width: '60%',
-        maxWidth: '500px'
+    board: {
+        height: '90%',
+        minHeight: '90%',
+        width: '90%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-});*/
-
+    container: {
+        display: 'flex',
+        height: '95%',
+        width: '95%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    widget: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'left',
+        height: '100%',
+        width: '100%',
+    },
+});
 
 const Dashboard = () => {
+
+    const classes = useStyle();
+
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
 
     const pieData = [
@@ -72,55 +94,91 @@ const Dashboard = () => {
       }, []);
     
     return (
-        <div>
-            <div>
-                <Typography>Dashboard</Typography>
-                <Typography sx={{
-                                fontFamily: FONT_FAMILY,
-                                fontWeight: '600',
-                                fontSize: '48px',
-                                lineHeight: '56px',
-                                display: 'flex'}}>
-                    {busName}
-                </Typography>
-                <Typography sx={{
-                                fontFamily: FONT_FAMILY,
-                                fontWeight: '600',
-                                fontSize: '36px',
-                                lineHeight: '44px',
-                                display: 'flex'}}>
-                    {ownerName}
-                </Typography>
-                <Typography sx={{
-                                fontFamily: FONT_FAMILY,
-                                fontWeight: '200',
-                                fontSize: '28px',
-                                lineHeight: '36px',
-                                display: 'flex'}}>
-                    {busType}
-                </Typography>
-            </div>
-            <div>
-                <Typography sx={{
-                                fontFamily: FONT_FAMILY,
-                                fontWeight: '600',
-                                fontSize: '36px',
-                                lineHeight: '44px',
-                                display: 'flex'}}>
-                    Monthly Report
-                </Typography>
-                <PieChart width={400} height={400}>
-                    <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={140} >
-                        {pieData.map((entry, index) => (
-                            <Cell
-                            key={`cell-${index}`}
-                            fill={PIE_COLORS[index % PIE_COLORS.length]}
-                            />
-                        ))}
-                    </Pie>
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend />
-                </PieChart>
+            <div className={classes.root}>
+                {/* <Paper className={classes.board} elevation={5} sx={{
+                backgroundColor: COLOR_PALETTE.BABY_BLUE,
+            }}> */}
+                <div className={classes.container}>
+                    <Grid2 container sx={{height: '100%', width: '100%'}} spacing={2}>
+                        <Grid2 id='grid-panel-left' xs={12} md={5} sx={{height: '100%'}}>
+                            <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
+                                <Grid2 id='grid-left-top' xs={12} md={12} sx={{position: 'absolute', top:0, left: 0, height: '40%'}}>
+                                    <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
+                                        <Box ml={4} mt={8}>
+                                            <Typography sx={{
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '600',
+                                                            fontSize: '48px',
+                                                            lineHeight: '56px',
+                                                            display: 'flex'}}>
+                                                {busName}
+                                            </Typography>
+                                            <Typography sx={{
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '600',
+                                                            fontSize: '36px',
+                                                            lineHeight: '44px',
+                                                            display: 'flex'}}>
+                                                {ownerName}
+                                            </Typography>
+                                            <Typography sx={{
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '200',
+                                                            fontSize: '28px',
+                                                            lineHeight: '36px',
+                                                            display: 'flex'}}>
+                                                {busType}
+                                            </Typography>
+                                        </Box>
+                                    </Card>
+                                </Grid2>
+                                <Grid2 id='grid-left-bottom' xs={12} md={12} sx={{position: 'absolute', bottom: 0, left: 0, height: '60%'}}>
+                                    <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
+                                        <Box ml={4} mt={8}>
+                                            <Typography sx={{
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '600',
+                                                            fontSize: '36px',
+                                                            lineHeight: '44px',
+                                                            display: 'flex'}}>
+                                                Monthly Report
+                                            </Typography>
+                                            <PieChart width={400} height={400}>
+                                                <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={140} >
+                                                    {pieData.map((entry, index) => (
+                                                        <Cell
+                                                        key={`cell-${index}`}
+                                                        fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                                        />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip content={<CustomTooltip />} />
+                                                <Legend />
+                                            </PieChart>
+                                        </Box>
+                                    </Card>
+                                </Grid2>
+                            </Grid2>
+                        </Grid2>  
+                        <Grid2 id='grid-panel-right' xs={12} md={7} sx={{height: '100%'}}>
+                            <Grid2 container sx={{height: '100%', width: '100%', position: 'relative', display: 'flex', alignItems: 'center'}}>
+                                <Grid2 id='grid-right' xs={12} md={12} sx={{position: 'absolute', right: 0, height: '100%',}}>
+                                    <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE, position: 'relative'}} elevation={3}>
+                                        <Box ml={4} mt={8}>
+                                            <Typography variant='h4'> Title3</Typography>
+                                            <Typography variant='subtitle1'> Subtitle3 </Typography>
+                                            <Fab color="primary" aria-label="add" sx={{position: 'absolute', bottom: 20, right: 20}}>
+                                                <AddIcon />
+                                            </Fab>
+                                            <IconButton aria-label="more" sx={{position: 'absolute', top: 20, right: 20}}>
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                        </Box>
+                                    </Card>
+                                </Grid2>
+                            </Grid2>
+                        </Grid2>
+                    </Grid2>
             </div>
         </div>
             
