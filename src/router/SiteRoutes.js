@@ -4,7 +4,7 @@ import { AccessTill } from '../pages/AccessTill/AccessTill';
 import { CreateBusiness } from '../pages/CreateBusiness/CreateBusiness';
 import { AccessBusiness } from '../pages/AccessBusiness/AccessBusiness';
 import { CreateAccount } from '../pages/CreateAccount/CreateAccount';
-import { Dashboard } from '../pages/Dashboard/Dashboard';
+import Dashboard from '../pages/Dashboard/Dashboard';
 import { ViewEditTill } from '../pages/ViewEditTill/ViewEditTill';
 
 const SiteRoutes = [
