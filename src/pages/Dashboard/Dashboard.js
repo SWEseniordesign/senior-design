@@ -1,13 +1,15 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Paper, Card, Typography, Box, Fab, IconButton } from "@mui/material";
+import { Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import BusinessIcon from '@mui/icons-material/Business';
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
+import { getAllTills } from "../../requests/tills-req";
 
 
 const useStyle = makeStyles({
@@ -75,29 +77,30 @@ const Dashboard = () => {
 
 
     //const classes = useStyle();
-    const [busName, setBusName] = useState("")
-    const [busType, setBusType] = useState("")
-    const [ownerName, setOwnerName] = useState("")
+    const [bus, setBus] = useState({})
+    const [owner, setOwner] = useState({})
+    const [tills, setTills] = useState([])
 
     useEffect(() => {
         async function getBus() {
-            const bus = await getBusiness()
-            setBusName(bus.formattedBus.name)
-            setBusType(bus.formattedBus.type)
+            const newBus = await getBusiness()
+            setBus(newBus.formattedBus)
         }
         async function getOwner() {
-            const owner = await getUserName()
-            setOwnerName(owner.formattedUser.fname + " " + owner.formattedUser.lname)
+            const newOwner = await getUserName()
+            setOwner(newOwner.formattedUser)
+        }
+        async function getTills() {
+            const newTills = await getAllTills(bus)
+            setTills(newTills.formattedTills)
         }
         getBus();
         getOwner();
-      }, []);
+        getTills();
+    }, []);
     
     return (
             <div className={classes.root}>
-                {/* <Paper className={classes.board} elevation={5} sx={{
-                backgroundColor: COLOR_PALETTE.BABY_BLUE,
-            }}> */}
                 <div className={classes.container}>
                     <Grid2 container sx={{height: '100%', width: '100%'}} spacing={2}>
                         <Grid2 id='grid-panel-left' xs={12} md={5} sx={{height: '100%'}}>
@@ -112,7 +115,7 @@ const Dashboard = () => {
                                                                 fontSize: '36px',
                                                                 lineHeight: '40px',
                                                                 display: 'flex'}}>
-                                                    Welcome, {ownerName}!
+                                                    Welcome, {owner.fname}!
                                                 </Typography>
                                             </Box>
                                             <Typography sx={{
@@ -121,7 +124,7 @@ const Dashboard = () => {
                                                             fontSize: '48px',
                                                             lineHeight: '60px',
                                                             display: 'flex'}}>
-                                                {busName}
+                                                {bus.name}
                                             </Typography>
                                             <Typography sx={{
                                                             fontFamily: FONT_FAMILY,
@@ -129,7 +132,7 @@ const Dashboard = () => {
                                                             fontSize: '28px',
                                                             lineHeight: '36px',
                                                             display: 'flex'}}>
-                                                {busType}
+                                                {bus.type}
                                             </Typography>
                                         </Box>
                                     </Card>
@@ -168,9 +171,34 @@ const Dashboard = () => {
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative', display: 'flex', alignItems: 'center'}}>
                                 <Grid2 id='grid-right' xs={12} md={12} sx={{position: 'absolute', right: 0, height: '100%',}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE, position: 'relative'}} elevation={3}>
-                                        <Box ml={4} mt={8}>
-                                            <Typography variant='h4'> Title3</Typography>
-                                            <Typography variant='subtitle1'> Subtitle3 </Typography>
+                                        <Box ml={4} mt={8} mr={4}>
+                                            <Typography variant='h4'> Tills </Typography>
+                                            <Typography variant='subtitle1'> {bus.name} </Typography>
+                                            <Box id='list-container' mt={4}>
+                                                <List sx={{overflow: "auto", maxHeight: 800}}>
+                                                    { tills.length ? tills.map((till) => {
+                                                        return (
+                                                            <ListItem
+                                                                secondaryAction={
+                                                                    <IconButton edge="end" aria-label="delete">
+                                                                        <MoreVertIcon />
+                                                                    </IconButton>
+                                                                }
+                                                            >
+                                                                <ListItemAvatar>
+                                                                    <Avatar>
+                                                                        <BusinessIcon />
+                                                                    </Avatar>
+                                                                </ListItemAvatar>
+                                                                <ListItemText
+                                                                    primary={till.name}
+                                                                    secondary={till.employees.length + " employees"}
+                                                                />
+                                                            </ListItem>
+                                                        )
+                                                    }) : <Typography> No tills found </Typography> }
+                                                </List>
+                                            </Box>
                                             <Fab color="primary" aria-label="add" sx={{position: 'absolute', bottom: 20, right: 20}}>
                                                 <AddIcon />
                                             </Fab>
