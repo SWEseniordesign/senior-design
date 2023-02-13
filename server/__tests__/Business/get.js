@@ -15,7 +15,7 @@ afterAll(async () => {
 }, 10000);
 
 describe('POST /get', () => {
-    it('should return 201 and business', async () => {
+    it('should return 200 and business', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
         
         const login = await request(app)
@@ -35,10 +35,10 @@ describe('POST /get', () => {
         const getBusiness = await request(app)
             .post('/business/get')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send()
         expect(getBusiness._body.formattedBus).toBeDefined();
-        expect(getBusiness._body.code).toBe(201);
+        expect(getBusiness._body.code).toBe(200);
     });
 
     it('should return 404 for attempting to find Business which doesn\'t exist', async () => {
