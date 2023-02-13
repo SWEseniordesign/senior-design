@@ -9,7 +9,7 @@ import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
-import { getAllTills } from "../../requests/tills-req";
+import { getTill } from "../../requests/tills-req";
 
 
 const useStyle = makeStyles({
@@ -57,6 +57,10 @@ const Dashboard = () => {
         {name: 'Snacks', orders: 10}
     ];
 
+    const [business, setBusiness] = useState({penis: 'balls'})
+    const [owner, setOwner] = useState({})
+    const [tills, setTills] = useState([])
+
     const CustomTooltip = ({ active, payload, label }) => {
         if (active) {
            return (
@@ -75,30 +79,29 @@ const Dashboard = () => {
      return null;
     };
 
-
-    //const classes = useStyle();
-    const [bus, setBus] = useState({})
-    const [owner, setOwner] = useState({})
-    const [tills, setTills] = useState([])
-
-    useEffect(() => {
-        async function getBus() {
+    useEffect (() => {
+        async function getBus(){
             const newBus = await getBusiness()
-            setBus(newBus.formattedBus)
-        }
-        async function getOwner() {
             const newOwner = await getUserName()
+            setBusiness(newBus.formattedBus)
             setOwner(newOwner.formattedUser)
         }
-        async function getTills() {
-            const newTills = await getAllTills(bus)
-            setTills(newTills.formattedTills)
-        }
         getBus();
-        getOwner();
-        getTills();
-    }, []);
-    
+    }, [])
+
+    useEffect (() => {
+        async function getTills(){
+            const tills = []
+            for(let tillId of business.tills) {
+                console.log('till: ', tillId)
+                const newTill = await getTill({id: tillId})
+                tills.push(newTill.formattedTill)
+            }
+            setTills(tills)
+        }
+        if(business.tills) getTills();
+    }, [business])
+
     return (
             <div className={classes.root}>
                 <div className={classes.container}>
@@ -118,21 +121,22 @@ const Dashboard = () => {
                                                     Welcome, {owner.fname}!
                                                 </Typography>
                                             </Box>
+                                            { business.name ?
                                             <Typography sx={{
                                                             fontFamily: FONT_FAMILY,
                                                             fontWeight: '600',
                                                             fontSize: '48px',
                                                             lineHeight: '60px',
                                                             display: 'flex'}}>
-                                                {bus.name}
-                                            </Typography>
+                                                {business.name}
+                                            </Typography> : null}
                                             <Typography sx={{
                                                             fontFamily: FONT_FAMILY,
                                                             fontWeight: '200',
                                                             fontSize: '28px',
                                                             lineHeight: '36px',
                                                             display: 'flex'}}>
-                                                {bus.type}
+                                                {business.type}
                                             </Typography>
                                         </Box>
                                     </Card>
@@ -173,7 +177,7 @@ const Dashboard = () => {
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE, position: 'relative'}} elevation={3}>
                                         <Box ml={4} mt={8} mr={4}>
                                             <Typography variant='h4'> Tills </Typography>
-                                            <Typography variant='subtitle1'> {bus.name} </Typography>
+                                            <Typography variant='subtitle1'> {business.name} </Typography>
                                             <Box id='list-container' mt={4}>
                                                 <List sx={{overflow: "auto", maxHeight: 800}}>
                                                     { tills.length ? tills.map((till) => {

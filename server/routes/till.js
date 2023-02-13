@@ -48,35 +48,6 @@ router.post('/get', verifyJWT, function(req, res){
 });
 
 /*
- * Gets all tills for a business (passed in body)
-*/
-router.post('/getAll', verifyJWT, async function(req, res){
-    //Check if req body exists
-    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
-    Till.find({businessId: req.body.businessId}, function(err, tills){ //TODO: get list of tills from object instead of find?
-        if(err){
-            console.log(err);
-            return res.status(500).send({err: 'Unable to get tills', code: 500});
-        } else {
-            //If tills not found
-            if(tills === null) return res.status(404).send({err: `Tills do not exist`, code: 404});
-            let formattedTills = [];
-            for(let till of tills){
-                formattedTills.push({
-                    id: till._id,
-                    name: till.name,
-                    managerPassword: till.managerPassword,
-                    employees: till.employees,
-                    tabs: till.tabs,
-                    props: till.props
-                });
-            }
-            return res.status(201).send({formattedTills, code: 201});
-        }
-    });
-});
-
-/*
     * DONE
     Posts a till
 */
