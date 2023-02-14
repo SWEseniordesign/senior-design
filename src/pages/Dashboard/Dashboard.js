@@ -1,9 +1,16 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Paper, Card, Typography, Box, Fab, IconButton } from "@mui/material";
+import { Paper, Card, Typography, Box, Fab, IconButton, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Grid2 from "@mui/material/Unstable_Grid2";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import MTTextField from '../../components/mui/MTTextField' 
+import MTButton from "../../components/mui/MTButton";
+import MTSelect from "../../components/mui/MTSelect";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { getBusiness } from "../../requests/businesses-req";
@@ -91,7 +98,31 @@ const Dashboard = () => {
         }
         getBus();
         getOwner();
-      }, []);
+    }, []);
+
+    const [businessName, setBusinessName] = useState('');
+    const [businessType, setBusinessType] = useState('');
+    const [open, setOpen] = useState(false);
+    //* The types of business myTill supports.
+    const businessTypes = [
+        {id: 1, title: 'Whole Sale', onClick: (e) => setBusinessType(e.target.value)},
+        {id: 2, title: 'Quick Service', onClick: (e) => setBusinessType(e.target.value)}
+    ]
+
+    const handleEditBusinessClick = () => {
+    setOpen(true);
+        //console.log("ayooo");
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
+    
+    const handleEditBusinessSubmit = () => {
+        console.log("yuh");
+        console.log(businessName);
+        //save new bus info and refresh
+        setOpen(false);
+    };
     
     return (
             <div className={classes.root}>
@@ -131,9 +162,32 @@ const Dashboard = () => {
                                                             display: 'flex'}}>
                                                 {busType}
                                             </Typography>
-                                            <IconButton aria-label="more" sx={{position: 'absolute', top: 20, right: 20}}>
+                                            <IconButton aria-label="more" onClick={handleEditBusinessClick} sx={{position: 'absolute', top: 20, right: 20}}>
                                                 <MoreVertIcon />
                                             </IconButton>
+
+                                            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                                                <DialogTitle id="form-dialog-title">Edit Business</DialogTitle>
+                                                
+                                                <Grid container spacing={3}>
+                                                    <DialogContent>
+                                                        <Grid item xs={12}>
+                                                            <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired />
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
+                                                        </Grid>
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                        <Grid item xs={6}>
+                                                            <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleClose} isFullWidth></MTButton>
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <MTButton label={'CREATE'} variant={'contained'} type={'submit'} onClick={handleEditBusinessSubmit} isFullWidth></MTButton>
+                                                        </Grid>
+                                                    </DialogActions>
+                                                </Grid>
+                                            </Dialog>
                                         </Box>
                                     </Card>
                                 </Grid2>
