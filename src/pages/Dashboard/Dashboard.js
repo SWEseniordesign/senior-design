@@ -92,7 +92,6 @@ const Dashboard = () => {
         const bus = await getBusiness()
         setBusName(bus.formattedBus.name)
         setBusType(bus.formattedBus.type)
-        console.log(bus); //remove
     }
     const getOwner = async() => {
         const owner = await getUserName()
@@ -102,7 +101,7 @@ const Dashboard = () => {
     useEffect(() => {
         if(submitTriggered) {
             getBus();
-            getOwner();
+            getOwner(); //remove?
             setSubmitTriggered(false);
         }
         getBus();
@@ -113,6 +112,7 @@ const Dashboard = () => {
     const [businessName, setBusinessName] = useState('');
     const [businessType, setBusinessType] = useState('');
     const [open, setOpen] = useState(false);
+
     //* The types of business myTill supports.
     const businessTypes = [
         {id: 1, title: 'Whole Sale', onClick: (e) => setBusinessType(e.target.value)},
@@ -121,7 +121,6 @@ const Dashboard = () => {
 
     const handleEditBusinessClick = () => {
         setOpen(true);
-        //console.log("ayooo");
     };
     const handleClose = () => {
         setSubmitTriggered(true);
@@ -129,12 +128,6 @@ const Dashboard = () => {
     };
     
     const handleEditBusinessSubmit = async(e) => {
-        //setSubmitTriggered(true);
-        console.log("yuh");
-        console.log(businessName);
-        console.log(businessType);
-        //save new bus info and refresh
-
         e.preventDefault();
         try{
             let updatedBusiness = {
