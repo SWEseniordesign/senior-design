@@ -131,6 +131,9 @@ const Dashboard = () => {
                                                             display: 'flex'}}>
                                                 {busType}
                                             </Typography>
+                                            <IconButton aria-label="more" sx={{position: 'absolute', top: 20, right: 20}}>
+                                                <MoreVertIcon />
+                                            </IconButton>
                                         </Box>
                                     </Card>
                                 </Grid2>
