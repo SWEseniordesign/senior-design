@@ -35,13 +35,13 @@ describe('POST /create', () => {
         const getEmployee = await request(app)
             .post('/employee/get')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send(testEmployee) 
         expect(getEmployee._body.formattedEmployee).toBeDefined();
-        expect(getEmployee._body.code).toBe(201);
+        expect(getEmployee._body.code).toBe(200);
     });
 
-    it('should return 403 for getting fake employee', async () => {
+    it('should return 404 for getting fake employee', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
