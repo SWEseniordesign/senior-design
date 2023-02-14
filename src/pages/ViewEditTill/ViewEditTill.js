@@ -1,11 +1,15 @@
-import { IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
-import ReactGridLayout from "react-grid-layout";
-import { Card } from "../../components/till/Card";
+import { Responsive, WidthProvider } from "react-grid-layout";
+import { AddItemModal } from "../../components/till/AddItemModal";
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
+import './ViewEditTill.css'
+import { COLOR_PALETTE } from "../../Constants";
 
 const useStyles = makeStyles({
     root: {
@@ -34,19 +38,60 @@ const useStyles = makeStyles({
         alignItems: 'flex-start',
         // border: '2px solid black'
     },
-    test: {
-        border: '2px solid black',
-        borderRadius: '5px',
-        backgroundColor: 'beige'
-    },
     layout: {
-        border: '1px solid grey'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '12px',
+        border: '1px solid lightgrey',
+        height: '100%'
+    },
+    cardTitleBar: {
+        display: 'flex',
+        justifyContent: 'space-between'
+    },
+    card: {
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid grey',
+        borderRadius: '5px',
+        gap: '12px',
+        height: '100%'
+    },
+    grid: {
+        display: 'grid',
+        gap: '12px',
+        gridTemplateColumns: 'auto auto auto',
+
+        height: '100%', 
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
+        '&::-webkit-scrollbar':{
+            width:0,
+        }
+    },
+    item: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '7vh',
+        border: '1px solid lightgrey',
+        borderRadius: '5px'
+    },
+    dragDots: {
+        height: '2px',
+        width: '2px',
+        backgroundColor: COLOR_PALETTE.NAVY_BLUE,
+        opacity: 0.4,
     }
+    
 })
 
-const testCards = [
-    {id: 0, label: 'Test1', dimensions: { x: 0, y: 0, w: 1, h: 2 }, color: 'beige', items: [{id: 0, label: 'ITEM'}], static: true},
-    {id: 1, label: "Test2", dimensions: { x: 1, y: 1, w: 2, h: 3 }, color: 'beige', items: [{id: 0, label: 'ITEM'}], static: true}
+const c = [
+    {id: 0, label: 'Test1', dimensions: {x: 0, y: 1, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
+    {id: 1, label: "Test2", dimensions: {x: 2, y: 1, w: 2, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
+    {id: 2, label: "Test3", dimensions: {x: 3, y: 3, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: true}
+
 ]
 
 export const ViewEditTill = () => {
@@ -55,7 +100,47 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
+    const [openAddItem, setOpenAddItem] = useState(false);
+    const [testCards, setTestCards] = useState(c);
 
+    const ResponsiveLayout = WidthProvider(Responsive);
+
+    const changeLockStatus = (e, cardId) => {
+        let newCards = testCards.map((card) => {
+            if(card.id == cardId){
+                card.static = !card.static
+            }
+            return card;
+        })
+        setTestCards(newCards);
+    }
+
+    const handleLayoutChange = (e) => {
+        console.log(e)
+        let newCardsDimensions = testCards.map((card, i) => {
+            if(card.id.toString === e[i].i){
+                card.dimensions.x = e[i].x;
+                card.dimensions.y = e[i].y;
+                card.dimensions.w = e[i].w;
+                card.dimensions.h = e[i].h;
+            }
+            return card;
+        })
+        // setTestCards(newCardsDimensions);
+    }
+
+    const createLayout = () => {
+        return testCards.map((card, index) => {
+            return {
+                i: index.toString(), 
+                x: card.dimensions.x, 
+                y: card.dimensions.y, 
+                w: card.dimensions.w, 
+                h: card.dimensions.h,
+                static: card.static
+            }
+        })
+    }
 
     const classes = useStyles();
 
@@ -76,29 +161,54 @@ export const ViewEditTill = () => {
                     </div>
                     <div className={classes.tabbar}>
                         <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                            <ReactGridLayout className={classes.layout} cols={12} rows={12} width={1920}>
-                                
+                            <ResponsiveLayout 
+                                className={classes.layout} 
+                                layouts={{lg: createLayout()}} 
+                                // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }} 
+                                draggableHandle=".draggableHandle"
+                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                                onLayoutChange={(e) => handleLayoutChange(e)}
+                                >
                                 {testCards.map((card, index) => {
-                                    // return <Card key={index} label={card.label} dimensions={card.dimensions} color={card.color} items={card.items} />
-                                    return (
-                                        <div key={index} data-grid={{ x: card.dimensions.x, y: card.dimensions.y, w: card.dimensions.w, h: card.dimensions.h, static: card.static }} className={classes.test}>
-                                            <Typography>{card.label}</Typography>
-                                            {card.items.map((item) => {
-                                                return (
-                                                    <ReactGridLayout className={classes.layout} cols={3} rows={6} width={1920 / 13}>
-                                                        <div key={index} data-grid={{ x: 0, y: 0, w: 1, h: 0.5 }} className={classes.test}>
-                                                            <Typography>{item.label}</Typography>
+                                    return  <div key={index.toString()}>
+                                                <Box className={classes.card} sx={{backgroundColor: card.color}}>
+                                                    <div className={classes.cardTitleBar}>
+                                                        <Typography variant={'h5'}>{card.label}</Typography>
+                                                        <div className='draggableHandle'>
+                                                            {Array.from(Array(6), (e, i) => {
+                                                                return <div key={i} className={classes.dragDots} />
+                                                            })}
                                                         </div>
-                                                    </ReactGridLayout>
-                                                )
-                                            })}
-                                            {/* Need a separate function to set the static variable in the correct card. */}
-                                            <MtButton label={'LOCK'} />
-                                        </div>
-                                    )
+                                                        {card.static ? 
+                                                            <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                <LockIcon fontSize="small" />
+                                                            </IconButton> 
+                                                            :
+                                                            <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                <LockOpenIcon fontSize="small" />
+                                                            </IconButton>
+                                                        }
+                                                    </div>
+                                                    <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
+                                                        {card.items.map((item, index) => {
+                                                            return (<div key={index} style={{gridColumn: 1 / 2}}>
+                                                                        <Box className={classes.item}>
+                                                                            <Typography>{item.label}</Typography>
+                                                                            {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
+                                                                        </Box>
+                                                                    </div>)
+                                                        })}
+                                                        <div style={{gridColumn: 1 / 2}} onClick={() => setOpenAddItem(true)}>
+                                                            <Box className={classes.item}>
+                                                                <Typography>+</Typography>
+                                                            </Box>
+                                                        </div>
+                                                    </div>
+                                                </Box>
+                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} />
+                                            </div>
                                 })}
-                                
-                            </ReactGridLayout>
+                            </ResponsiveLayout>
                         </MTTabs>
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
                             <SettingsIcon fontSize="medium" />
@@ -113,3 +223,14 @@ export const ViewEditTill = () => {
         </div>
     )
 }
+
+/**
+ * <div key={index.toString()} >
+                                                <Box className={classes.card} sx={{backgroundColor: card.color}}>
+                                                    <Typography>{card.label}</Typography>
+                                                </Box>
+                                        </div>
+
+                                        <Card key={index.toString()} label={card.label} color={card.color} items={card.items} />
+ * 
+ */

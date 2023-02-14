@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { COLOR_PALETTE } from '../../Constants';
 
 export default function MTTextField(props) {    
   const [showPassword, setShowPassword] = useState(false);
