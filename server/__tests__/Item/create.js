@@ -91,7 +91,7 @@ describe('POST /create', () => {
             .expect(400)
             .send(testCard)
         expect(item._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(item._body.code).toBe(403);
+        expect(item._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to create an iten with a improper string cardId of length 12B', async () => {
@@ -111,7 +111,7 @@ describe('POST /create', () => {
             .expect(400)
             .send(testItem)
         expect(item._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(item._body.code).toBe(403);
+        expect(item._body.code).toBe(400);
     });
 
     it('should return 500 for attempting to create an item with a fake cardId of length 12B', async () => {
@@ -128,9 +128,9 @@ describe('POST /create', () => {
         const item = await request(app)
             .post('/items/create')
             .set('authorization', login.body.token) 
-            .expect(500)
+            .expect(404)
             .send(testItem)
         expect(item._body.err).toBe('Card not found');
-        expect(item._body.code).toBe(500);
+        expect(item._body.code).toBe(404);
     });
 });
