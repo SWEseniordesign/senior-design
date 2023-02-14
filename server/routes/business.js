@@ -47,7 +47,7 @@ router.post('/get', verifyJWT, async function(req, res){
  * Creates a business from JSON object
  *
  * @route POST /business/create
- * @expects JWT in header of request
+ * @expects JWT in header of request, business info in JSON in body of request
  * @success 201 Created, returns {formattedBus, code}
  * @error 400 Bad Request, No Request body passed
  *        401 Unauthorized, Invalid Token

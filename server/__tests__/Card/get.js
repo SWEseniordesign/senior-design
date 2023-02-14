@@ -16,7 +16,7 @@ afterAll(async () => {
 
 
 describe('POST /get', () => {
-    it('should return 201 and card', async () => {
+    it('should return 200 and card', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
@@ -66,10 +66,10 @@ describe('POST /get', () => {
         const getCard = await request(app)
             .post('/card/get')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send({id: card._body.formattedCard.id})
         expect(getCard._body.formattedCard).toBeDefined();
-        expect(getCard._body.code).toBe(201);
+        expect(getCard._body.code).toBe(200);
     });
 
     it('should return 400 for attempting to get a card with a less than 12B cardId', async () => {
@@ -87,7 +87,7 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType1})
         expect(card._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(card._body.code).toBe(403);
+        expect(card._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to get a card with a improper string cardId of length 12B', async () => {
@@ -105,10 +105,10 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType2})
         expect(card._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(card._body.code).toBe(403);
+        expect(card._body.code).toBe(400);
     });
 
-    it('should return 500 for attempting to get a card with a fake cardId of length 12B', async () => {
+    it('should return 404 for attempting to get a card with a fake cardId of length 12B', async () => {
         const userData = { email: testUser1.email, password: testUser1.password }; 
 
         const login = await request(app)
