@@ -47,6 +47,12 @@ const useStyle = makeStyles({
         height: '100%',
         width: '100%',
     },
+    dialogContainer: {
+        margin: '20px'
+    },
+    dialogElement: {
+        marginBottom: '20px'
+    }
 });
 
 const Dashboard = () => {
@@ -196,28 +202,32 @@ const Dashboard = () => {
                                             <IconButton aria-label="more" onClick={handleEditBusinessClick} sx={{position: 'absolute', top: 20, right: 20}}>
                                                 <MoreVertIcon />
                                             </IconButton>
-
                                             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                                                <DialogTitle id="form-dialog-title">Edit Business</DialogTitle>
-                                                
-                                                <Grid container spacing={3}>
+                                                <div className={classes.dialogContainer}>
+                                                    <DialogTitle id="form-dialog-title">
+                                                        <Typography sx={{
+                                                                        fontFamily: FONT_FAMILY,
+                                                                        fontWeight: '600',
+                                                                        fontSize: '32px',
+                                                                        lineHeight: '40px',
+                                                                        display: 'flex',
+                                                                        justifyContent: 'center'}}>
+                                                            Edit Business
+                                                        </Typography>
+                                                    </DialogTitle>
                                                     <DialogContent>
-                                                        <Grid item xs={12}>
-                                                            <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired />
-                                                        </Grid>
-                                                        <Grid item xs={12}>
+                                                        <div className={classes.dialogElement}>
+                                                            <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired mb={4} />
+                                                        </div>
+                                                        <div className={classes.dialogElement}>
                                                             <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
-                                                        </Grid>
+                                                        </div>
                                                     </DialogContent>
                                                     <DialogActions>
-                                                        <Grid item xs={6}>
-                                                            <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleClose} isFullWidth></MTButton>
-                                                        </Grid>
-                                                        <Grid item xs={6}>
-                                                            <MTButton label={'CREATE'} variant={'contained'} type={'submit'} onClick={handleEditBusinessSubmit} isFullWidth></MTButton>
-                                                        </Grid>
+                                                        <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleClose} isFullWidth></MTButton>
+                                                        <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleEditBusinessSubmit} isFullWidth></MTButton>
                                                     </DialogActions>
-                                                </Grid>
+                                                </div>
                                             </Dialog>
                                         </Box>
                                     </Card>
