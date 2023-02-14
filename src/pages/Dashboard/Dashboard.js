@@ -52,7 +52,23 @@ const useStyle = makeStyles({
     },
     dialogElement: {
         marginBottom: '20px'
-    }
+    },
+    overlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 200,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      dialog: {
+        position: "relative",
+        zIndex: 10000,
+      }
 });
 
 const Dashboard = () => {
@@ -202,33 +218,37 @@ const Dashboard = () => {
                                             <IconButton aria-label="more" onClick={handleEditBusinessClick} sx={{position: 'absolute', top: 20, right: 20}}>
                                                 <MoreVertIcon />
                                             </IconButton>
-                                            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                                                <div className={classes.dialogContainer}>
-                                                    <DialogTitle id="form-dialog-title">
-                                                        <Typography sx={{
-                                                                        fontFamily: FONT_FAMILY,
-                                                                        fontWeight: '600',
-                                                                        fontSize: '32px',
-                                                                        lineHeight: '40px',
-                                                                        display: 'flex',
-                                                                        justifyContent: 'center'}}>
-                                                            Edit Business
-                                                        </Typography>
-                                                    </DialogTitle>
-                                                    <DialogContent>
-                                                        <div className={classes.dialogElement}>
-                                                            <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired mb={4} />
+                                            {open && (
+                                                <div className={classes.overlay}>
+                                                    <Dialog open={open} onClose={handleClose} className={classes.dialog} PaperProps={{ style: { zIndex: 10002 } }} aria-labelledby="form-dialog-title">
+                                                        <div className={classes.dialogContainer}>
+                                                            <DialogTitle id="form-dialog-title">
+                                                                <Typography sx={{
+                                                                                fontFamily: FONT_FAMILY,
+                                                                                fontWeight: '600',
+                                                                                fontSize: '32px',
+                                                                                lineHeight: '40px',
+                                                                                display: 'flex',
+                                                                                justifyContent: 'center'}}>
+                                                                    Edit Business
+                                                                </Typography>
+                                                            </DialogTitle>
+                                                            <DialogContent>
+                                                                <div className={classes.dialogElement}>
+                                                                    <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired mb={4} />
+                                                                </div>
+                                                                <div className={classes.dialogElement}>
+                                                                    <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
+                                                                </div>
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleClose} isFullWidth></MTButton>
+                                                                <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleEditBusinessSubmit} isFullWidth></MTButton>
+                                                            </DialogActions>
                                                         </div>
-                                                        <div className={classes.dialogElement}>
-                                                            <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
-                                                        </div>
-                                                    </DialogContent>
-                                                    <DialogActions>
-                                                        <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleClose} isFullWidth></MTButton>
-                                                        <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleEditBusinessSubmit} isFullWidth></MTButton>
-                                                    </DialogActions>
+                                                    </Dialog>
                                                 </div>
-                                            </Dialog>
+                                            )}
                                         </Box>
                                     </Card>
                                 </Grid2>
