@@ -1,8 +1,8 @@
 let testUser = {
     fname: 'Test',
     lname: 'User',
-    email: 'run_test@gmail.com',
-    password: 'peanut_butter_baby',
+    email: 'test@gmail.com',
+    password: '123',
     businessId: null
 };
 
@@ -10,7 +10,7 @@ let testUser1 = {
     fname: 'Test',
     lname: 'User',
     email: 'run_test1@gmail.com',
-    password: 'peanut_butter_baby',
+    password: '123',
     businessId: null
 };
 
@@ -18,19 +18,19 @@ let testUserBusId = {
     fname: 'Test',
     lname: 'User',
     email: 'run_test3@gmail.com',
-    password: 'peanut_butter_baby',
+    password: '123',
     businessId: '63d2b33a2a75670dbd74fb3b'
 };
 
 let testBusiness = {
-    name: 'Walmart',
+    name: 'Test Business 1',
     type: 'Wholesale',
     admins: [],
     tills: []
 };
 
 let testTill = {
-    name: 'Sandwiches',
+    name: 'Test Location 1',
     managerPassword: 123,
     employees: [],
     tabs: [],
