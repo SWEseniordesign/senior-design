@@ -1,7 +1,7 @@
 import { Typography, Button, Grid, Box, Link } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { COLOR_PALETTE } from "../../Constants";
 import { useNavigate } from "react-router";
 import { userState } from "../../states/userState";
@@ -80,6 +80,7 @@ export const Home = () => {
 
     const classes = useStyle();
     const uState = useHookstate(userState);
+    const [hasBusiness, setHasBusiness] = useState(false);
 
     const navigate = useNavigate();
     const handleSignUp = () => {
@@ -93,6 +94,26 @@ export const Home = () => {
     const handleDashboard = () => {
         navigate('/dashboard');
     }
+
+    const handleCreateBusiness = () => {
+        navigate('/create-business');
+    }
+
+    /*   
+        * Checks if the user has a business. 
+        * Activated when page renders. 
+    */
+   useEffect(() => {
+    async function userHasBusiness() {
+        let response;
+        if(userState.token.get() !== ''){
+            response = await getUserBusiness();
+        }
+
+        if(!!(response)) setHasBusiness(response.business);
+    }
+    userHasBusiness();
+   }, []);
 
     //This is temporary to allow me to test creating data
     const handleCreateData = async () => {
@@ -167,16 +188,20 @@ export const Home = () => {
                     <Typography sx={{fontSize: '64px', fontWeight: 'bold', lineHeight: '66px', alignContent: 'center', justifyContent: 'center'}}>A customized sales experience.</Typography>
                 </div>
                 {uState.token.get() === "" ?
-                <div className={classes.buttonBox}>
-                    <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
-                    <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
-                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
-                </div>
+                    <div className={classes.buttonBox}>
+                        <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
+                        <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
+                        { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
+                    </div>
                 :
-                <div className={classes.buttonBox}>
-                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
-                    <Button variant="outlined" onClick={handleDashboard} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>DASHBOARD</Button>
-                </div>
+                    <div className={classes.buttonBox}>
+                        { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
+                        {hasBusiness ?
+                            <Button variant="outlined" onClick={handleDashboard} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>DASHBOARD</Button>
+                        :
+                            <Button variant="outlined" onClick={handleCreateBusiness} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE BUSINESS</Button>
+                        }
+                    </div>
                 }
             </div>
             <div className={classes.singleSectionBox}>
