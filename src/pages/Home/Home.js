@@ -101,10 +101,9 @@ export const Home = () => {
 
     /*   
         * Checks if the user has a business. 
-        * Activated when page renders. 
+        * Activated when page renders (in useEffect). 
     */
-   useEffect(() => {
-    async function userHasBusiness() {
+    const userHasBusiness = async() => {
         let response;
         if(userState.token.get() !== ''){
             response = await getUserBusiness();
@@ -112,6 +111,8 @@ export const Home = () => {
 
         if(!!(response)) setHasBusiness(response.business);
     }
+
+   useEffect(() => {
     userHasBusiness();
    }, []);
 
