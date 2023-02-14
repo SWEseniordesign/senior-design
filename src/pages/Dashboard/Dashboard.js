@@ -13,7 +13,7 @@ import MTButton from "../../components/mui/MTButton";
 import MTSelect from "../../components/mui/MTSelect";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
-import { getBusiness } from "../../requests/businesses-req";
+import { getBusiness, editBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
 
 
@@ -82,23 +82,33 @@ const Dashboard = () => {
 
 
     //const classes = useStyle();
-    const [busName, setBusName] = useState("")
-    const [busType, setBusType] = useState("")
-    const [ownerName, setOwnerName] = useState("")
+    const [busName, setBusName] = useState("");
+    const [busType, setBusType] = useState("");
+    const [ownerName, setOwnerName] = useState("");
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
+    const [submitTriggered, setSubmitTriggered] = useState(false);
+
+    const getBus = async() => {
+        const bus = await getBusiness()
+        setBusName(bus.formattedBus.name)
+        setBusType(bus.formattedBus.type)
+        console.log(bus); //remove
+    }
+    const getOwner = async() => {
+        const owner = await getUserName()
+        setOwnerName(owner.formattedUser.fname + " " + owner.formattedUser.lname)
+    }
 
     useEffect(() => {
-        async function getBus() {
-            const bus = await getBusiness()
-            setBusName(bus.formattedBus.name)
-            setBusType(bus.formattedBus.type)
-        }
-        async function getOwner() {
-            const owner = await getUserName()
-            setOwnerName(owner.formattedUser.fname + " " + owner.formattedUser.lname)
+        if(submitTriggered) {
+            getBus();
+            getOwner();
+            setSubmitTriggered(false);
         }
         getBus();
         getOwner();
-    }, []);
+        
+    }, [submitTriggered]);
 
     const [businessName, setBusinessName] = useState('');
     const [businessType, setBusinessType] = useState('');
@@ -110,17 +120,45 @@ const Dashboard = () => {
     ]
 
     const handleEditBusinessClick = () => {
-    setOpen(true);
+        setOpen(true);
         //console.log("ayooo");
     };
     const handleClose = () => {
+        setSubmitTriggered(true);
         setOpen(false);
     };
     
-    const handleEditBusinessSubmit = () => {
+    const handleEditBusinessSubmit = async(e) => {
+        //setSubmitTriggered(true);
         console.log("yuh");
         console.log(businessName);
+        console.log(businessType);
         //save new bus info and refresh
+
+        e.preventDefault();
+        try{
+            let updatedBusiness = {
+                name: businessName,
+                type: businessType
+                //admins: [],
+                //tills: []
+            }
+            let response = await editBusiness(updatedBusiness);
+
+            if(!(response) || response.code !== 201){
+                setAlertMessage({message: !(response) ? 'Failed to update business.' : response.err, status: 'warning'});
+            } else {
+                setAlertMessage({message: 'Business Updated!', status: 'success'});
+                setBusinessName('');
+                setBusinessType('');
+            }
+
+            setOpen(true);
+        } catch(e){
+            console.log(e);
+        }
+
+        setSubmitTriggered(true);
         setOpen(false);
     };
     
