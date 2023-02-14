@@ -90,6 +90,10 @@ export const Home = () => {
         navigate('/login');
     }
 
+    const handleDashboard = () => {
+        navigate('/dashboard');
+    }
+
     //This is temporary to allow me to test creating data
     const handleCreateData = async () => {
         let employee = {
@@ -171,6 +175,7 @@ export const Home = () => {
                 :
                 <div className={classes.buttonBox}>
                     { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
+                    <Button variant="outlined" onClick={handleDashboard} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>DASHBOARD</Button>
                 </div>
                 }
             </div>
