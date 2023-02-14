@@ -4,6 +4,8 @@ import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { COLOR_PALETTE } from "../../Constants";
 import { useNavigate } from "react-router";
+import { userState } from "../../states/userState";
+import { useHookstate } from "@hookstate/core";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
@@ -77,6 +79,7 @@ const useStyle = makeStyles({
 export const Home = () => {
 
     const classes = useStyle();
+    const uState = useHookstate(userState);
 
     const navigate = useNavigate();
     const handleSignUp = () => {
@@ -159,11 +162,17 @@ export const Home = () => {
                 <div className={classes.heroTitle}>
                     <Typography sx={{fontSize: '64px', fontWeight: 'bold', lineHeight: '66px', alignContent: 'center', justifyContent: 'center'}}>A customized sales experience.</Typography>
                 </div>
+                {uState.token.get() === "" ?
                 <div className={classes.buttonBox}>
                     <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
                     <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
                     { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
                 </div>
+                :
+                <div className={classes.buttonBox}>
+                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
+                </div>
+                }
             </div>
             <div className={classes.singleSectionBox}>
                 <Grid container spacing={6}>
