@@ -2,10 +2,12 @@ const {testUser, testUser1, testUserBusId} = require('./variables');
 const request = require('supertest');
 const app = require('../server');
 const mongoose = require('mongoose');
-//const disconnectDB = require('../config/db');
+
+
 if(process.env.npm_lifecycle_event === 'dbscript'){
     start();
 }
+
 
 async function start(){
     await initializeDatabase();
@@ -32,7 +34,7 @@ async function start(){
 
 async function initializeDatabase(){
     try{
-        /*const user1 = await request(app)
+        const user1 = await request(app)
             .post('/user/register')
             .expect(201)
             .send(testUser);
@@ -45,7 +47,7 @@ async function initializeDatabase(){
         const user3 = await request(app)
             .post('/user/register')
             .expect(201)
-            .send(testUserBusId);*/
+            .send(testUserBusId);
     }
     catch(e){
         return {err: 'Error creating users'};
