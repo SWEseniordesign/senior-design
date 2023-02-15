@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+
+/**
+ * Attempts to make connection to database
+ *
+ * @expects yarn server or yarn test or yarn dev to be ran
+ * @success MongoDB Connected: ...
+ * @error error then exit
+ */
 const connectDB = async () => {
     try {
         //if yarn server was ran, connect to myTill
