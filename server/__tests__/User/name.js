@@ -30,10 +30,10 @@ describe('POST /name', () => {
         const getName = await request(app)
             .post('/user/name')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send() 
-        expect(getName.body.formattedUser.fname).toBe('Test');
-        expect(getName.body.formattedUser.lname).toBe('User');
-        expect(getName.body.code).toBe(201);
+        expect(getName.body.formattedUser.fname).toBe(testUser.fname);
+        expect(getName.body.formattedUser.lname).toBe(testUser.lname);
+        expect(getName.body.code).toBe(200);
     });  
 });

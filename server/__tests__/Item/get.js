@@ -76,10 +76,10 @@ describe('POST /get', () => {
         const getItem = await request(app)
             .post('/items/get')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send({id: item._body.formattedItem.id})
         expect(getItem._body.formattedItem).toBeDefined();
-        expect(getItem._body.code).toBe(201);
+        expect(getItem._body.code).toBe(200);
     });
 
     it('should return 400 for attempting to get an item with a less than 12B itemId', async () => {
@@ -97,7 +97,7 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType1})
         expect(item._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(item._body.code).toBe(403);
+        expect(item._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to get an item with a improper string itemId of length 12B', async () => {
@@ -115,10 +115,10 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType2})
         expect(item._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(item._body.code).toBe(403);
+        expect(item._body.code).toBe(400);
     });
 
-    it('should return 500 for attempting to create an item with a fake cardId of length 12B', async () => {
+    it('should return 404 for attempting to create an item with a fake cardId of length 12B', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)

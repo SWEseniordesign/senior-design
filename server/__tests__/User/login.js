@@ -16,7 +16,7 @@ afterAll(async () => {
 
 describe('POST /login', () => {
 
-    it('should return 400 if no request body is sent', async () => {
+    it('should return 404 if no request body is sent', async () => {
         const res = await request(app)
             .post('/user/login')
             .expect(400)
@@ -28,18 +28,18 @@ describe('POST /login', () => {
         const userData = { email: testUser.email, password: 'incorrectPass' };
         const res = await request(app)
             .post('/user/login')
-            .expect(400)
+            .expect(404)
             .send(userData) 
-        expect(res.body).toEqual({err: 'Invalid email or password', code: 400});
+        expect(res.body).toEqual({err: 'Invalid email or password', code: 404});
     });
 
-    it('should return 400 if invalid email is sent', async () => {
+    it('should return 404 if invalid email is sent', async () => {
         const userData = { email: 'incorrect@email.ca', password: testUser.password };
         const res = await request(app)
             .post('/user/login')
-            .expect(400)
+            .expect(404)
             .send(userData) 
-        expect(res.body).toEqual({err: 'Invalid email or password', code: 400});
+        expect(res.body).toEqual({err: 'Invalid email or password', code: 404});
     });
 
     it('should return 200 and token if valid credentials are sent', async () => {
@@ -49,22 +49,6 @@ describe('POST /login', () => {
             .expect(200)
             .send(userData) 
         expect(res.body.token).toBeDefined();  
-
+        expect(res.body.code).toBe(200); 
     });  
-
-    //! Might be difficult to execute this test. 
-    // it('should return 500 if internal server error occurs', async () => { 
-
-    //     const userData = { email: 'test@email.com', password: 'testpassword' }; 
-
-    //     bcrypt.compare = jest.fn().mockImplementationOnce((reqBody, findUserPassword, cbFn) => 
-    //         cbFn({ err : "Internal server error" })
-    //     );  
-
-    //     const res = await request(app)
-    //         .post('/user/login')
-    //         .expect(500)
-    //         .send(userData) 
-    //     expect(res.body).toEqual({err: 'Internal server error', code: 500}); 
-    // });
 });

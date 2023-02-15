@@ -81,7 +81,7 @@ describe('POST /create', () => {
             .expect(400)
             .send(testCard)
         expect(card._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(card._body.code).toBe(403);
+        expect(card._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to create a card with a improper string tillId of length 12B', async () => {
@@ -101,7 +101,7 @@ describe('POST /create', () => {
             .expect(400)
             .send(testCard)
         expect(card._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(card._body.code).toBe(403);
+        expect(card._body.code).toBe(400);
     });
 
     it('should return 500 for attempting to create a card with a fake tillId of length 12B', async () => {
@@ -118,9 +118,9 @@ describe('POST /create', () => {
         const card = await request(app)
             .post('/card/create')
             .set('authorization', login.body.token) 
-            .expect(500)
+            .expect(404)
             .send(testCard)
         expect(card._body.err).toBe('Tab not found');
-        expect(card._body.code).toBe(500);
+        expect(card._body.code).toBe(404);
     });
 });

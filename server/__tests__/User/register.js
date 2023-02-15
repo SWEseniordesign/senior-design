@@ -23,7 +23,7 @@ describe('/register', () => {
                 .post('/user/register')
                 .expect(201)
                 .send(testUser) 
-            expect(res.body).toEqual(true);
+            expect(res.body).toEqual({created: true, code: 201});
     });
 
     it('should return 403 if user already exists', async () => {

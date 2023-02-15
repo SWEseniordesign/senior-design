@@ -15,7 +15,7 @@ afterAll(async () => {
 }, 10000);
 
 describe('POST /business', () => {
-    it('should return 201 and true if valid credentials are sent & user has business', async () => {
+    it('should return 200 and true if valid credentials are sent & user has business', async () => {
         const userData = { email: testUserBusId.email, password: testUserBusId.password }; 
 
         const login = await request(app)
@@ -27,13 +27,13 @@ describe('POST /business', () => {
         const business = await request(app)
             .post('/user/business')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send()
         expect(business._body.business).toBe(true);
-        expect(business._body.code).toBe(201);
+        expect(business._body.code).toBe(200);
     });
 
-    it('should return 201 and false if valid credentials are sent & user does not have a business', async () => {
+    it('should return 200 and false if valid credentials are sent & user does not have a business', async () => {
         const userData = { email: testUser.email, password: testUser.password };  
 
         const login = await request(app)
@@ -45,9 +45,9 @@ describe('POST /business', () => {
         const business = await request(app)
             .post('/user/business')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send(testBusiness)
         expect(business._body.business).toBe(false);
-        expect(business._body.code).toBe(201);
+        expect(business._body.code).toBe(200);
     }); 
 });
