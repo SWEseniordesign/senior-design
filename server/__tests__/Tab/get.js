@@ -16,7 +16,7 @@ afterAll(async () => {
 
 
 describe('POST /get', () => {
-    it('should return 201 and tab', async () => {
+    it('should return 200 and tab', async () => {
         const userData = { email: testUser.email, password: testUser.password }; 
 
         const login = await request(app)
@@ -56,10 +56,10 @@ describe('POST /get', () => {
         const getTab = await request(app)
             .post('/tab/get')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send({id: tab._body.formattedTab.id})
         expect(getTab._body.formattedTab).toBeDefined();
-        expect(getTab._body.code).toBe(201);
+        expect(getTab._body.code).toBe(200);
     });
 
     it('should return 400 for attempting to get a tab with a less than 12B tabId', async () => {
@@ -77,7 +77,7 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType1})
         expect(tab._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(tab._body.code).toBe(403);
+        expect(tab._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to get a tab with a improper string tabId of length 12B', async () => {
@@ -95,7 +95,7 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType2})
         expect(tab._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(tab._body.code).toBe(403);
+        expect(tab._body.code).toBe(400);
     });
 
     it('should return 404 for attempting to get a tab with a fake tabId of length 12B', async () => {

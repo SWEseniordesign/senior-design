@@ -6,9 +6,14 @@ const Item = require('../models/Item');
 const Tab = require('../models/Tab');
 const Till = require('../models/Till');
 
-/*
-    ! DO NOT RUN THIS FUNCTION OUTSIDE OF WIPING THE TEST DB
-*/
+
+/**
+ * ! Note: This is only setup to run in test which may be changed in the future
+ * Deletes all data in connected database
+ *
+ * @success Deletion of test complete
+ * @error Error deleting...
+ */
 async function cleanDatabase(){
     if(process.env.npm_lifecycle_event === 'test'){
         await User.deleteMany({}).catch( err => {return {err: 'Error deleting Users'}});
