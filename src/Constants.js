@@ -6,4 +6,3 @@ export const COLOR_PALETTE = {
 }
 
 export const FONT_FAMILY = 'Arial';
-
