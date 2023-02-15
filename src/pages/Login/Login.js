@@ -139,7 +139,7 @@ export const Login = () => {
                                         <Typography sx={{
                                             fontSize: '16px'
                                         }}>Don't have an account?</Typography>
-                                        <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/login')} sx={{
+                                        <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/create-account')} sx={{
                                             fontSize: '16px'
                                         }}>Create an Account</Link>
                                     </div>
