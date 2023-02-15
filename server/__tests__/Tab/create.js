@@ -94,7 +94,7 @@ describe('POST /create', () => {
         expect(tab._body.code).toBe(400);
     });
 
-    it('should return 500 for attempting to create a tab with a fake tillId of length 12B', async () => {
+    it('should return 404 for attempting to create a tab with a fake tillId of length 12B', async () => {
         const userData = { email: testUser1.email, password: testUser1.password }; 
 
         const login = await request(app)

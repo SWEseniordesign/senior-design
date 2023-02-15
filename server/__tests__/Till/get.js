@@ -45,10 +45,10 @@ describe('POST /get', () => {
         const getTill = await request(app)
             .post('/till/get')
             .set('authorization', login.body.token) 
-            .expect(201)
+            .expect(200)
             .send({id: till._body.formattedTill.id})
         expect(getTill._body.formattedTill).toBeDefined();
-        expect(getTill._body.code).toBe(201);
+        expect(getTill._body.code).toBe(200);
     });
 
     it('should return 400 for attempting to create a till with a less than 12B businessId', async () => {
@@ -66,7 +66,7 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType1})
         expect(getTill._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(getTill._body.code).toBe(403);
+        expect(getTill._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to get a till with a improper string businessId of length 12B', async () => {
@@ -84,7 +84,7 @@ describe('POST /get', () => {
             .expect(400)
             .send({id: fakeObjectIdType2})
         expect(getTill._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(getTill._body.code).toBe(403);
+        expect(getTill._body.code).toBe(400);
     });
 
     it('should return 500 for attempting to get a till with a fake businessId of length 12B', async () => {
