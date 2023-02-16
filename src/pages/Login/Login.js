@@ -71,7 +71,7 @@ export const Login = () => {
             }
             let error = await login(userCreds);
 
-            if(!!(error.code)){
+            if(!!(error.err)){
                 setAlertMessage({message: error.err, status: 'warning'});
             } else if(!!(error.token)) {
                 userState.token.set(error.token);
