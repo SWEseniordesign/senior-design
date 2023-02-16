@@ -6,7 +6,7 @@ Create an employee document.
 */
 export async function createEmployee (obj) {
     let data;
-    await fetch('https://localhost:8080/employee/create', {
+    await fetch('http://localhost:8080/employee/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ Get an employee
 */
 export async function getEmployee (obj) {
     let data;
-    await fetch('https://localhost:8080/employee/get', {
+    await fetch('http://localhost:8080/employee/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

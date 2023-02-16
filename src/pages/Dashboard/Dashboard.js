@@ -59,7 +59,7 @@ const Dashboard = () => {
         {name: 'Snacks', orders: 10}
     ];
 
-    const [business, setBusiness] = useState({penis: 'balls'})
+    const [business, setBusiness] = useState({})
     const [owner, setOwner] = useState({})
     const [tills, setTills] = useState([])
 
@@ -99,7 +99,6 @@ const Dashboard = () => {
         async function getTills(){
             const tills = []
             for(let tillId of business.tills) {
-                console.log('till: ', tillId)
                 const newTill = await getTill({id: tillId})
                 tills.push(newTill.formattedTill)
             }
