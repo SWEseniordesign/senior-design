@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
+import { Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -7,6 +7,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
 import { getTill } from "../../requests/tills-req";
@@ -47,6 +48,7 @@ const useStyle = makeStyles({
 const Dashboard = () => {
 
     const classes = useStyle();
+    const navigate = useNavigate();
 
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
 
@@ -60,6 +62,10 @@ const Dashboard = () => {
     const [business, setBusiness] = useState({penis: 'balls'})
     const [owner, setOwner] = useState({})
     const [tills, setTills] = useState([])
+
+    const handleNavigateTill = (till) => {
+        console.log("Clicked Till: " + till.id)
+    }
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active) {
@@ -179,25 +185,31 @@ const Dashboard = () => {
                                             <Typography variant='h4'> Tills </Typography>
                                             <Typography variant='subtitle1'> {business.name} </Typography>
                                             <Box id='list-container' mt={4}>
-                                                <List sx={{overflow: "auto", maxHeight: 800}}>
+                                                <List sx={{overflow: "auto", maxHeight: 600}}>
                                                     { tills.length ? tills.map((till) => {
                                                         return (
-                                                            <ListItem
+                                                            <ListItem 
+                                                                key={till.id}
                                                                 secondaryAction={
                                                                     <IconButton edge="end" aria-label="delete">
                                                                         <MoreVertIcon />
+                                                                        {/* TODO More menu */}
                                                                     </IconButton>
                                                                 }
+                                                                disablePadding
                                                             >
-                                                                <ListItemAvatar>
-                                                                    <Avatar>
-                                                                        <BusinessIcon />
-                                                                    </Avatar>
-                                                                </ListItemAvatar>
-                                                                <ListItemText
-                                                                    primary={till.name}
-                                                                    secondary={till.employees.length + " employees"}
-                                                                />
+                                                                <ListItemButton 
+                                                                    onClick={() => handleNavigateTill(till)}>
+                                                                    <ListItemAvatar>
+                                                                        <Avatar>
+                                                                            <BusinessIcon />
+                                                                        </Avatar>
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={till.name}
+                                                                        secondary={till.employees.length + " employees"}
+                                                                    />
+                                                                </ListItemButton>
                                                             </ListItem>
                                                         )
                                                     }) : <Typography> No tills found </Typography> }
