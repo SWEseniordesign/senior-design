@@ -10,6 +10,8 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
 import './ViewEditTill.css'
 import { COLOR_PALETTE } from "../../Constants";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
 const useStyles = makeStyles({
     root: {
@@ -47,7 +49,7 @@ const useStyles = makeStyles({
     },
     cardTitleBar: {
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     card: {
         display: 'flex',
@@ -55,12 +57,14 @@ const useStyles = makeStyles({
         border: '1px solid grey',
         borderRadius: '5px',
         gap: '12px',
-        height: '100%'
+        height: '100%',
+        // minHeight: '17vh'
     },
     grid: {
         display: 'grid',
         gap: '12px',
         gridTemplateColumns: 'auto auto auto',
+        padding: '12px',
 
         height: '100%', 
         msOverflowStyle: 'none',
@@ -75,6 +79,7 @@ const useStyles = makeStyles({
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '7vh',
+        height: '100%',
         border: '1px solid lightgrey',
         borderRadius: '5px'
     },
@@ -116,9 +121,8 @@ export const ViewEditTill = () => {
     }
 
     const handleLayoutChange = (e) => {
-        console.log(e)
-        let newCardsDimensions = testCards.map((card, i) => {
-            if(card.id.toString === e[i].i){
+        testCards.map((card, i) => {
+            if(card.id.toString() === e[i].i){
                 card.dimensions.x = e[i].x;
                 card.dimensions.y = e[i].y;
                 card.dimensions.w = e[i].w;
@@ -126,7 +130,6 @@ export const ViewEditTill = () => {
             }
             return card;
         })
-        // setTestCards(newCardsDimensions);
     }
 
     const createLayout = () => {
@@ -137,7 +140,8 @@ export const ViewEditTill = () => {
                 y: card.dimensions.y, 
                 w: card.dimensions.w, 
                 h: card.dimensions.h,
-                static: card.static
+                static: isEdit ? card.static : true,
+                resizeHandles: ["se"]
             }
         })
     }
@@ -147,6 +151,7 @@ export const ViewEditTill = () => {
     return (
         <div>
             {isEdit ? 
+                //? The following JSX is for when the till is being edited. (In edit mode)
                 <div className={classes.root}>
                     <div className={classes.actions}>
                         <Typography sx={{
@@ -173,7 +178,7 @@ export const ViewEditTill = () => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'}>{card.label}</Typography>
+                                                        <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
                                                         <div className='draggableHandle'>
                                                             {Array.from(Array(6), (e, i) => {
                                                                 return <div key={i} className={classes.dragDots} />
@@ -216,9 +221,49 @@ export const ViewEditTill = () => {
                     </div>
                 </div>
             :
-                <div>
-
-                </div>    
+            //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
+            <div className={classes.root}>
+                <div className={classes.actions}>
+                    <Typography sx={{
+                        fontSize: '24px'
+                    }}>Actions</Typography>
+                    <div className={classes.action_buttons}>
+                        <MtButton label={'Manage Employees'} variant={'outlined'} />
+                        <MtButton label={'View Transactions History'} variant={'outlined'} />
+                        <MtButton label={'Edit Till'} variant={'outlined'} />
+                    </div>
+                </div>
+                <div className={classes.tabbar}>
+                    <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
+                        <ResponsiveLayout 
+                            className={classes.layout} 
+                            layouts={{lg: createLayout()}} 
+                            cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                            >
+                            {testCards.map((card, index) => {
+                                return  <div key={index.toString()}>
+                                            <Box className={classes.card} sx={{backgroundColor: card.color}}>
+                                                <div className={classes.cardTitleBar}>
+                                                    <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
+                                                </div>
+                                                <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
+                                                    {card.items.map((item, index) => {
+                                                        return (<div key={index} style={{gridColumn: 1 / 2}}>
+                                                                    <Box className={classes.item}>
+                                                                        <Typography>{item.label}</Typography>
+                                                                        {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
+                                                                    </Box>
+                                                                </div>)
+                                                    })}
+                                                </div>
+                                            </Box>
+                                            <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} />
+                                        </div>
+                            })}
+                        </ResponsiveLayout>
+                    </MTTabs>
+                </div>
+            </div>
         }
         </div>
     )
