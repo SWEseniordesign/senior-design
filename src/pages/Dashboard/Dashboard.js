@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar } from "@mui/material";
+import { Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -116,48 +116,55 @@ const Dashboard = () => {
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
                                 <Grid2 id='grid-left-top' xs={12} md={12} sx={{position: 'absolute', top:0, left: 0, height: '40%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={8}>
+                                        <Box ml={4} mr={4} mt={8}>
                                             <Box mb={2}>
-                                                <Typography sx={{
-                                                                fontFamily: FONT_FAMILY,
-                                                                fontWeight: '400',
-                                                                fontSize: '36px',
-                                                                lineHeight: '40px',
-                                                                display: 'flex'}}>
-                                                    Welcome, {owner.fname}!
-                                                </Typography>
+                                                { owner.fname ? 
+                                                    <Typography variant='h3' sx={{
+                                                                    fontFamily: FONT_FAMILY,
+                                                                    fontWeight: '400',
+                                                                    fontSize: '36px',
+                                                                    lineHeight: '40px',
+                                                                    display: 'flex'}}>
+                                                        Welcome, {owner.fname}!
+                                                    </Typography>
+                                                : null }
                                             </Box>
+                                            <Divider/>
                                             { business.name ?
-                                            <Typography sx={{
-                                                            fontFamily: FONT_FAMILY,
-                                                            fontWeight: '600',
-                                                            fontSize: '48px',
-                                                            lineHeight: '60px',
-                                                            display: 'flex'}}>
-                                                {business.name}
-                                            </Typography> : null}
-                                            <Typography sx={{
-                                                            fontFamily: FONT_FAMILY,
-                                                            fontWeight: '200',
-                                                            fontSize: '28px',
-                                                            lineHeight: '36px',
-                                                            display: 'flex'}}>
-                                                {business.type}
-                                            </Typography>
+                                                <Typography mt={2} variant='h2' sx={{
+                                                                fontFamily: FONT_FAMILY,
+                                                                fontWeight: '600',
+                                                                fontSize: '48px',
+                                                                lineHeight: '60px',
+                                                                display: 'flex'}}>
+                                                    {business.name}
+                                                </Typography> 
+                                            : null}
+                                            { business.type ?
+                                                <Typography variant='h5' sx={{
+                                                                fontFamily: FONT_FAMILY,
+                                                                fontWeight: '200',
+                                                                fontSize: '28px',
+                                                                lineHeight: '36px',
+                                                                display: 'flex'}}>
+                                                    {business.type}
+                                                </Typography> 
+                                            : null}
                                         </Box>
                                     </Card>
                                 </Grid2>
                                 <Grid2 id='grid-left-bottom' xs={12} md={12} sx={{position: 'absolute', bottom: 0, left: 0, height: '60%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={4} mr={4}>
-                                            <Typography sx={{
+                                        <Box m={4}>
+                                            <Typography mb={2} variant='h3' sx={{
                                                             fontFamily: FONT_FAMILY,
-                                                            fontWeight: '600',
+                                                            fontWeight: '400',
                                                             fontSize: '36px',
-                                                            lineHeight: '44px',
+                                                            lineHeight: '40px',
                                                             display: 'flex'}}>
                                                 Monthly Report
                                             </Typography>
+                                            <Divider/>
                                             <ResponsiveContainer height={400} width={"100%"}>
                                                 <PieChart>
                                                     <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={"80%"} >
@@ -182,8 +189,22 @@ const Dashboard = () => {
                                 <Grid2 id='grid-right' xs={12} md={12} sx={{position: 'absolute', right: 0, height: '100%',}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE, position: 'relative'}} elevation={3}>
                                         <Box ml={4} mt={8} mr={4}>
-                                            <Typography variant='h4'> Tills </Typography>
-                                            <Typography variant='subtitle1'> {business.name} </Typography>
+                                            <Typography variant='h3' sx={{
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '400',
+                                                            fontSize: '36px',
+                                                            lineHeight: '40px',
+                                                            display: 'flex'}}> 
+                                                Tills 
+                                            </Typography>
+                                            <Typography variant='h6' sx={{
+                                                            fontFamily: FONT_FAMILY,
+                                                            fontWeight: '200',
+                                                            fontSize: '20px',
+                                                            lineHeight: '48px',
+                                                            display: 'flex'}}>
+                                                 {business.name}
+                                            </Typography>
                                             <Box id='list-container' mt={4}>
                                                 <List sx={{overflow: "auto", maxHeight: 600}}>
                                                     { tills.length ? tills.map((till) => {
