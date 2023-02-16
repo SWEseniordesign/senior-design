@@ -14,7 +14,7 @@ Create a till document.
 */
 export async function createTill (obj) {
     let data;
-    await fetch('http://localhost:8080/till/create', {
+    await fetch('https://localhost:8080/till/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ Get a Till from its name
 */
 export async function getTill (obj) {
     let data;
-    await fetch('http://localhost:8080/till/get', {
+    await fetch('https://localhost:8080/till/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ modify a Till's employees
 */
 export async function addEmployees (obj) {
     let data;
-    await fetch('http://localhost:8080/till/employees', {
+    await fetch('https://localhost:8080/till/employees', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ modify a Till's tabs
 */
 export async function addTabs (obj) {
     let data;
-    await fetch('http://localhost:8080/till/tabs', {
+    await fetch('https://localhost:8080/till/tabs', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ modify a Till's props
 */
 export async function addProps (obj) {
     let data;
-    await fetch('http://localhost:8080/till/props', {
+    await fetch('https://localhost:8080/till/props', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

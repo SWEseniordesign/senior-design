@@ -6,6 +6,7 @@ import MTTextField from "../../components/mui/MTTextField";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
 import MTButton from "../../components/mui/MTButton";
+import { userState } from "../../states/userState";
 
 const useStyle = makeStyles({
     root: {
@@ -88,7 +89,10 @@ export const CreateAccount = () => {
                 if(error.code === 403){
                     setAlertMessage({message: error.err, status: 'warning'});
                 } else {
-                    setAlertMessage({message: 'Account Created!', status: 'success'})
+                    //setAlertMessage({message: 'Account Created!', status: 'success'})
+                    userState.token.set(error.token);
+                    userState.isLoggedIn.set(true);
+                    navigate('/create-business');
                 }
 
                 setOpen(true);

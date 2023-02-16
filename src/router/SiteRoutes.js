@@ -5,6 +5,7 @@ import { CreateBusiness } from '../pages/CreateBusiness/CreateBusiness';
 import { AccessBusiness } from '../pages/AccessBusiness/AccessBusiness';
 import { CreateAccount } from '../pages/CreateAccount/CreateAccount';
 import Dashboard from '../pages/Dashboard/Dashboard';
+import { ViewEditTill } from '../pages/ViewEditTill/ViewEditTill';
 
 const SiteRoutes = [
     {
@@ -28,12 +29,12 @@ const SiteRoutes = [
         component: <AccessBusiness/>
     },
     {
-        path: '/create-till',
-        // component: CreateTill
+        path: '/edit-till',
+        component: <ViewEditTill/>
     },
     {
         path: '/view-till',
-        // component: ViewTill
+        component: <ViewEditTill/>
     },
     {
         path: '/access-till',

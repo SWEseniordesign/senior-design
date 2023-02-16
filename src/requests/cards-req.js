@@ -13,7 +13,7 @@ Create a card document.
 */
 export async function createCard (obj) {
     let data;
-    await fetch('http://localhost:8080/card/create', {
+    await fetch('https://localhost:8080/card/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ Get a card from its name
 */
 export async function getCard (obj) {
     let data;
-    await fetch('http://localhost:8080/card/get', {
+    await fetch('https://localhost:8080/card/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ modify a card's dimensions
 */
 export async function changeDimensions (obj) {
     let data;
-    await fetch('http://localhost:8080/card/dimensions', {
+    await fetch('https://localhost:8080/card/dimensions', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ modify a card's color
 */
 export async function changeColor (obj) {
     let data;
-    await fetch('http://localhost:8080/card/color', {
+    await fetch('https://localhost:8080/card/color', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ modify a card's items
 */
 export async function changeItems (obj) {
     let data;
-    await fetch('http://localhost:8080/card/items', {
+    await fetch('https://localhost:8080/card/items', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

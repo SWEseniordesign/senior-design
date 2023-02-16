@@ -6,10 +6,19 @@ const mongoose = require('mongoose');
 const Card = require('../models/Card');
 const verifyJWT = require('../middleware/auth');
 
-/*
-    * DONE
-    Fetch item based on ObjectId
-*/
+/**
+ * Get a item from ObjectId
+ *
+ * @route POST /items/get
+ * @expects JWT in header of request, ObjectId in JSON in body of request
+ * @success 200 GET, returns {formattedItem, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Item not found
+ *        500 Internal Server Error
+ */
 router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
@@ -24,7 +33,7 @@ router.post('/get', verifyJWT, function(req, res){
             Item.findById(objectId, function(err, item){
                 if(err){
                     console.log(err);
-                    return res.status(500).send({err: 'Unable to get item', code: 500});
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
                 } else {
                     //If tab not found
                     if(item === null) return res.status(404).send({err: `Item does not exist`, code: 404});
@@ -36,24 +45,34 @@ router.post('/get', verifyJWT, function(req, res){
                         props: item.props,
                         stock: item.stock
                     };
-                    return res.status(201).send({formattedItem, code: 201});
+                    return res.status(200).send({formattedItem, code: 200});
                 }
             });
         } else {
-            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
+            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
         }
     } else {
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
     }
 });
 
-/*
-    * DONE
-    Create an item
-*/
+
+/**
+ * Create a item from passed in item info
+ *
+ * @route POST /items/create
+ * @expects JWT in header of request, name, price, image, props, & stock in JSON in body of request
+ * @success 201 Created, returns {formattedItem, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Item not found
+ *        500 Internal Server Error
+ */
 router.post('/create', verifyJWT, async function(req, res){
     //check if req body exists
-    if(!req.body) return res.status(400).send({err: 'No request body'});
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Create temp new item
     let new_item = new Item({
@@ -67,21 +86,21 @@ router.post('/create', verifyJWT, async function(req, res){
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(cardId))){
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
     }
     if(!((String)(new ObjectId(cardId)) === cardId)){
-        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 403});
+        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
     }
 
     //Find card to link
-    let card = await Card.findById(cardId).catch( err => {return res.status(500).send({err: 'Error finding card to link to item', code: 500});});
-    if(card === null) return res.status(500).send({err: 'Card not found', code: 500});
+    let card = await Card.findById(cardId).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
+    if(card === null) return res.status(404).send({err: 'Card not found', code: 404});
 
     //Attempt to save item
     new_item.save(function(err, item) {
         if(err) {
             console.log(err);
-            return res.status(500).send({err: 'Unable to create new item', code: 500});
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
             let formattedItem = {
                 id: item._id,
@@ -96,7 +115,7 @@ router.post('/create', verifyJWT, async function(req, res){
             card.save(function(err, card){
                 if(err) {
                     console.log(err);
-                    return res.status(500).send({err: 'Unable to link item to card', code: 500});
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
                 }
             });
             return res.status(201).send({formattedItem, code: 201});
@@ -104,40 +123,64 @@ router.post('/create', verifyJWT, async function(req, res){
     });
 });
 
-/*
-    TODO
-    Change an items name
-*/
+
+/**
+ * TODO: implement
+ * Modify an item's name
+ *
+ * @route POST /items/name
+ * @expects 
+ * @success 
+ * @error 
+ */
 router.get('/name', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
 });
 
-/*
-    TODO
-    Change an items image
-*/
+
+/**
+ * TODO: implement
+ * Modify an item's image
+ *
+ * @route POST /items/image
+ * @expects 
+ * @success 
+ * @error 
+ */
 router.get('/image', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
 });
 
-/*
-    TODO
-    Change an items props
-*/
+
+/**
+ * TODO: implement
+ * Modify an item's props
+ *
+ * @route POST /items/props
+ * @expects 
+ * @success 
+ * @error 
+ */
 router.get('/props', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
 });
 
-/*
-    TODO
-    Change an items stock
-*/
+
+/**
+ * TODO: implement
+ * Modify an item's stock
+ *
+ * @route POST /items/stock
+ * @expects 
+ * @success 
+ * @error 
+ */
 router.get('/stock', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
