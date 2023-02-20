@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { COLOR_PALETTE } from '../../Constants';
 
 export default function MTTextField(props) {    
   const [showPassword, setShowPassword] = useState(false);
@@ -65,7 +64,7 @@ export default function MTTextField(props) {
       autoComplete={'new-password'}
       InputProps={{
         startAdornment: (
-          <InputAdornment sx={{ margin: '0 12px 0 0' }}>
+          <InputAdornment position="start" sx={{ margin: '0 12px 0 0' }}>
             {!!(icon) ? icon : undefined}
           </InputAdornment>
         ),

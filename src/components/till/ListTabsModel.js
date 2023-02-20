@@ -1,9 +1,9 @@
 import { Modal, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
-import { COLOR_PALETTE } from "../Constants";
-import { AddTabModal } from "./AddTabModal";
-import { MTTable } from "./mui/MTTable";
+import { COLOR_PALETTE } from "../../Constants";
+import { tabState } from "../../states/tabState";
+import { MTTable } from "../mui/MTTable";
 
 const useStyles = makeStyles({
     paper: {
@@ -28,9 +28,10 @@ const useStyles = makeStyles({
     }
 })
 
+//* The modal that pops up when the user wants to view the list of tabs.
 export const ListTabsModel = (props) => {
 
-    const {tabList, setTabsList, open, setOpen} = props;
+    const {open, setOpen} = props;
 
     const handleCloseModal = () => {
         setOpen(false);
@@ -52,7 +53,7 @@ export const ListTabsModel = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'}>List of Tabs</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={tabList} setRows={setTabsList} hasPagination actionIsEdit />
+                <MTTable columns={tableColumns} rows={tabState.tabs.get()} hasPagination actionIsEdit />
             </Paper>
         </Modal>
     )

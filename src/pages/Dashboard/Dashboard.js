@@ -117,7 +117,7 @@ const Dashboard = () => {
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
                                         <Box ml={4} mr={4} mt={8}>
                                             <Box mb={2}>
-                                                { owner.fname ? 
+                                                { owner.fname ?
                                                     <Typography variant='h3' sx={{
                                                                     fontFamily: FONT_FAMILY,
                                                                     fontWeight: '400',
@@ -137,7 +137,7 @@ const Dashboard = () => {
                                                                 lineHeight: '60px',
                                                                 display: 'flex'}}>
                                                     {business.name}
-                                                </Typography> 
+                                                </Typography>
                                             : null}
                                             { business.type ?
                                                 <Typography variant='h5' sx={{
@@ -147,7 +147,7 @@ const Dashboard = () => {
                                                                 lineHeight: '36px',
                                                                 display: 'flex'}}>
                                                     {business.type}
-                                                </Typography> 
+                                                </Typography>
                                             : null}
                                         </Box>
                                     </Card>
@@ -182,7 +182,7 @@ const Dashboard = () => {
                                     </Card>
                                 </Grid2>
                             </Grid2>
-                        </Grid2>  
+                        </Grid2>
                         <Grid2 id='grid-panel-right' xs={12} md={7} sx={{height: '100%'}}>
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative', display: 'flex', alignItems: 'center'}}>
                                 <Grid2 id='grid-right' xs={12} md={12} sx={{position: 'absolute', right: 0, height: '100%',}}>
@@ -193,8 +193,8 @@ const Dashboard = () => {
                                                             fontWeight: '400',
                                                             fontSize: '36px',
                                                             lineHeight: '40px',
-                                                            display: 'flex'}}> 
-                                                Tills 
+                                                            display: 'flex'}}>
+                                                Tills
                                             </Typography>
                                             <Typography variant='h6' sx={{
                                                             fontFamily: FONT_FAMILY,
@@ -208,7 +208,7 @@ const Dashboard = () => {
                                                 <List sx={{overflow: "auto", maxHeight: 600}}>
                                                     { tills.length ? tills.map((till) => {
                                                         return (
-                                                            <ListItem 
+                                                            <ListItem
                                                                 key={till.id}
                                                                 secondaryAction={
                                                                     <IconButton edge="end" aria-label="delete">
@@ -218,7 +218,7 @@ const Dashboard = () => {
                                                                 }
                                                                 disablePadding
                                                             >
-                                                                <ListItemButton 
+                                                                <ListItemButton
                                                                     onClick={() => handleNavigateTill(till)}>
                                                                     <ListItemAvatar>
                                                                         <Avatar>

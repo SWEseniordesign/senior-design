@@ -5,7 +5,8 @@ Create a new version whenever we update main/master.
 
 Add items closer to the version number so the date go from newest to oldest (top to bottom).
 
-### *Version 0.2.2*
+### *Version 0.2.3*
+- 2023/02/20 - [Create Card](https://sd-onlinepos.atlassian.net/browse/ON-87)
 - 2023/02/08 - [Create Layout for Till View Page](https://sd-onlinepos.atlassian.net/browse/ON-103)
 - 2023/01/24 - [Setup Unit Testing with Sample Tests](https://sd-onlinepos.atlassian.net/browse/ON-108)
 
