@@ -66,6 +66,7 @@ export const CreateBusiness = () => {
                 setAlertMessage({message: 'Business Created!', status: 'success'});
                 setBusinessName('');
                 setBusinessType('');
+                navigate('/dashboard');
             }
 
             setOpen(true);
