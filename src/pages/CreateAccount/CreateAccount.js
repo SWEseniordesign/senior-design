@@ -90,9 +90,9 @@ export const CreateAccount = () => {
                     setAlertMessage({message: error.err, status: 'warning'});
                 } else {
                     //setAlertMessage({message: 'Account Created!', status: 'success'})
-                    userState.token.set(error.token);
-                    userState.isLoggedIn.set(true);
-                    navigate('/create-business');
+                    //userState.token.set(error.token);
+                    //userState.isLoggedIn.set(true);
+                    navigate('/login');
                 }
 
                 setOpen(true);
