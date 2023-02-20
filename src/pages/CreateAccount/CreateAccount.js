@@ -6,6 +6,7 @@ import MTTextField from "../../components/mui/MTTextField";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
 import MTButton from "../../components/mui/MTButton";
+import { userState } from "../../states/userState";
 
 const useStyle = makeStyles({
     root: {
@@ -88,7 +89,10 @@ export const CreateAccount = () => {
                 if(error.code === 403){
                     setAlertMessage({message: error.err, status: 'warning'});
                 } else {
-                    setAlertMessage({message: 'Account Created!', status: 'success'})
+                    //setAlertMessage({message: 'Account Created!', status: 'success'})
+                    //userState.token.set(error.token);
+                    //userState.isLoggedIn.set(true);
+                    navigate('/login');
                 }
 
                 setOpen(true);
@@ -197,8 +201,8 @@ export const CreateAccount = () => {
                             </Grid>
                             <Grid item xs={12} md={12}>
                                 <div className={classes.buttons_container}>
-                                    <MTButton variant='contained' type="submit" label={'Create'} width={'90%'} />
-                                    <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} />
+                                    <MTButton variant='contained' type="submit" label={'Create'} width={'100%'} />
+                                    {/* <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} /> */}
                                 </div>
                             </Grid>
                             <Grid item xs={12} md={12}>
