@@ -5,7 +5,7 @@ import { userState } from "../states/userState";
 */
 export async function createItem(obj) {
     let data;
-    await fetch('https://localhost:8080/items/create', {
+    await fetch('http://localhost:8080/items/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export async function createItem(obj) {
 */
 export async function getItem (obj) {
     let data;
-    await fetch('https://localhost:8080/items/get', {
+    await fetch('http://localhost:8080/items/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export async function getItem (obj) {
 */
 export async function changeName(obj) {
     let data;
-    await fetch('https://localhost:8080/items/', {
+    await fetch('http://localhost:8080/items/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export async function changeName(obj) {
 */
 export async function changeImage(obj) {
     let data;
-    await fetch('https://localhost:8080/items/', {
+    await fetch('http://localhost:8080/items/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export async function changeImage(obj) {
 */
 export async function changeProps(obj) {
     let data;
-    await fetch('https://localhost:8080/items/', {
+    await fetch('http://localhost:8080/items/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export async function changeProps(obj) {
 */
 export async function changeStock(obj) {
     let data;
-    await fetch('https://localhost:8080/items/', {
+    await fetch('http://localhost:8080/items/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -78,7 +78,7 @@ describe('POST /create', () => {
             .expect(400)
             .send(testTill)
         expect(till._body.err).toBe('Type 1: Id is not a valid ObjectId');
-        expect(till._body.code).toBe(403);
+        expect(till._body.code).toBe(400);
     });
 
     it('should return 400 for attempting to create a till with a improper string businessId of length 12B', async () => {
@@ -98,10 +98,10 @@ describe('POST /create', () => {
             .expect(400)
             .send(testTill)
         expect(till._body.err).toBe('Type 2: Id is not a valid ObjectId');
-        expect(till._body.code).toBe(403);
+        expect(till._body.code).toBe(400);
     });
 
-    it('should return 500 for attempting to create a till with a fake businessId of length 12B', async () => {
+    it('should return 404 for attempting to create a till with a fake businessId of length 12B', async () => {
         const userData = { email: testUser1.email, password: testUser1.password }; 
 
         const login = await request(app)
@@ -115,9 +115,9 @@ describe('POST /create', () => {
         const till = await request(app)
             .post('/till/create')
             .set('authorization', login.body.token) 
-            .expect(500)
+            .expect(404)
             .send(testTill)
         expect(till._body.err).toBe('Business not found');
-        expect(till._body.code).toBe(500);
+        expect(till._body.code).toBe(404);
     });
 });
