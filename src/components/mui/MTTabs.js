@@ -1,14 +1,11 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Modal, Paper, Tab, Typography } from "@mui/material";
+import { Tab } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
-import { CompactPicker } from "react-color";
-import { COLOR_PALETTE } from "../../Constants";
-import { ListTabsModel } from "../ListTabsModel";
-import { AddTabModal } from "../AddTabModal";
-import MtButton from "./MTButton";
-import { MTModal } from "./MTModal";
-import MTTextField from "./MTTextField";
+import { tabState } from "../../states/tabState";
+import { ListTabsModel } from "../till/ListTabsModel";
+import { AddTabModal } from "../till/AddTabModal";
+
 
 const useStyle = makeStyles({
     root: {
@@ -39,7 +36,7 @@ const useStyle = makeStyles({
 
 export const MTTabs = (props) => {
 
-    const {tabs, addTabsFunc, openEditModal, setOpenEditModal, children} = props;
+    const {openEditModal, setOpenEditModal, children} = props;
 
     const [value, setValue] = useState(0);
     const [openAddModal, setOpenAddModal] = useState(false);
@@ -66,7 +63,7 @@ export const MTTabs = (props) => {
             <TabContext value={value}>
                 <div className={classes.tabBar}>
                     <TabList onChange={tabChange}>
-                        {tabs.map((tab) => {
+                        {tabState.tabs.get().map((tab) => {
                             if(tab.label === '+'){
                                 return <Tab 
                                         sx={addTabStyle}
@@ -86,8 +83,8 @@ export const MTTabs = (props) => {
                 </div>
                 <TabPanel value={value} index={value}>{children}</TabPanel>
             </TabContext>
-            <AddTabModal tabs={tabs} setTabsFunction={addTabsFunc} open={openAddModal} setOpen={setOpenAddModal} />
-            <ListTabsModel tabList={tabs} setTabsList={addTabsFunc} open={openEditModal} setOpen={setOpenEditModal} />
+            {openAddModal && <AddTabModal open={openAddModal} setOpen={setOpenAddModal} />}
+            {openEditModal && <ListTabsModel open={openEditModal} setOpen={setOpenEditModal} />}
         </div>
     )
 }
