@@ -28,6 +28,7 @@ const useStyles = makeStyles({
     }
 })
 
+//* The modal that pops up when the user wants to view the list of tabs.
 export const ListTabsModel = (props) => {
 
     const {open, setOpen} = props;

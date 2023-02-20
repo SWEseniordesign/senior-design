@@ -26,6 +26,7 @@ const useStyle = makeStyles({
     }
 })
 
+//* The modal that pops up when the user wants to edit a tab.
 export const EditTabModal = (props) => {
     const {open, setOpen, tabEditId} = props;
 

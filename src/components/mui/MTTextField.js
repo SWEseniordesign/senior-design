@@ -64,7 +64,7 @@ export default function MTTextField(props) {
       autoComplete={'new-password'}
       InputProps={{
         startAdornment: (
-          <InputAdornment sx={{ margin: '0 12px 0 0' }}>
+          <InputAdornment position="start" sx={{ margin: '0 12px 0 0' }}>
             {!!(icon) ? icon : undefined}
           </InputAdornment>
         ),

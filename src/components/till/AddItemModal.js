@@ -1,7 +1,6 @@
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
-import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
@@ -24,6 +23,7 @@ const useStyle = makeStyles({
     }
 })
 
+//* The modal that pops up when the user wants to add a item.
 export const AddItemModal = (props) => {
 
     const {open, setOpen, items} = props;
@@ -33,8 +33,7 @@ export const AddItemModal = (props) => {
 
     const handleAddItem = (e) => {
         setOpen(false);
-        console.log(items);
-        items.push({id: items[items.length-1].id + 1, label: newItemName, price: newItemPrice})
+        items.push({id: items.length !== 0 ? items[items.length-1].id + 1 : 0, label: newItemName, price: newItemPrice})
 
     }
 

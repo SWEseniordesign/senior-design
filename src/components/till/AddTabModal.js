@@ -26,6 +26,7 @@ const useStyle = makeStyles({
     }
 })
 
+//* The modal that pops up when the user wants to add a tab.
 export const AddTabModal = (props) => {
 
     const {open, setOpen} = props;

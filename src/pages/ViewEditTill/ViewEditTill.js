@@ -6,8 +6,10 @@ import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { AddItemModal } from "../../components/till/AddItemModal";
+import { AddCardModal } from "../../components/till/AddCardModal";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import './ViewEditTill.css'
 import { COLOR_PALETTE } from "../../Constants";
 import "react-grid-layout/css/styles.css";
@@ -38,7 +40,6 @@ const useStyles = makeStyles({
         width: '95%',
         display: 'flex',
         alignItems: 'flex-start',
-        // border: '2px solid black'
     },
     layout: {
         display: 'grid',
@@ -55,10 +56,8 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'column',
         border: '1px solid grey',
-        borderRadius: '5px',
         gap: '12px',
         height: '100%',
-        // minHeight: '17vh'
     },
     grid: {
         display: 'grid',
@@ -88,15 +87,23 @@ const useStyles = makeStyles({
         width: '2px',
         backgroundColor: COLOR_PALETTE.NAVY_BLUE,
         opacity: 0.4,
+    },
+    addCard: {
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer'
     }
     
 })
 
-const c = [
-    {id: 0, label: 'Test1', dimensions: {x: 0, y: 1, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
-    {id: 1, label: "Test2", dimensions: {x: 2, y: 1, w: 2, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
-    {id: 2, label: "Test3", dimensions: {x: 3, y: 3, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: true}
 
+// Can be removed once the backend call is created/called
+const c = [
+    {id: 0, label: 'Test1', dimensions: {x: 0, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
+    {id: 1, label: "Test2", dimensions: {x: 1, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
+    {id: 2, label: "Test3", dimensions: {x: 2, y: 0, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false}
 ]
 
 export const ViewEditTill = () => {
@@ -106,13 +113,40 @@ export const ViewEditTill = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
     const [openAddItem, setOpenAddItem] = useState(false);
+    const [openAddCard, setOpenAddCard] = useState(false);
     const [testCards, setTestCards] = useState(c);
+    const [cardItems, setCardItems] = useState([]);
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
+    //* Sets the openAddCard state to true to open the addCard modal.
+    const handleAddCard = () => {
+        setOpenAddCard(true);
+    }
+
+    //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
+    const handleAddItem = (e, i) => {
+        let card = testCards.find((card) => card.id === i);
+        setCardItems(card[0].items);
+        setOpenAddItem(true);
+    }
+
+    //* Filters out the card that wants to be removed.
+    const removeCard = (e, i) => {
+        let newCards = testCards.filter((card) => card.id !== i);
+        newCards = newCards.map((card) => {
+            if(card.id > i){
+                card.id = card.id - 1;
+            }
+            return card;
+        })
+        setTestCards(newCards);
+    }
+
+    //* Changes the static property of the card to unlock/lock it.
     const changeLockStatus = (e, cardId) => {
         let newCards = testCards.map((card) => {
-            if(card.id == cardId){
+            if(card.id === cardId){
                 card.static = !card.static
             }
             return card;
@@ -120,6 +154,7 @@ export const ViewEditTill = () => {
         setTestCards(newCards);
     }
 
+    //* Sets new dimensions to the card that has been moved.
     const handleLayoutChange = (e) => {
         testCards.map((card, i) => {
             if(card.id.toString() === e[i].i){
@@ -132,18 +167,46 @@ export const ViewEditTill = () => {
         })
     }
 
+    //* Initializes the layout of the cards.
     const createLayout = () => {
-        return testCards.map((card, index) => {
-            return {
-                i: index.toString(), 
-                x: card.dimensions.x, 
-                y: card.dimensions.y, 
-                w: card.dimensions.w, 
-                h: card.dimensions.h,
-                static: isEdit ? card.static : true,
-                resizeHandles: ["se"]
-            }
-        })
+        let layout = [];
+        if(testCards.length !== 0){
+            layout = testCards.map((card, index) => {
+                return {
+                    i: index.toString(), 
+                    x: card.dimensions.x, 
+                    y: card.dimensions.y, 
+                    w: card.dimensions.w, 
+                    h: card.dimensions.h,
+                    static: isEdit ? card.static : true,
+                    resizeHandles: ["se"]
+                }
+            })
+        }
+
+        // Initialize the AddCard option if there is only that option. (No cards in till)
+        if(layout.length === 0){
+            layout.push({
+                i: '0',
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1,
+                static: false,
+                resizeHandles: []
+            });
+        } else { // Initialize the AddCard option but if there is cards in the till. 
+            layout.push({
+                i: layout.length.toString(),
+                x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
+                y: layout[layout.length-1].x < 2 ? layout[layout.length-1].y : layout[layout.length-1].y + 1,
+                w: 1,
+                h: 1,
+                static: false,
+                resizeHandles: []
+            });
+        }
+        return layout
     }
 
     const classes = useStyles();
@@ -169,12 +232,11 @@ export const ViewEditTill = () => {
                             <ResponsiveLayout 
                                 className={classes.layout} 
                                 layouts={{lg: createLayout()}} 
-                                // breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }} 
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
                                 onLayoutChange={(e) => handleLayoutChange(e)}
                                 >
-                                {testCards.map((card, index) => {
+                                {testCards?.map((card, index) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
@@ -184,15 +246,20 @@ export const ViewEditTill = () => {
                                                                 return <div key={i} className={classes.dragDots} />
                                                             })}
                                                         </div>
-                                                        {card.static ? 
-                                                            <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                <LockIcon fontSize="small" />
-                                                            </IconButton> 
-                                                            :
-                                                            <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                <LockOpenIcon fontSize="small" />
+                                                        <div>
+                                                            {card.static ? 
+                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                    <LockIcon fontSize="small" />
+                                                                </IconButton> 
+                                                                :
+                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                    <LockOpenIcon fontSize="small" />
+                                                                </IconButton>
+                                                            }
+                                                            <IconButton size="small" onClick={(e) => removeCard(e, index)}>
+                                                                    <HighlightOffIcon fontSize="small" />
                                                             </IconButton>
-                                                        }
+                                                        </div>
                                                     </div>
                                                     <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
@@ -203,16 +270,23 @@ export const ViewEditTill = () => {
                                                                         </Box>
                                                                     </div>)
                                                         })}
-                                                        <div style={{gridColumn: 1 / 2}} onClick={() => setOpenAddItem(true)}>
+                                                        <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, index)}>
                                                             <Box className={classes.item}>
                                                                 <Typography>+</Typography>
                                                             </Box>
                                                         </div>
                                                     </div>
                                                 </Box>
-                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} />
+                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems} />
                                             </div>
+                                            
                                 })}
+                                <div key={(testCards.length).toString()}>
+                                    <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
+                                        <Typography variant="h6">+</Typography>
+                                    </Box>
+                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={testCards} />
+                                </div>
                             </ResponsiveLayout>
                         </MTTabs>
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
@@ -268,14 +342,3 @@ export const ViewEditTill = () => {
         </div>
     )
 }
-
-/**
- * <div key={index.toString()} >
-                                                <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                    <Typography>{card.label}</Typography>
-                                                </Box>
-                                        </div>
-
-                                        <Card key={index.toString()} label={card.label} color={card.color} items={card.items} />
- * 
- */
