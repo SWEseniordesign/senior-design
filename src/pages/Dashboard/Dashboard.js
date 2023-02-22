@@ -87,10 +87,11 @@ const Dashboard = () => {
 
     useEffect (() => {
         async function getBusAndTills(){
-            const result = await getAllTills()
-            setBusiness(result.business)
-            setOwner(result.user)
-            setTills(result.tills)
+            const result = await getAllTills();
+            const user = await getUserName();
+            setBusiness(result.business);
+            setOwner(user.formattedUser);
+            setTills(result.tills);
         }
         getBusAndTills();
     }, [])

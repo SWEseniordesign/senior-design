@@ -144,18 +144,21 @@ router.post('/create', verifyJWT, async (req, res) => {
  *
  * @route POST /till/getall
  * @expects JWT in header of request, ObjectId in JSON in body of request
- * @success 200 GET, returns {formattedTill, code}
+ * @success 200 GET, returns {business, tills, code}
  * @error 400 Bad Request, No Request Body passed
  *        400 Bad Request, Type1: ObjectId is not 12 bytes
  *        400 Bad Request, Type2: ObjectId is not valid
  *        401 Unauthorized, Invalid Token
- *        404 Not Found, Till not found
+ *        404 Not Found, User does not exist
+ *        404 Not Found, Business does not exist
+ *        404 Not Found,Till does not exist
  *        500 Internal Server Error
  */
 router.post('/getall', verifyJWT, async function(req, res){
     //Find user from JWT
     let userResult = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
-    if(userResult === null) return res.status(403).send({err: 'User does not exist', code: 403});
+    if(userResult === null) return res.status(404).send({err: 'User does not exist', code: 404});
+    if(userResult.businessId === null) return res.status(403).send({err: 'User does not have a business', code: 403});
     let user = {
         id: userResult._id.toString(),
         fname: userResult.fname,
@@ -164,9 +167,9 @@ router.post('/getall', verifyJWT, async function(req, res){
         businessId: userResult.businessId.toString()
     }
 
-    //Find the business then format it and return
+    //Find the business
     let businessResult = await Business.findOne({ownerId: user.id}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
-    if(businessResult === null) return res.status(403).send({err: 'Business does not exist', code: 403});
+    if(businessResult === null) return res.status(404).send({err: 'Business does not exist', code: 404});
     let business = {
         id: businessResult._id.toString(),
         name: businessResult.name,
@@ -175,21 +178,16 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills: businessResult.tills
     }       
 
+    if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
+
     //Grab tills
     let tills = [];
     for (let tillId of business.tills) {
         tillId = tillId.toString();
-        //verify ObjectId is valid
-        if(!(mongoose.isValidObjectId(tillId))){
-            return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-        }
-        if(!((String)(new ObjectId(tillId)) === tillId)){
-            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
-        }
 
         //Find till
         let till = await Till.findById(tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
-        if(till === null) return res.status(403).send({err: 'Till does not exist', code: 403});
+        if(till === null) return res.status(404).send({err: 'Till does not exist', code: 404});
         let formattedTill = {
             id: till._id,
             name: till.name,
@@ -201,29 +199,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills.push(formattedTill);
     }
 
-    return res.status(200).send({user, business, tills, code: 200});
-
-    //Get business
-
-
-    // Till.findById(objectId, function(err, till){
-    //     if(err){
-    //         console.log(err);
-    //         return res.status(500).send({err: 'Internal Server Error', code: 500});
-    //     } else {
-    //         //If till not found
-    //         if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
-    //         let formattedTill = {
-    //             id: till._id,
-    //             name: till.name,
-    //             managerPassword: till.managerPassword,
-    //             employees: till.employees,
-    //             tabs: till.tabs,
-    //             props: till.props
-    //         };
-    //         return res.status(200).send({formattedTill, code: 200});
-    //     }
-    // });
+    return res.status(200).send({business, tills, code: 200});
 });
 
 
