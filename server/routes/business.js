@@ -37,30 +37,29 @@ router.post('/get', verifyJWT, async function(req, res){
     })
 });
 
-/*
-    * TODO 
+/** 
+ * TODO: check that it's proper code numbers, check proper comment format, and make pop-up if business name is duplicate
     Edits a business's name and type
 */
 router.post('/edit', verifyJWT, async function(req, res) {
     //Check if there is a body in the request
     //if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
     
-    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user from jwt', code: 500})});
-    if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
+    if(user === null) return res.status(404).send({err: 'User does not exist', code: 404});
 
     //Find the business then format it and return
     let name = req.body.name;
     Business.findOne({ownerId: user._id}, async function(err, business){
         if(err){
             console.log(err);
-            return res.status(500).send({err: 'Unable to get business', code: 500});
+            return res.status(500).send({err: 'Internal server error.', code: 500});
         } else {
             //If business is not found
             if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
-            //TODO check if user has permission to edit?????
 
             //Check if a business with the same name exists
-            let findBusinessDup = await Business.findOne({name: req.body.name}).exec();
+            let findBusinessDup = await Business.findOne({name: req.body.name}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
             if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
 
             //create updatedBus???
@@ -69,7 +68,7 @@ router.post('/edit', verifyJWT, async function(req, res) {
             business.save(function(err, updatedBusiness) {
                 if(err) {
                     console.log(err);
-                    return res.status(500).send({err: 'Error updating business', code: 500});
+                    return res.status(500).send({err: 'Internal server error.', code: 500});
                 }
                 return res.status(200).send({updatedBusiness, code: 200});
             });
