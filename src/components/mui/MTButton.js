@@ -19,7 +19,10 @@ export default function MtButton(props) {
     isFullWidth, 
     type, 
     label,
-    width 
+    width,
+    backgroundColor,
+    textColor,
+    borderColor
   } = props;
   
   return (
@@ -28,7 +31,10 @@ export default function MtButton(props) {
       variant={variant} 
       onClick={onClick} 
       sx={{
-        width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
+        width: !isFullWidth ? !!(width) ? width : 'auto' : '100%',
+        background: backgroundColor,
+        color: textColor,
+        borderColor: borderColor
       }}
       type={!!(type) ? type : 'button'}>
         {label}
