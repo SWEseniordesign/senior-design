@@ -9,7 +9,23 @@ let testUser = {
 let testUser1 = {
     fname: 'Test',
     lname: 'User',
-    email: 'run_test1@gmail.com',
+    email: 'test1@gmail.com',
+    password: '123',
+    businessId: null
+};
+
+let testUser2 = {
+    fname: 'Test',
+    lname: 'User',
+    email: 'test2@gmail.com',
+    password: '123',
+    businessId: null
+};
+
+let testUser3 = {
+    fname: 'Test',
+    lname: 'User',
+    email: 'test3@gmail.com',
     password: '123',
     businessId: null
 };
@@ -29,8 +45,38 @@ let testBusiness = {
     tills: []
 };
 
+let testBusiness2 = {
+    name: 'Test Business 2',
+    type: 'Wholesale',
+    admins: [],
+    tills: []
+};
+
+let testBusinessType1 = {
+    name: 'Test Business: Type 1',
+    type: 'Wholesale',
+    admins: [],
+    tills: ['1f213']
+};
+
+let testBusinessType2 = {
+    name: 'Test Business: Type 2',
+    type: 'Wholesale',
+    admins: [],
+    tills: ['yoyoyoyoyoyo']
+};
+
 let testTill = {
     name: 'Test Location 1',
+    managerPassword: 123,
+    employees: [],
+    tabs: [],
+    props: [],
+    businessId: ''
+};
+
+let testTill2 = {
+    name: '123 @ Test Street',
     managerPassword: 123,
     employees: [],
     tabs: [],
@@ -75,9 +121,15 @@ let testEmployee = {
 module.exports = {
     testUser,
     testUser1,
+    testUser2,
+    testUser3,
     testUserBusId,
     testBusiness,
+    testBusiness2,
+    testBusinessType1,
+    testBusinessType2,
     testTill,
+    testTill2,
     testTab,
     testCard,
     testItem,
