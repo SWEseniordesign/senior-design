@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { COLOR_PALETTE } from "../../Constants";
+import { getUserName } from "../../requests/users-req";
+import { useQuery } from "react-query";
 import { userState } from "../../states/userState";
 
 const MTDropdown = (props) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const {label, menuItems=[], variant, isAccount, menuOpenAction} = props; // Parameters that can be passed into the custom dropdown
+    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
 
     //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {
@@ -21,6 +24,12 @@ const MTDropdown = (props) => {
     const handleCloseMenu = () => {
         setAnchorEl(null);
     }
+
+    useEffect(() => {
+        if(userState.token.get() !== ''){
+            userRefetch();
+        }
+    }, [userState.token.get()])
 
     return (
         <div>
@@ -57,7 +66,7 @@ const MTDropdown = (props) => {
                     <Tooltip title={'Account Settings'}>
                         <IconButton onClick={handleOpenMenu}>
                             {/* Update the avatar once we have a update backend fn to get user info */}
-                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>O</Avatar>
+                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>{!userLoading ? user?.formattedUser.fname.charAt(0) : ':)'}</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu 

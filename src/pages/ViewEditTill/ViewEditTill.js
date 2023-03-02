@@ -14,6 +14,7 @@ import './ViewEditTill.css'
 import { COLOR_PALETTE } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import { useLocation, useParams } from "react-router-dom";
 
 const useStyles = makeStyles({
     root: {
@@ -108,7 +109,10 @@ const c = [
 
 export const ViewEditTill = () => {
 
-    const [isEdit, setIsEdit] = useState(true);
+    const params = useParams();
+    const location = useLocation();
+
+    const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
@@ -119,6 +123,8 @@ export const ViewEditTill = () => {
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
+    console.log(params)
+
     //* Sets the openAddCard state to true to open the addCard modal.
     const handleAddCard = () => {
         setOpenAddCard(true);
@@ -127,7 +133,7 @@ export const ViewEditTill = () => {
     //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
     const handleAddItem = (e, i) => {
         let card = testCards.find((card) => card.id === i);
-        setCardItems(card[0].items);
+        setCardItems(card.items);
         setOpenAddItem(true);
     }
 

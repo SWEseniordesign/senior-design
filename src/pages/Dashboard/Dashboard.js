@@ -11,6 +11,7 @@ import { useNavigate } from "react-router";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
 import { getTill } from "../../requests/tills-req";
+import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
 
 const useStyle = makeStyles({
@@ -65,6 +66,11 @@ const Dashboard = () => {
 
     const handleNavigateTill = (till) => {
         console.log("Clicked Till: " + till.id)
+
+        //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
+        //? Leaving this for now since it can be tested
+        navigate(`/edit-till/${till.id}`)
+
     }
 
     const CustomTooltip = ({ active, payload, label }) => {
@@ -109,7 +115,7 @@ const Dashboard = () => {
 
     return (
             <div className={classes.root}>
-                <div className={classes.container}>
+                {checkLoggedInStatus_Redirect(navigate) && <div className={classes.container}>
                     <Grid2 container sx={{height: '100%', width: '100%'}} spacing={2}>
                         <Grid2 id='grid-panel-left' xs={12} md={5} sx={{height: '100%'}}>
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
@@ -247,7 +253,7 @@ const Dashboard = () => {
                             </Grid2>
                         </Grid2>
                     </Grid2>
-            </div>
+            </div>}
         </div>
 
 
