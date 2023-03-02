@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { AddItemModal } from "../../components/till/AddItemModal";
 import { AddCardModal } from "../../components/till/AddCardModal";
@@ -14,6 +15,7 @@ import './ViewEditTill.css'
 import { COLOR_PALETTE } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import CartDrawer from "../../components/drawer/CartDrawer";
 
 const useStyles = makeStyles({
     root: {
@@ -118,6 +120,14 @@ export const ViewEditTill = () => {
     const [cardItems, setCardItems] = useState([]);
 
     const ResponsiveLayout = WidthProvider(Responsive);
+
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const handleCartOpen = () => {
+        setIsCartOpen(true);
+    };
+    const handleCartClose = () => {
+        setIsCartOpen(false);
+    };
 
     //* Sets the openAddCard state to true to open the addCard modal.
     const handleAddCard = () => {
@@ -292,6 +302,10 @@ export const ViewEditTill = () => {
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
                             <SettingsIcon fontSize="medium" />
                         </IconButton>
+                        <IconButton size="small" onClick={() => setIsCartOpen((isCartOpen) => !isCartOpen)}>
+                            <ShoppingCartIcon fontSize="medium" />
+                        </IconButton>
+                        <CartDrawer isOpen={isCartOpen} onClose={handleCartClose} />
                     </div>
                 </div>
             :
