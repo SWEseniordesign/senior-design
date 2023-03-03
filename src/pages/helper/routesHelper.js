@@ -1,3 +1,4 @@
+import { getUserBusiness } from "../../requests/users-req";
 import { userState } from "../../states/userState";
 
 export const checkLoggedInStatus_Redirect = (nav) => {
@@ -12,4 +13,15 @@ export const isLoggedIn_Redirect = (nav) => {
         return true
     } 
     nav('/');
+}
+
+export const checkUserForBusiness = async (nav) => {
+
+    const business = await getUserBusiness();
+
+    if(business){
+        nav(-1);
+    } else {
+        return true;
+    }
 }

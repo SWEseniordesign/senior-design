@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Skeleton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
@@ -15,6 +15,8 @@ import { COLOR_PALETTE } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { useLocation, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getTill } from "../../requests/tills-req";
 
 const useStyles = makeStyles({
     root: {
@@ -95,6 +97,10 @@ const useStyles = makeStyles({
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer'
+    },
+    loader: {
+        width: '100%',
+        height: '100%'
     }
     
 })
@@ -120,10 +126,9 @@ export const ViewEditTill = () => {
     const [openAddCard, setOpenAddCard] = useState(false);
     const [testCards, setTestCards] = useState(c);
     const [cardItems, setCardItems] = useState([]);
+    const {isLoading: tillDataIsLoading, data: till, error} = useQuery("tills", () => getTill({id: params.id}));
 
     const ResponsiveLayout = WidthProvider(Responsive);
-
-    console.log(params)
 
     //* Sets the openAddCard state to true to open the addCard modal.
     const handleAddCard = () => {
@@ -225,7 +230,7 @@ export const ViewEditTill = () => {
                     <div className={classes.actions}>
                         <Typography sx={{
                             fontSize: '24px'
-                        }}>Actions</Typography>
+                        }}>{till?.formattedTill.name}</Typography>
                         <div className={classes.action_buttons}>
                             <MtButton label={'Manage Employees'} variant={'outlined'} />
                             <MtButton label={'View Transactions History'} variant={'outlined'} />
@@ -235,65 +240,68 @@ export const ViewEditTill = () => {
                     </div>
                     <div className={classes.tabbar}>
                         <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                            <ResponsiveLayout 
-                                className={classes.layout} 
-                                layouts={{lg: createLayout()}} 
-                                draggableHandle=".draggableHandle"
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                                onLayoutChange={(e) => handleLayoutChange(e)}
-                                >
-                                {testCards?.map((card, index) => {
-                                    return  <div key={index.toString()}>
-                                                <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                    <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
-                                                        <div className='draggableHandle'>
-                                                            {Array.from(Array(6), (e, i) => {
-                                                                return <div key={i} className={classes.dragDots} />
-                                                            })}
-                                                        </div>
-                                                        <div>
-                                                            {card.static ? 
-                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                    <LockIcon fontSize="small" />
-                                                                </IconButton> 
-                                                                :
-                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                    <LockOpenIcon fontSize="small" />
+                            {!tillDataIsLoading ? 
+                                <ResponsiveLayout 
+                                    className={classes.layout} 
+                                    layouts={{lg: createLayout()}} 
+                                    draggableHandle=".draggableHandle"
+                                    cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                                    onLayoutChange={(e) => handleLayoutChange(e)}
+                                    >
+                                    {testCards?.map((card, index) => {
+                                        return  <div key={index.toString()}>
+                                                    <Box className={classes.card} sx={{backgroundColor: card.color}}>
+                                                        <div className={classes.cardTitleBar}>
+                                                            <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
+                                                            <div className='draggableHandle'>
+                                                                {Array.from(Array(6), (e, i) => {
+                                                                    return <div key={i} className={classes.dragDots} />
+                                                                })}
+                                                            </div>
+                                                            <div>
+                                                                {card.static ? 
+                                                                    <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                        <LockIcon fontSize="small" />
+                                                                    </IconButton> 
+                                                                    :
+                                                                    <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                        <LockOpenIcon fontSize="small" />
+                                                                    </IconButton>
+                                                                }
+                                                                <IconButton size="small" onClick={(e) => removeCard(e, index)}>
+                                                                        <HighlightOffIcon fontSize="small" />
                                                                 </IconButton>
-                                                            }
-                                                            <IconButton size="small" onClick={(e) => removeCard(e, index)}>
-                                                                    <HighlightOffIcon fontSize="small" />
-                                                            </IconButton>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
-                                                        {card.items.map((item, index) => {
-                                                            return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                        <Box className={classes.item}>
-                                                                            <Typography>{item.label}</Typography>
-                                                                            {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
-                                                                        </Box>
-                                                                    </div>)
-                                                        })}
-                                                        <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, index)}>
-                                                            <Box className={classes.item}>
-                                                                <Typography>+</Typography>
-                                                            </Box>
+                                                        <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
+                                                            {card.items.map((item, index) => {
+                                                                return (<div key={index} style={{gridColumn: 1 / 2}}>
+                                                                            <Box className={classes.item}>
+                                                                                <Typography>{item.label}</Typography>
+                                                                                {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
+                                                                            </Box>
+                                                                        </div>)
+                                                            })}
+                                                            <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, index)}>
+                                                                <Box className={classes.item}>
+                                                                    <Typography>+</Typography>
+                                                                </Box>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </Box>
-                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems} />
-                                            </div>
-                                            
-                                })}
-                                <div key={(testCards.length).toString()}>
-                                    <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
-                                        <Typography variant="h6">+</Typography>
-                                    </Box>
-                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={testCards} />
-                                </div>
-                            </ResponsiveLayout>
+                                                    </Box>
+                                                    <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems} />
+                                                </div>
+                                                
+                                    })}
+                                    <div key={(testCards.length).toString()}>
+                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
+                                            <Typography variant="h6">+</Typography>
+                                        </Box>
+                                        <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={testCards} />
+                                    </div>
+                                </ResponsiveLayout>
+                                : <Skeleton className={classes.loader} variant={'rectangle'} />
+                            }
                         </MTTabs>
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
                             <SettingsIcon fontSize="medium" />
