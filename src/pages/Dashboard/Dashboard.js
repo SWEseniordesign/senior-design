@@ -110,7 +110,7 @@ const Dashboard = () => {
             }
             setTills(tills)
         }
-        if(business.tills) getTills();
+        if(business?.tills) getTills();
     }, [business])
 
     return (

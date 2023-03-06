@@ -1,13 +1,14 @@
-import { Typography, Button, Grid, Box, Link } from "@mui/material";
+import { Typography, Button, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { COLOR_PALETTE } from "../../Constants";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
+import { pageState } from "../../states/pageState";
 
 /*
 import { createEmployee, getEmployee } from "../../requests/employees-req";
@@ -81,6 +82,10 @@ export const Home = () => {
     const classes = useStyle();
 
     const navigate = useNavigate();
+
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
     const handleSignUp = () => {
         navigate('/create-account');
     }
@@ -88,6 +93,24 @@ export const Home = () => {
     const handleLogin = () => {
         navigate('/login');
     }
+
+    useEffect(() => {
+        if(pageState.hasBeenRedirected.get()){
+            setAlertMessage(pageState.reasonForRedirect.get());
+            setOpenAlert(true);
+            pageState.hasBeenRedirected.set(false);
+        } else {
+            pageState.reasonForRedirect.set('');
+        }
+    }, []);
+
+    //* Closes the alert that pops up when the user gets redirected to the home page.
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
 
     //This is temporary to allow me to test creating data
     /*
@@ -306,6 +329,11 @@ export const Home = () => {
             </div>
             <div className={classes.endPage}>
             </div>
+            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity={'warning'} variant="filled" sx={{ width: '100%' }}>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

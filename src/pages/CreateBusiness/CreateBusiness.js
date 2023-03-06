@@ -7,7 +7,6 @@ import MTTextField from '../../components/mui/MTTextField'
 import MTButton from "../../components/mui/MTButton";
 import { createBusiness } from "../../requests/businesses-req";
 import MTSelect from "../../components/mui/MTSelect";
-import { userState } from "../../states/userState";
 import { checkUserForBusiness } from "../helper/routesHelper";
 
 const useStyles = makeStyles({
@@ -84,7 +83,7 @@ export const CreateBusiness = () => {
 
     return (
         <div className={classes.root}>
-            {checkUserForBusiness(navigate) && 
+            {!(checkUserForBusiness(navigate)) && 
                 <Paper className={classes.paper} square elevation={5} sx={{
                     backgroundColor: COLOR_PALETTE.BABY_BLUE
                 }}>
