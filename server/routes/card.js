@@ -41,10 +41,14 @@ router.post('/get', verifyJWT, function(req, res){
                     let formattedCard = {
                         id: card._id,
                         name: card.name,
-                        managerPassword: card.managerPassword,
-                        employees: card.employees,
-                        tabs: card.tabs,
-                        props: card.props
+                        color: card.color,
+                        dimensions: {
+                            x: card.dimensions.x,
+                            y: card.dimensions.y,
+                            w: card.dimensions.width,
+                            h: card.dimensions.height,
+                        },
+                        items: card.items
                     };
                     return res.status(200).send({formattedCard, code: 200});
                 }

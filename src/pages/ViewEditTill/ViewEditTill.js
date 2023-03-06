@@ -1,6 +1,6 @@
 import { Box, IconButton, Skeleton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -17,6 +17,10 @@ import "react-resizable/css/styles.css";
 import { useLocation, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
+import { getAllTabs, getTab } from "../../requests/tabs-req";
+import { getCard } from "../../requests/cards-req";
+import { tabState } from "../../states/tabState";
+import { none, useHookstate } from "@hookstate/core";
 
 const useStyles = makeStyles({
     root: {
@@ -122,103 +126,7 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
-    const [openAddItem, setOpenAddItem] = useState(false);
-    const [openAddCard, setOpenAddCard] = useState(false);
-    const [testCards, setTestCards] = useState(c);
-    const [cardItems, setCardItems] = useState([]);
-    const {isLoading: tillDataIsLoading, data: till, error} = useQuery("tills", () => getTill({id: params.id}));
-
-    const ResponsiveLayout = WidthProvider(Responsive);
-
-    //* Sets the openAddCard state to true to open the addCard modal.
-    const handleAddCard = () => {
-        setOpenAddCard(true);
-    }
-
-    //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
-    const handleAddItem = (e, i) => {
-        let card = testCards.find((card) => card.id === i);
-        setCardItems(card.items);
-        setOpenAddItem(true);
-    }
-
-    //* Filters out the card that wants to be removed.
-    const removeCard = (e, i) => {
-        let newCards = testCards.filter((card) => card.id !== i);
-        newCards = newCards.map((card) => {
-            if(card.id > i){
-                card.id = card.id - 1;
-            }
-            return card;
-        })
-        setTestCards(newCards);
-    }
-
-    //* Changes the static property of the card to unlock/lock it.
-    const changeLockStatus = (e, cardId) => {
-        let newCards = testCards.map((card) => {
-            if(card.id === cardId){
-                card.static = !card.static
-            }
-            return card;
-        })
-        setTestCards(newCards);
-    }
-
-    //* Sets new dimensions to the card that has been moved.
-    const handleLayoutChange = (e) => {
-        testCards.map((card, i) => {
-            if(card.id.toString() === e[i].i){
-                card.dimensions.x = e[i].x;
-                card.dimensions.y = e[i].y;
-                card.dimensions.w = e[i].w;
-                card.dimensions.h = e[i].h;
-            }
-            return card;
-        })
-    }
-
-    //* Initializes the layout of the cards.
-    const createLayout = () => {
-        let layout = [];
-        if(testCards.length !== 0){
-            layout = testCards.map((card, index) => {
-                return {
-                    i: index.toString(), 
-                    x: card.dimensions.x, 
-                    y: card.dimensions.y, 
-                    w: card.dimensions.w, 
-                    h: card.dimensions.h,
-                    static: isEdit ? card.static : true,
-                    resizeHandles: ["se"]
-                }
-            })
-        }
-
-        // Initialize the AddCard option if there is only that option. (No cards in till)
-        if(layout.length === 0){
-            layout.push({
-                i: '0',
-                x: 0,
-                y: 0,
-                w: 1,
-                h: 1,
-                static: false,
-                resizeHandles: []
-            });
-        } else { // Initialize the AddCard option but if there is cards in the till. 
-            layout.push({
-                i: layout.length.toString(),
-                x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
-                y: layout[layout.length-1].x < 2 ? layout[layout.length-1].y : layout[layout.length-1].y + 1,
-                w: 1,
-                h: 1,
-                static: false,
-                resizeHandles: []
-            });
-        }
-        return layout
-    }
+    const {isLoading: tillDataIsLoading, data: till} = useQuery("tills", () => getTill({id: params.id}));
 
     const classes = useStyles();
 
@@ -239,70 +147,7 @@ export const ViewEditTill = () => {
                         </div>
                     </div>
                     <div className={classes.tabbar}>
-                        <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                            {!tillDataIsLoading ? 
-                                <ResponsiveLayout 
-                                    className={classes.layout} 
-                                    layouts={{lg: createLayout()}} 
-                                    draggableHandle=".draggableHandle"
-                                    cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                                    onLayoutChange={(e) => handleLayoutChange(e)}
-                                    >
-                                    {testCards?.map((card, index) => {
-                                        return  <div key={index.toString()}>
-                                                    <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                        <div className={classes.cardTitleBar}>
-                                                            <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
-                                                            <div className='draggableHandle'>
-                                                                {Array.from(Array(6), (e, i) => {
-                                                                    return <div key={i} className={classes.dragDots} />
-                                                                })}
-                                                            </div>
-                                                            <div>
-                                                                {card.static ? 
-                                                                    <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                        <LockIcon fontSize="small" />
-                                                                    </IconButton> 
-                                                                    :
-                                                                    <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                        <LockOpenIcon fontSize="small" />
-                                                                    </IconButton>
-                                                                }
-                                                                <IconButton size="small" onClick={(e) => removeCard(e, index)}>
-                                                                        <HighlightOffIcon fontSize="small" />
-                                                                </IconButton>
-                                                            </div>
-                                                        </div>
-                                                        <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
-                                                            {card.items.map((item, index) => {
-                                                                return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                            <Box className={classes.item}>
-                                                                                <Typography>{item.label}</Typography>
-                                                                                {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
-                                                                            </Box>
-                                                                        </div>)
-                                                            })}
-                                                            <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, index)}>
-                                                                <Box className={classes.item}>
-                                                                    <Typography>+</Typography>
-                                                                </Box>
-                                                            </div>
-                                                        </div>
-                                                    </Box>
-                                                    <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems} />
-                                                </div>
-                                                
-                                    })}
-                                    <div key={(testCards.length).toString()}>
-                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
-                                            <Typography variant="h6">+</Typography>
-                                        </Box>
-                                        <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={testCards} />
-                                    </div>
-                                </ResponsiveLayout>
-                                : <Skeleton className={classes.loader} variant={'rectangle'} />
-                            }
-                        </MTTabs>
+                        <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} tillDataIsLoading={tillDataIsLoading} />
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
                             <SettingsIcon fontSize="medium" />
                         </IconButton>
@@ -322,34 +167,7 @@ export const ViewEditTill = () => {
                     </div>
                 </div>
                 <div className={classes.tabbar}>
-                    <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                        <ResponsiveLayout 
-                            className={classes.layout} 
-                            layouts={{lg: createLayout()}} 
-                            cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                            >
-                            {testCards.map((card, index) => {
-                                return  <div key={index.toString()}>
-                                            <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                <div className={classes.cardTitleBar}>
-                                                    <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
-                                                </div>
-                                                <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
-                                                    {card.items.map((item, index) => {
-                                                        return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                    <Box className={classes.item}>
-                                                                        <Typography>{item.label}</Typography>
-                                                                        {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
-                                                                    </Box>
-                                                                </div>)
-                                                    })}
-                                                </div>
-                                            </Box>
-                                            <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} />
-                                        </div>
-                            })}
-                        </ResponsiveLayout>
-                    </MTTabs>
+                    <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}/>
                 </div>
             </div>
         }

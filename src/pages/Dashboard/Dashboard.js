@@ -112,7 +112,7 @@ const Dashboard = () => {
             setTills(tills)
         }
         if(business.tills) getTills();
-    }, [business])
+    }, [business])*/
 
     return (
             <div className={classes.root}>
