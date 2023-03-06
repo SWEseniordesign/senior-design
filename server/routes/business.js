@@ -39,7 +39,7 @@ router.post('/get', verifyJWT, async function(req, res){
             };
             return res.status(200).send({formattedBus, code: 200});
         }
-    })
+    });
 });
 
 

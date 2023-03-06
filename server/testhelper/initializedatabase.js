@@ -1,4 +1,4 @@
-const {testUser, testUser1, testUserBusId, testBusiness, testTill, testTab, testCard, testItem} = require('./variables');
+const {testUser, testUser1, testUser2, testUser3, testUserBusId, testBusiness, testTill, testTab, testCard, testItem} = require('./variables');
 const request = require('supertest');
 const app = require('../server');
 const mongoose = require('mongoose');
@@ -144,6 +144,16 @@ async function initializeDatabase(){
             .post('/user/register')
             .expect(201)
             .send(testUserBusId);
+
+        const user4 = await request(app)
+            .post('/user/register')
+            .expect(201)
+            .send(testUser2);
+
+        const user5 = await request(app)
+            .post('/user/register')
+            .expect(201)
+            .send(testUser3);
     }
     catch(e){
         return {err: 'Error creating users'};

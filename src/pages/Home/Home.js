@@ -10,15 +10,15 @@ import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
 import { pageState } from "../../states/pageState";
 
-/*
+
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill } from "../../requests/tills-req";
+import { createTill, getTill, getAllTills } from "../../requests/tills-req";
 import { createTab, getTab } from "../../requests/tabs-req";
 import { createCard, getCard } from "../../requests/cards-req";
 import { createItem, getItem } from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
-*/
+
 
 const useStyle = makeStyles({
     root: {
@@ -113,7 +113,7 @@ export const Home = () => {
     };
 
     //This is temporary to allow me to test creating data
-    /*
+    
     const handleCreateData = async () => {
         let employee = {
             email: 'bob@unb.ca',
@@ -173,11 +173,11 @@ export const Home = () => {
 
         let id = {email: 'test@unb.ca'};
         
-        let error = await getUserName();
+        let error = await getAllTills();
 
         
         console.log(error);
-    }*/
+    }
 
     return (
         <div className={classes.root}>
@@ -188,7 +188,7 @@ export const Home = () => {
                 <div className={classes.buttonBox}>
                     <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
                     <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
-                    { /*<Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button>*/ }
+                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
                 </div>
             </div>
             <div className={classes.singleSectionBox}>

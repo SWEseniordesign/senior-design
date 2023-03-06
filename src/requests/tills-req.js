@@ -46,6 +46,24 @@ export async function getTill (obj) {
 }
 
 /*
+Get all tills for a business
+*/
+export async function getAllTills (obj) {
+    let data;
+    await fetch('http://localhost:8080/till/getall', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
 modify a Till's employees
 */
 export async function addEmployees (obj) {
