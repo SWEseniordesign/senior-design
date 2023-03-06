@@ -29,11 +29,11 @@ const SiteRoutes = [
         component: <AccessBusiness/>
     },
     {
-        path: '/edit-till',
+        path: '/edit-till/:id',
         component: <ViewEditTill/>
     },
     {
-        path: '/view-till',
+        path: '/view-till/:id',
         component: <ViewEditTill/>
     },
     {

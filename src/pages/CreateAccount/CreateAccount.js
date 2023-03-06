@@ -6,7 +6,7 @@ import MTTextField from "../../components/mui/MTTextField";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
 import MTButton from "../../components/mui/MTButton";
-import { userState } from "../../states/userState";
+import { createAccount_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({
     root: {
@@ -57,7 +57,7 @@ export const CreateAccount = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
+    const [passwordError, setPasswordError] = useState();
     const [open, setOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
@@ -89,28 +89,13 @@ export const CreateAccount = () => {
                 if(error.code === 403){
                     setAlertMessage({message: error.err, status: 'warning'});
                 } else {
-                    //setAlertMessage({message: 'Account Created!', status: 'success'})
-                    //userState.token.set(error.token);
-                    //userState.isLoggedIn.set(true);
                     navigate('/login');
                 }
-
-                setOpen(true);
-                formSubmitted_ResetValues();
             }
         } catch(e){
             console.log(e);
         }
 
-    }
-
-    //* Reset the values in the textfields
-    const formSubmitted_ResetValues = () => {
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
     }
 
     //* Checks the password and the confirm password to make sure they match
@@ -128,102 +113,103 @@ export const CreateAccount = () => {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper} square elevation={5} sx={{
-                backgroundColor: COLOR_PALETTE.BABY_BLUE
-            }}>
-                <div className={classes.container}>
-                    <div className={classes.title_subtitle}>
-                        <Typography sx={{
-                            fontFamily: FONT_FAMILY,
-                            fontWeight: '600',
-                            fontSize: '48px',
-                            lineHeight: '56px',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}>Create Account</Typography>
-                        <Typography sx={{
-                            fontFamily: FONT_FAMILY,
-                            fontSize: '20px',
-                            lineHeight: '28px',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}>Business Owners Only</Typography>
-                    </div>
-                    <form id="create-account-form" onSubmit={handleSubmit}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} md={6}>
-                                <MTTextField
-                                    label='First Name'
-                                    value={firstName}
-                                    isRequired
-                                    onChangeFunc={setFirstName}
-                                    width={'100%'}/>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <MTTextField
-                                    label='Last Name'
-                                    value={lastName}
-                                    isRequired
-                                    onChangeFunc={setLastName}
-                                    width={'100%'}/>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <MTTextField
-                                    label='Email'
-                                    value={email}
-                                    variant={'outlined'}
-                                    isRequired
-                                    type={'email'}
-                                    onChangeFunc={setEmail}
-                                    width={'100%'}/>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <MTTextField
-                                    label='Password'
-                                    type='password'
-                                    value={password}
-                                    isRequired
-                                    onChangeFunc={setPassword}
-                                    hasError={passwordError}
-                                    hasPasswordHideShow={true}
-                                    width={'100%'}/>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <MTTextField
-                                    label='Confirm Password'
-                                    type='password'
-                                    value={confirmPassword}
-                                    isRequired
-                                    onChangeFunc={setConfirmPassword}
-                                    hasError={passwordError}
-                                    hasPasswordHideShow={true}
-                                    width={'100%'}/>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <div className={classes.buttons_container}>
-                                    <MTButton variant='contained' type="submit" label={'Create'} width={'100%'} />
-                                    {/* <MTButton variant='outlined' onClick={() => navigate('/')} label={'Cancel'} width={'90%'} /> */}
-                                </div>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <div className={classes.login}>
-                                    <Typography sx={{
+            {!!(createAccount_Redirect(navigate)) && 
+                <Paper className={classes.paper} square elevation={5} sx={{
+                    backgroundColor: COLOR_PALETTE.BABY_BLUE
+                }}>
+                    <div className={classes.container}>
+                        <div className={classes.title_subtitle}>
+                            <Typography sx={{
+                                fontFamily: FONT_FAMILY,
+                                fontWeight: '600',
+                                fontSize: '48px',
+                                lineHeight: '56px',
+                                display: 'flex',
+                                alignItems: 'center'
+                            }}>Create Account</Typography>
+                            <Typography sx={{
+                                fontFamily: FONT_FAMILY,
+                                fontSize: '20px',
+                                lineHeight: '28px',
+                                display: 'flex',
+                                alignItems: 'center'
+                            }}>Business Owners Only</Typography>
+                        </div>
+                        <form id="create-account-form" onSubmit={handleSubmit}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={6}>
+                                    <MTTextField
+                                        label='First Name'
+                                        value={firstName}
+                                        isRequired
+                                        onChangeFunc={setFirstName}
+                                        width={'100%'}/>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <MTTextField
+                                        label='Last Name'
+                                        value={lastName}
+                                        isRequired
+                                        onChangeFunc={setLastName}
+                                        width={'100%'}/>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <MTTextField
+                                        label='Email'
+                                        value={email}
+                                        variant={'outlined'}
+                                        isRequired
+                                        type={'email'}
+                                        onChangeFunc={setEmail}
+                                        width={'100%'}/>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <MTTextField
+                                        label='Password'
+                                        type='password'
+                                        value={password}
+                                        isRequired
+                                        onChangeFunc={setPassword}
+                                        hasError={passwordError}
+                                        hasPasswordHideShow={true}
+                                        width={'100%'}/>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <MTTextField
+                                        label='Confirm Password'
+                                        type='password'
+                                        value={confirmPassword}
+                                        isRequired
+                                        onChangeFunc={setConfirmPassword}
+                                        hasError={passwordError}
+                                        hasPasswordHideShow={true}
+                                        width={'100%'}/>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <div className={classes.buttons_container}>
+                                        <MTButton variant='contained' type="submit" label={'Create'} width={'100%'} />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <div className={classes.login}>
+                                        <Typography sx={{
+                                                fontSize: '16px'
+                                            }}>Already have an account?</Typography>
+                                        <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/login')} sx={{
                                             fontSize: '16px'
-                                        }}>Already have an account?</Typography>
-                                    <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/login')} sx={{
-                                        fontSize: '16px'
-                                    }}>Sign In</Link>
-                                </div>
+                                        }}>Sign In</Link>
+                                    </div>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </form>
-                    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
-                            {alertMessage.message}
-                        </Alert>
-                    </Snackbar>
-                </div>
-            </Paper>
+                        </form>
+                        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                            <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
+                                {alertMessage.message}
+                            </Alert>
+                        </Snackbar>
+                    </div>
+                </Paper>
+            }
         </div>
     );
 }

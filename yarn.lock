@@ -2187,6 +2187,11 @@
   resolved "https://registry.npmjs.org/@hookstate/core/-/core-4.0.0.tgz"
   integrity sha512-l0UNUB4FK/oX+yhMY9JeI6oXlzUUGkXI9E59mFS7TR3HLJao7MQrR2dk4oriMV2Rb5l+6vzXfp1DwhGnq/IgPg==
 
+"@hookstate/localstored@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@hookstate/localstored/-/localstored-4.0.0.tgz#0633599d92d5ef807347b8879c184067e4c26077"
+  integrity sha512-uL1XlXlq4CdbfIeYwXve5WRSm5n/HdCtfwfzIumGsDdRl/mKh6If+y5bHBdQAc0nfTwVQupp5j9+XE8Yng0YaA==
+
 "@humanwhocodes/config-array@^0.10.5":
   version "0.10.6"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.10.6.tgz"
