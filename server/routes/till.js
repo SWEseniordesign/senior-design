@@ -41,6 +41,7 @@ router.post('/get', verifyJWT, function(req, res){
                     if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
                     let formattedTill = {
                         id: till._id,
+                        loginId: till.loginId,
                         name: till.name,
                         managerPassword: till.managerPassword,
                         employees: till.employees,
@@ -111,13 +112,14 @@ router.post('/create', verifyJWT, async (req, res) => {
         }
     }
 
+    let formattedTill;
     //Attempt to save till and update the businesses tills
     new_till.save(function(err, till) {
         if(err) {
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
-            let formattedTill = {
+            formattedTill = {
                 id: till._id.toString(),
                 name: till.name,
                 managerPassword: till.managerPassword,
@@ -133,7 +135,20 @@ router.post('/create', verifyJWT, async (req, res) => {
                     return res.status(500).send({err: 'Internal Server Error', code: 500});
                 }
             });
-            return res.status(201).send({formattedTill, code: 201});
+
+            Till.findByIdAndUpdate(formattedTill.id, {loginId: formattedTill.id.slice(-6)}, function(err, till){
+                if(err){
+                    console.log(err);
+                    Till.findByIdAndDelete(formattedTill.id, function(err, till){
+                        if(err) return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    });
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+                else{
+                    formattedTill.loginId = till.loginId;
+                    return res.status(201).send({formattedTill, code: 201});
+                }
+            });
         }
     });
 });
@@ -190,6 +205,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         if(till === null) return res.status(404).send({err: 'Till does not exist', code: 404});
         let formattedTill = {
             id: till._id,
+            loginId: till.loginId,
             name: till.name,
             managerPassword: till.managerPassword,
             employees: till.employees,
