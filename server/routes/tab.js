@@ -179,19 +179,40 @@ router.post('/getall', verifyJWT, async function(req, res){
 
 
 /**
- * TODO: implement
  * Edit a tab's name and color
  *
  * @route POST /tab/edit
  * @expects JWT in header of request; ObjectId in JSON in body of request
- * @success 
- * @error 
+ * @success 200 POST, returns {updated, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        500 Internal Server Error
  */
 router.post('/edit', verifyJWT, async function(req, res){
+    //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_tab = await Tab.findOne({name: req.body.name}).exec();
-    if(!find_tab) return res.status(403).send({err: 'Tab does not exist', code: 403});
+    //Create temp object
+    let updatedTab = new Tab({
+        name: req.body.name,
+        color: req.body.color
+    });
+    let tabId = req.body.tabId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(tabId)) === tabId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Find Tab and update it
+    Tab.findByIdAndUpdate(tabId, {name: updatedTab.name, color: req.body.color}, function(err, till){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        return res.status(200).send({updated: true, code: 200});
+    });
 });
 
 
