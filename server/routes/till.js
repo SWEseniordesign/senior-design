@@ -253,4 +253,24 @@ router.post('/props', verifyJWT, async function(req, res){
     if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
 });
 
+/**
+ * TODO: implement
+ * Verify a employee's credentials
+ *
+ * @route POST /till/auth
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/auth', async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    let till = await Till.findOne({tillid: req.body.tillid}).exec();
+    if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
+    if(till.employees.indexOf(req.body.email)!== -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
+    if(till.managerPassword!== req.body.password) return res.status(401).send({err: 'Incorrect Password', code: 401});
+    let objId = till._id.toString();
+    return res.status(200).send({objId, code: 200});
+});
+
 module.exports = router;

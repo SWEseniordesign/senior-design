@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const TillSchema = new mongoose.Schema({
+    loginId: {
+        type: String,
+        required: true,
+        unique: true
+    },
     name: {
         type: String,
         required: true,
@@ -10,7 +15,7 @@ const TillSchema = new mongoose.Schema({
         required: true
     },
     employees: {
-        type: [Number]
+        type: [String],
     },
     tabs: {
         type: [mongoose.Schema.Types.ObjectId]
