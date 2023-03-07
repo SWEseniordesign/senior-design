@@ -192,15 +192,27 @@ export const MTTabs = (props) => {
             }
             return card;
         })
+        handleLayoutChange(e, true);
         setLocalCards(newCards);
     }
 
     //* Sets new dimensions to the card that has been moved.
-    const handleLayoutChange =  async (e) => {
+    const handleLayoutChange = (e, updateLock) => {
         let newDimensions;
-        console.log(e)
-        localCards?.map((card, i) => {
-            if(i.toString() === e[i].i){
+        let dimensionsResponse;
+
+        localCards?.map(async (card, i) => {
+            if(!!(updateLock)){
+                newDimensions = {
+                    cardId: card.id,
+                    x: card.dimensions.x,
+                    y: card.dimensions.y,
+                    width:card.dimensions.w,
+                    height: card.dimensions.h,
+                    static: card.static
+                }
+                dimensionsResponse = await modifyCardPosition(newDimensions);
+            } else if(card.dimensions.x !== e[i].x || card.dimensions.y !== e[i].y || card.dimensions.width !== e[i].w || card.dimensions.height !== e[i].h || card.static !== e[i].static){
                 card.dimensions.x = e[i].x;
                 card.dimensions.y = e[i].y;
                 card.dimensions.w = e[i].w;
@@ -213,25 +225,19 @@ export const MTTabs = (props) => {
                     height: e[i].h,
                     static: card.static
                 }
+                dimensionsResponse = await modifyCardPosition(newDimensions);
             }
             return card;
         })
-        let dimensionsResponse = await modifyCardPosition(newDimensions);
-        if(dimensionsResponse.code !== 201){
-            console.log("Cannot move card.");
-        }
     }
 
     //* Initializes the layout of the cards.
     const createLayout = () => {
         let layout = [];
 
-        console.log(localCards)
-
         if(!!(localCards)){
             if(localCards.length !== 0){
                 layout = localCards.map((card, index) => {
-                    console.log(!!(card.dimensions.width));
                     return {
                         i: index.toString(), 
                         x: card.dimensions.x === null ? index : card.dimensions.x, 
@@ -279,8 +285,6 @@ export const MTTabs = (props) => {
         opacity: '0.5'
     }
 
-    console.log(localCards)
-
     const classes = useStyle();
 
     return (
@@ -314,7 +318,7 @@ export const MTTabs = (props) => {
                                 layouts={{lg: createLayout()}} 
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                                onLayoutChange={(e) => handleLayoutChange(e)}
+                                onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards?.map((card, index) => {
                                     return  <div key={index.toString()}>
