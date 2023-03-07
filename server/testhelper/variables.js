@@ -83,8 +83,9 @@ let testTill = {
         let testCardClassicPizza = {
             name: 'Classic',
             color: 'yellow',
-            dimensions: {x: null, y: null, width: null, height: null},
+            dimensions: {x: 0, y: 0, width: 1, height: 1},
             items: [],
+            static: false,
             tabId: ''
         };
             let testItem1CP = {
@@ -104,9 +105,10 @@ let testTill = {
             };
         let testCardSpecialityPizza = {
             name: 'Speciality',
-            color: 'yellow',
-            dimensions: {x: null, y: null, width: null, height: null},
+            color: 'pink',
+            dimensions: {x: 1, y: 1, width: 2, height: 1},
             items: [],
+            static: true,
             tabId: ''
         };
             let testItem1SP = {
@@ -132,8 +134,9 @@ let testTill = {
         let testCardBurgers = {
             name: 'Burgers',
             color: 'red',
-            dimensions: {x: null, y: null, width: null, height: null},
+            dimensions: {x: 0, y: 0, width: 1, height: 1},
             items: [],
+            static: false,
             tabId: ''
         };
             let testItem1B = {
@@ -154,8 +157,9 @@ let testTill = {
         let testCardClassicSand = {
             name: 'Classic',
             color: 'blue',
-            dimensions: {x: null, y: null, width: null, height: null},
+            dimensions: {x: 1, y: 1, width: 2, height: 1},
             items: [],
+            static: true,
             tabId: ''
         };
             let testItem1C = {
@@ -186,6 +190,32 @@ let testTill2 = {
 let testEmployee = {
     email: 'test@test.ca',
     isManager: true
+};
+
+let testTab = {
+    name: 'Sandwiches',
+    managerPassword: 123,
+    employees: [],
+    tabs: [],
+    props: [],
+    tillId: ''
+};
+
+let testCard = {
+    name: 'Burgers',
+    color: 'red',
+    dimensions: {x: null, y: null, width: null, height: null},
+    items: [],
+    static: true,
+    tabId: ''
+};
+
+let testItem = {
+    name: 'BigMac',
+    price: 69.09,
+    image: '',
+    props: [],
+    stock: 4
 };
 
  const fakeObjectIdType1 = 'yo';
@@ -219,6 +249,9 @@ module.exports = {
     testItem1C,
     testItem2C,
     testEmployee,
+    testTab,
+    testCard,
+    testItem,
     fakeObjectIdType1,
     fakeObjectIdType2,
     fakeObjectId
