@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Card = require('../models/Card');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
-const Tab = require('../models/Tab');
 const verifyJWT = require('../middleware/auth');
+const Card = require('../models/Card');
+const Tab = require('../models/Tab');
 
 
 /**
@@ -41,10 +41,15 @@ router.post('/get', verifyJWT, function(req, res){
                     let formattedCard = {
                         id: card._id,
                         name: card.name,
-                        managerPassword: card.managerPassword,
-                        employees: card.employees,
-                        tabs: card.tabs,
-                        props: card.props
+                        color: card.color,
+                        dimensions: {
+                            x: card.dimensions.x,
+                            y: card.dimensions.y,
+                            w: card.dimensions.width,
+                            h: card.dimensions.height,
+                        },
+                        items: card.items,
+                        static: card.static
                     };
                     return res.status(200).send({formattedCard, code: 200});
                 }
@@ -81,6 +86,7 @@ router.post('/create', verifyJWT, async (req, res) => {
         color: req.body.color,
         dimensions: req.body.dimensions,
         items: req.body.items,
+        static: req.body.static
     });
     let tabId = req.body.tabId;
 
@@ -105,10 +111,10 @@ router.post('/create', verifyJWT, async (req, res) => {
             let formattedCard = {
                 id: card._id,
                 name: card.name,
-                managerPassword: card.managerPassword,
-                employees: card.employees,
-                tabs: card.tabs,
-                props: card.props
+                color: card.color,
+                dimensions: card.dimensions,
+                items: card.items,
+                static: card.static
             };
             //Attempts to update tab to include new card
             tab.cards.push(new ObjectId(formattedCard.id));
