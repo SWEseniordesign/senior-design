@@ -105,6 +105,10 @@ const useStyles = makeStyles({
     loader: {
         width: '100%',
         height: '100%'
+    },
+    noTillErrorMessage: {
+        display: 'flex',
+        flexDirection: 'column'
     }
     
 })
@@ -126,7 +130,7 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
-    const {isLoading: tillDataIsLoading, data: till} = useQuery("tills", () => getTill({id: params.id}));
+    const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
 
     const classes = useStyles();
 
@@ -136,9 +140,9 @@ export const ViewEditTill = () => {
                 //? The following JSX is for when the till is being edited. (In edit mode)
                 <div className={classes.root}>
                     <div className={classes.actions}>
-                        <Typography sx={{
+                        {!isLoadingTill && <Typography sx={{
                             fontSize: '24px'
-                        }}>{till?.formattedTill.name}</Typography>
+                        }}>{till?.formattedTill?.name}</Typography>}
                         <div className={classes.action_buttons}>
                             <MtButton label={'Manage Employees'} variant={'outlined'} />
                             <MtButton label={'View Transactions History'} variant={'outlined'} />
@@ -146,12 +150,19 @@ export const ViewEditTill = () => {
                             <MtButton label={'SAVE'} variant={'contained'} />
                         </div>
                     </div>
-                    <div className={classes.tabbar}>
-                        <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} tillDataIsLoading={tillDataIsLoading} />
-                        <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
-                            <SettingsIcon fontSize="medium" />
-                        </IconButton>
-                    </div>
+                    {!!(till) ? 
+                        <div className={classes.tabbar}>
+                            <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} />
+                            <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
+                                <SettingsIcon fontSize="medium" />
+                            </IconButton>
+                        </div>
+                        :
+                        <div className={classes.noTillErrorMessage}>
+                            <Typography variant="h4">Problem loading till</Typography>
+                            <Typography variant="subtitle">Either the user is not logged in or perhaps the till does not exist.</Typography>
+                        </div>
+                    }
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
@@ -167,7 +178,7 @@ export const ViewEditTill = () => {
                     </div>
                 </div>
                 <div className={classes.tabbar}>
-                    <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}/>
+                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}/>
                 </div>
             </div>
         }

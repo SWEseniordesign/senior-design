@@ -180,14 +180,14 @@ router.post('/getall', verifyJWT, async function(req, res){
 
 /**
  * TODO: implement
- * Modify a tab's color
+ * Edit a tab's name and color
  *
- * @route POST /tab/color
+ * @route POST /tab/edit
  * @expects JWT in header of request; ObjectId in JSON in body of request
  * @success 
  * @error 
  */
-router.post('/color', verifyJWT, async function(req, res){
+router.post('/edit', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_tab = await Tab.findOne({name: req.body.name}).exec();

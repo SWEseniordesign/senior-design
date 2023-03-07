@@ -12,8 +12,8 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { AddItemModal } from "../../components/till/AddItemModal";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { COLOR_PALETTE } from "../../Constants";
-import { getTab } from "../../requests/tabs-req";
-import { getCard } from "../../requests/cards-req";
+import { getAllTabs, getTab } from "../../requests/tabs-req";
+import { getAllCards, getCard } from "../../requests/cards-req";
 import { useQuery } from "react-query";
 import { none, useHookstate } from "@hookstate/core";
 
@@ -112,37 +112,42 @@ const c = [
 
 export const MTTabs = (props) => {
 
-    const {till, openEditModal, setOpenEditModal, children, isEdit, tillDataIsLoading} = props;
+    const {till, openEditModal, setOpenEditModal, children, isEdit, isLoadingTill} = props;
 
     const [value, setValue] = useState(0);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openAddItem, setOpenAddItem] = useState(false);
     const [openAddCard, setOpenAddCard] = useState(false);
-    const [testCards, setTestCards] = useState();
+    const [localCards, setLocalCards] = useState([]);
     const [cardItems, setCardItems] = useState([]);
     const [selectedTabId, setSelectedTabId] = useState('');
     const localTabState = useHookstate(tabState);
 
-    const {isLoading: tabsDataIsLoading, data: tabs, refetch: fetchTabs} = useQuery("tabs", () => getTab({id: till?.formattedTill.tabs[0]}), { enabled: false });
-    const {isLoading: cardsDataIsLoading, data: cards, refetch: fetchCards} = useQuery("cards", () => getCard({id: tabs?.formattedTab.cards[0]}), { enabled: false }); //! This should be a call where we give it a tab id and it grabs all the cards for the tab.
+    const {isLoading: isLoadingTabs, data: tabs, refetch: fetchTabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), { enabled: false });
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: selectedTabId}), { enabled: false });
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
     useEffect(() => {
         if(till?.formattedTill.tabs.length > 0){
             fetchTabs();
-            if(tabs?.formattedTab.cards.length > 0){
-                if(cards?.formattedCard.items.length > 0){
-                    setTestCards([cards?.formattedCard]);
-                } else {
-                    fetchCards();
-                    localTabState.tabs[localTabState.tabs.get().length-1].set(none);
-                    localTabState.tabs.merge([tabs.formattedTab])
-                    localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}])
-                }
+            if(tabs?.tabs.length > 0){
+                localTabState.tabs[localTabState.tabs.get().length-1].set(none);
+                localTabState.tabs.merge(tabs.tabs)
+                localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}])
             }
         }
-    }, [till, tabs, cards])
+    }, [till, tabs]);
+    
+    useEffect(() => {
+        if(selectedTabId !== ''){
+            fetchCards();
+        }
+    }, [selectedTabId]);
+
+    useEffect(() => {
+        setLocalCards(cards?.cards);
+    }, [cards]);
 
     const tabChange = (event, newValue) => {
         setValue(newValue)
@@ -159,37 +164,37 @@ export const MTTabs = (props) => {
 
     //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
     const handleAddItem = (e, i) => {
-        let card = testCards.find((card) => card.id === i);
+        let card = localCards?.find((card) => card.id === i);
         setCardItems(card.items);
         setOpenAddItem(true);
     }
 
     //* Filters out the card that wants to be removed.
     const removeCard = (e, i) => {
-        let newCards = testCards?.filter((card) => card.id !== i);
+        let newCards = localCards?.filter((card) => card.id !== i);
         newCards = newCards.map((card) => {
             if(card.id > i){
                 card.id = card.id - 1;
             }
             return card;
         })
-        setTestCards(newCards);
+        setLocalCards(newCards);
     }
 
     //* Changes the static property of the card to unlock/lock it.
     const changeLockStatus = (e, cardId) => {
-        let newCards = testCards?.map((card) => {
+        let newCards = localCards?.map((card) => {
             if(card.id === cardId){
                 card.static = !card.static
             }
             return card;
         })
-        setTestCards(newCards);
+        setLocalCards(newCards);
     }
 
     //* Sets new dimensions to the card that has been moved.
     const handleLayoutChange = (e) => {
-        testCards?.map((card, i) => {
+        localCards?.map((card, i) => {
             if(card.id.toString() === e[i].i){
                 card.dimensions.x = e[i].x;
                 card.dimensions.y = e[i].y;
@@ -203,19 +208,24 @@ export const MTTabs = (props) => {
     //* Initializes the layout of the cards.
     const createLayout = () => {
         let layout = [];
-        if(!!(testCards) && testCards?.length !== 0){
-            layout = testCards?.map((card, index) => {
-                return {
-                    i: index.toString(), 
-                    x: card.dimensions.x === null ? 0 : card.dimensions.x, 
-                    y: card.dimensions.y === null ? 0 : card.dimensions.y, 
-                    w: card.dimensions.w === null ? 1 : card.dimensions.w, 
-                    h: card.dimensions.h === null ? 1 : card.dimensions.h,
-                    static: isEdit ? card.static : true,
-                    resizeHandles: ["se"]
-                }
-            })
+
+        if(!!(localCards)){
+            if(localCards.length !== 0){
+                layout = localCards.map((card, index) => {
+                    return {
+                        i: index.toString(), 
+                        x: card.dimensions.x === null ? index : card.dimensions.x, 
+                        y: card.dimensions.y === null ? 0 : card.dimensions.y, 
+                        w: card.dimensions.width === null ? 1 : card.dimensions.width, 
+                        h: card.dimensions.height === null ? 1 : card.dimensions.height,
+                        static: isEdit ? card.static : true,
+                        resizeHandles: ["se"]
+                    }
+                })
+            }
         }
+
+        // console.log(layout)
 
         // Initialize the AddCard option if there is only that option. (No cards in till)
         if(layout.length === 0){
@@ -239,6 +249,7 @@ export const MTTabs = (props) => {
                 resizeHandles: []
             });
         }
+
         return layout
     }
 
@@ -275,9 +286,8 @@ export const MTTabs = (props) => {
                         })}
                     </TabList>
                 </div>
-                {localTabState.tabs.get()?.map((tab) => {
                     <TabPanel value={value} index={value}>
-                        {isEdit ? !tillDataIsLoading ? 
+                        {!isEdit ? 
                             <ResponsiveLayout 
                                 className={classes.layout} 
                                 layouts={{lg: createLayout()}} 
@@ -285,7 +295,7 @@ export const MTTabs = (props) => {
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
                                 onLayoutChange={(e) => handleLayoutChange(e)}
                                 >
-                                {testCards?.map((card, index) => {
+                                {localCards?.map((card, index) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
@@ -330,21 +340,21 @@ export const MTTabs = (props) => {
                                             </div>
                                             
                                 })}
-                                <div key={!!(testCards) ? (testCards.length).toString() : 0}>
+                                <div key={!!(localCards) ? (localCards.length).toString() : 0}>
                                     <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
                                         <Typography variant="h6">+</Typography>
                                     </Box>
-                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={testCards} />
+                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={cards} />
                                 </div>
                             </ResponsiveLayout>
-                            : <Skeleton className={classes.loader} variant={'rectangle'} />
+                            // : <Skeleton className={classes.loader} variant={'rectangle'} />
                         : 
                             <ResponsiveLayout 
                                 className={classes.layout} 
                                 layouts={{lg: createLayout()}} 
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
                                 >
-                                {testCards?.map((card, index) => {
+                                {localCards.map((card, index) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
@@ -367,9 +377,8 @@ export const MTTabs = (props) => {
                             </ResponsiveLayout>
                         }
                     </TabPanel>
-                })}
             </TabContext>
-            {openAddModal && <AddTabModal open={openAddModal} setOpen={setOpenAddModal} />}
+            {openAddModal && <AddTabModal tillId={till.formattedTill.id} open={openAddModal} setOpen={setOpenAddModal} />}
             {openEditModal && <ListTabsModel open={openEditModal} setOpen={setOpenEditModal} />}
         </div>
     )

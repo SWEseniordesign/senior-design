@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { makeStyles } from "@mui/styles";
+import { LoadingButton } from '@mui/lab';
 
 const useStyles = makeStyles({
   MTButton: {
@@ -19,19 +20,36 @@ export default function MtButton(props) {
     isFullWidth, 
     type, 
     label,
-    width 
+    width,
+    loading,
+    isLoadingButton 
   } = props;
   
   return (
-    <Button 
-      className={classes.MTButton} 
-      variant={variant} 
-      onClick={onClick} 
-      sx={{
-        width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
-      }}
-      type={!!(type) ? type : 'button'}>
-        {label}
+    <>
+    {!isLoadingButton ? 
+      <Button 
+        className={classes.MTButton} 
+        variant={variant} 
+        onClick={onClick} 
+        sx={{
+          width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
+        }}
+        type={!!(type) ? type : 'button'}>
+          {label}
       </Button>
+    :
+      <LoadingButton 
+        className={classes.MTButton} 
+        variant={variant} 
+        onClick={onClick} 
+        sx={{
+          width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
+        }}
+        loading={loading}>
+        {label}
+      </LoadingButton>
+    }
+    </>
   );
 }
