@@ -210,19 +210,43 @@ router.post('/getall', verifyJWT, async function(req, res){
 
 
 /**
- * TODO: not implemented & not working;
- * Modify a card's dimensions
+ * Modify a card's position
  *
- * @route POST /card/dimensions
- * @expects 
- * @success 
- * @error 
+ * @route POST /card/modifyposition
+ * @expects JWT in header of request; info in JSON in body of request
+ * @success 200 POST, returns {updated, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        500 Internal Server Error
  */
-router.post('/dimensions', verifyJWT, async function(req, res){
+router.post('/modifyposition', verifyJWT, async function(req, res){
+    //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_card = await Card.findOne({name: req.body.name}).exec();
-    if(!find_card) return res.status(403).send({err: 'Card does not exist', code: 403});
+    //Create temp object
+    let updatedDimensions = new Tab({
+        x: req.body.x,
+        y: req.body.y,
+        width: req.body.width,
+        height: req.body.height,
+        static: req.body.static
+    });
+    let cardId = req.body.cardId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(cardId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Find Tab and update it
+    Card.findByIdAndUpdate(cardId, {x: updatedDimensions.x, y: updatedDimensions.y, width: updatedDimensions.width, height: updatedDimensions.height, static: updatedDimensions.static}, function(err, card){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        return res.status(200).send({updated: true, code: 200});
+    });
 });
 
 

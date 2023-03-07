@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { boolean } = require('yargs');
 
 const CardSchema = new mongoose.Schema({
     name: {

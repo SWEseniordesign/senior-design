@@ -67,7 +67,7 @@ modify a card's dimensions
 */
 export async function modifyCardPosition (obj) {
     let data;
-    await fetch('http://localhost:8080/card/dimensions', {
+    await fetch('http://localhost:8080/card/modifyposition', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
