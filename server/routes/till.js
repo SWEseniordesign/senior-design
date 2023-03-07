@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Till = require('../models/Till');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
+const User = require('../models/User');
 const Business = require('../models/Business');
+const Till = require('../models/Till');
 const verifyJWT = require('../middleware/auth');
 
 
@@ -135,6 +136,70 @@ router.post('/create', verifyJWT, async (req, res) => {
             return res.status(201).send({formattedTill, code: 201});
         }
     });
+});
+
+
+/**
+ * Get all tills from business via jwt
+ *
+ * @route POST /till/getall
+ * @expects JWT in header of request, ObjectId in JSON in body of request
+ * @success 200 GET, returns {business, tills, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, User does not exist
+ *        404 Not Found, Business does not exist
+ *        404 Not Found,Till does not exist
+ *        500 Internal Server Error
+ */
+router.post('/getall', verifyJWT, async function(req, res){
+    //Find user from JWT
+    let userResult = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+    if(userResult === null) return res.status(404).send({err: 'User does not exist', code: 404});
+    if(userResult.businessId === null) return res.status(403).send({err: 'User does not have a business', code: 403});
+    let user = {
+        id: userResult._id.toString(),
+        fname: userResult.fname,
+        lname: userResult.lname,
+        email: userResult.email,
+        businessId: userResult.businessId.toString()
+    }
+
+    //Find the business
+    let businessResult = await Business.findOne({ownerId: user.id}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+    if(businessResult === null) return res.status(404).send({err: 'Business does not exist', code: 404});
+    let business = {
+        id: businessResult._id.toString(),
+        name: businessResult.name,
+        ownerId: businessResult.ownerId.toString(),
+        admins: businessResult.admins,
+        tills: businessResult.tills
+    }       
+
+    if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
+
+    //Grab tills
+    let tills = [];
+    for (let tillId of business.tills) {
+        tillId = tillId.toString();
+
+        //Find till
+        let till = await Till.findById(tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+        if(till === null) return res.status(404).send({err: 'Till does not exist', code: 404});
+        let formattedTill = {
+            id: till._id,
+            name: till.name,
+            managerPassword: till.managerPassword,
+            employees: till.employees,
+            tabs: till.tabs,
+            props: till.props
+        }
+        tills.push(formattedTill);
+    }
+
+    return res.status(200).send({business, tills, code: 200});
 });
 
 

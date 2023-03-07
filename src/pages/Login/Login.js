@@ -2,11 +2,12 @@ import { Grid, Paper, Typography, Snackbar, Alert, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from "../../components/mui/MTTextField";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { login } from "../../requests/users-req";
 import { userState } from "../../states/userState";
+import { isLoggedIn_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({
     root: {
@@ -48,9 +49,13 @@ export const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [open, setOpen] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
+    const [alertMessage, setAlertMessage] = useState();
 
     const classes = useStyle();
+
+    useEffect(() => {
+        setAlertMessage({message: '', status: 'success'});
+    }, [])
 
     //* Closes the alert that pops up when the user logins or an error occurs.
     const handleClose = (event, reason) => {
@@ -87,6 +92,7 @@ export const Login = () => {
 
     return (
         <div className={classes.root}>
+            {isLoggedIn_Redirect(navigate) && 
             <Paper className={classes.paper} elevation={5} sx={{
                 backgroundColor: COLOR_PALETTE.BABY_BLUE
             }}>
@@ -147,12 +153,12 @@ export const Login = () => {
                             </Grid>
                     </form>
                     <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
-                            {alertMessage.message}
+                        <Alert onClose={handleClose} severity={alertMessage?.status} variant="filled" sx={{ width: '100%' }}>
+                            {alertMessage?.message}
                         </Alert>
                     </Snackbar>
                 </div>
-            </Paper>
+            </Paper>}
         </div>
     );
 }

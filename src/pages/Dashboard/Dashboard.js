@@ -10,8 +10,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
-import { getTill } from "../../requests/tills-req";
-
+import { getTill, getAllTills } from "../../requests/tills-req";
+import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({
     root: {
@@ -65,6 +65,11 @@ const Dashboard = () => {
 
     const handleNavigateTill = (till) => {
         console.log("Clicked Till: " + till.id)
+
+        //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
+        //? Leaving this for now since it can be tested
+        navigate(`/edit-till/${till.id}`)
+
     }
 
     const CustomTooltip = ({ active, payload, label }) => {
@@ -86,16 +91,17 @@ const Dashboard = () => {
     };
 
     useEffect (() => {
-        async function getBus(){
-            const newBus = await getBusiness()
-            const newOwner = await getUserName()
-            setBusiness(newBus.formattedBus)
-            setOwner(newOwner.formattedUser)
+        async function getBusAndTills(){
+            const result = await getAllTills();
+            const user = await getUserName();
+            setBusiness(result.business);
+            setOwner(user.formattedUser);
+            setTills(result.tills);
         }
-        getBus();
+        getBusAndTills();
     }, [])
 
-    useEffect (() => {
+    /*useEffect (() => {
         async function getTills(){
             const tills = []
             for(let tillId of business.tills) {
@@ -105,11 +111,11 @@ const Dashboard = () => {
             setTills(tills)
         }
         if(business.tills) getTills();
-    }, [business])
+    }, [business])*/
 
     return (
             <div className={classes.root}>
-                <div className={classes.container}>
+                {checkLoggedInStatus_Redirect(navigate) && <div className={classes.container}>
                     <Grid2 container sx={{height: '100%', width: '100%'}} spacing={2}>
                         <Grid2 id='grid-panel-left' xs={12} md={5} sx={{height: '100%'}}>
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
@@ -247,7 +253,7 @@ const Dashboard = () => {
                             </Grid2>
                         </Grid2>
                     </Grid2>
-            </div>
+            </div>}
         </div>
 
 

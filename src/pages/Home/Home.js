@@ -1,18 +1,27 @@
-import { Typography, Button, Grid, Box, Link } from "@mui/material";
+import { Typography, Button, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
 import React, { useState, useEffect } from "react";
 import { COLOR_PALETTE } from "../../Constants";
-import { useNavigate } from "react-router";
 import { userState } from "../../states/userState";
 import { useHookstate } from "@hookstate/core";
 import MTButton from '../../components/mui/MTButton'
+import { useLocation, useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
+import { pageState } from "../../states/pageState";
 
-import { getUserBusiness } from "../../requests/users-req";
+
+import { createEmployee, getEmployee } from "../../requests/employees-req";
+import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
+import { createTill, getTill, getAllTills } from "../../requests/tills-req";
+import { createTab, getTab } from "../../requests/tabs-req";
+import { createCard, getCard } from "../../requests/cards-req";
+import { createItem, getItem } from "../../requests/items-req";
+import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
+
 
 const useStyle = makeStyles({
     root: {
@@ -78,6 +87,10 @@ export const Home = () => {
     const [hasBusiness, setHasBusiness] = useState(false);
 
     const navigate = useNavigate();
+
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
     const handleSignUp = () => {
         navigate('/create-account');
     }
@@ -89,6 +102,25 @@ export const Home = () => {
     const handleDashboard = () => {
         navigate('/dashboard');
     }
+
+    useEffect(() => {
+        if(pageState.hasBeenRedirected.get()){
+            setAlertMessage(pageState.reasonForRedirect.get());
+            setOpenAlert(true);
+            pageState.hasBeenRedirected.set(false);
+        } else {
+            pageState.reasonForRedirect.set('');
+        }
+    }, []);
+
+    //* Closes the alert that pops up when the user gets redirected to the home page.
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
 
     const handleCreateBusiness = () => {
         navigate('/create-business');
@@ -270,6 +302,11 @@ export const Home = () => {
             </div>
             <div className={classes.endPage}>
             </div>
+            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity={'warning'} variant="filled" sx={{ width: '100%' }}>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }
