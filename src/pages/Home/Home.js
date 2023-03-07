@@ -138,11 +138,12 @@ export const Home = () => {
             cards: []
         }
         let card = {
-            tabId: '63c44024140e3d9f771083c8',
-            name: 'Dog',
-            color: 'yellow',
+            tabId: '64076d826deedfc9db3032cb',
+            name: 'Balls',
+            color: 'pink',
             dimensions: {x: 1, y: 2, width: 3, height: 4},
-            items: []
+            items: [],
+            static: true
         }
         let cardId = {id: '63c4454e4ffdaf5afa747913'};
         let item = {
@@ -161,8 +162,8 @@ export const Home = () => {
             businessId: '63c03e39d4e646c1151dd54c'
         };
         let till = {
-            businessId: '63c00db199361ea1767b451e',
-            name: null,
+            businessId: '63d2b33a2a75670dbd74fb3b',
+            name: 'Mega Balls',
             managerPassword: '99999',
             employees: [],
             tabs: [],
@@ -173,7 +174,7 @@ export const Home = () => {
 
         let id = {email: 'test@unb.ca'};
         
-        let error = await getAllTills();
+        let error = await createCard(card);
 
         
         console.log(error);

@@ -13,6 +13,9 @@ const CardSchema = new mongoose.Schema({
     },
     items: {
         type: [mongoose.Schema.Types.ObjectId]
+    },
+    static: {
+        type: Boolean
     }
 });
 
