@@ -15,7 +15,7 @@ import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab } from "../../requests/tabs-req";
-import { createCard, getCard, getAllCards } from "../../requests/cards-req";
+import { createCard, getCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { createItem, getItem } from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 
@@ -178,8 +178,16 @@ export const Home = () => {
             color: '#8AFF8A',
             tabId: '64079e7cfbc83db9e075f8db'
         }
+        let cardPosition = {
+            x: 0,
+            y: 0,
+            height: 1,
+            width: 2,
+            static: true,
+            cardId: '64079e7dfbc83db9e075f8df'
+        }
         
-        let error = await editTab(updatedTabInfo);
+        let error = await modifyCardPosition(cardPosition);
 
         
         console.log(error);

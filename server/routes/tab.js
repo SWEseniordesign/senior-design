@@ -195,10 +195,10 @@ router.post('/edit', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Create temp object
-    let updatedTab = new Tab({
+    let updatedTab = {
         name: req.body.name,
         color: req.body.color
-    });
+    }
     let tabId = req.body.tabId;
 
     //verify ObjectId is valid

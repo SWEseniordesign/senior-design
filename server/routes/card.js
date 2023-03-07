@@ -226,13 +226,13 @@ router.post('/modifyposition', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Create temp object
-    let updatedDimensions = new Tab({
+    let updatedDimensions = {
         x: req.body.x,
         y: req.body.y,
         width: req.body.width,
         height: req.body.height,
-        static: req.body.static
-    });
+    }
+    let staticUpdated = req.body.static;
     let cardId = req.body.cardId;
 
     //verify ObjectId is valid
@@ -240,7 +240,7 @@ router.post('/modifyposition', verifyJWT, async function(req, res){
     if(!((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Find Tab and update it
-    Card.findByIdAndUpdate(cardId, {x: updatedDimensions.x, y: updatedDimensions.y, width: updatedDimensions.width, height: updatedDimensions.height, static: updatedDimensions.static}, function(err, card){
+    Card.findByIdAndUpdate(cardId, {dimensions: updatedDimensions, static: staticUpdated}, function(err, card){
         if(err){
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
