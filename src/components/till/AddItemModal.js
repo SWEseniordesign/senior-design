@@ -30,11 +30,14 @@ export const AddItemModal = (props) => {
 
     const [newItemName, setNewItemName] = useState('');
     const [newItemPrice, setNewItemPrice] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [saveMessage, setSaveMessage] = useState('');
 
     const handleAddItem = (e) => {
-        setOpen(false);
+        setLoading(true);
         items.push({id: items.length !== 0 ? items[items.length-1].id + 1 : 0, label: newItemName, price: newItemPrice})
 
+        setLoading(false);
     }
 
     const handleCloseModal = () => {
@@ -52,7 +55,8 @@ export const AddItemModal = (props) => {
                     <Typography variant="h5">Add Item</Typography>
                     <MTTextField label={'Name'} value={newItemName} onChangeFunc={setNewItemName}/>
                     <MTTextField label={'Price'} value={newItemPrice} onChangeFunc={setNewItemPrice} icon={'$'}/>
-                    <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddItem()} width={'64%'} />
+                    <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddItem()} width={'64%'} loading={loading} isLoadingButton />
+                    {saveMessage !== '' && <Typography variant="subtitle2">{saveMessage}</Typography>}
             </Paper>
         </MTModal>
     )

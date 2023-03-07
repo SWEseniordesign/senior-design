@@ -150,6 +150,14 @@ export const MTTabs = (props) => {
         setLocalCards(!!(cards?.cards) ? cards?.cards : []);
     }, [cards]);
 
+    //* Handles updating the selected tabId
+    const handleTabId = (tabID) => {
+        if(tabID !== selectedTabId){
+            setLocalCards([]); 
+            setSelectedTabId(tabID);
+        }
+    }
+
     //* Handles tab change
     const tabChange = (event, newValue) => {
         setValue(newValue)
@@ -199,7 +207,6 @@ export const MTTabs = (props) => {
     //* Sets new dimensions to the card that has been moved.
     const handleLayoutChange = (e, updateLock) => {
         let newDimensions;
-        let dimensionsResponse;
 
         localCards?.map(async (card, i) => {
             if(!!(updateLock)){
@@ -211,7 +218,7 @@ export const MTTabs = (props) => {
                     height: card.dimensions.h,
                     static: card.static
                 }
-                dimensionsResponse = await modifyCardPosition(newDimensions);
+                await modifyCardPosition(newDimensions);
             } else if(card.dimensions.x !== e[i].x || card.dimensions.y !== e[i].y || card.dimensions.width !== e[i].w || card.dimensions.height !== e[i].h || card.static !== e[i].static){
                 card.dimensions.x = e[i].x;
                 card.dimensions.y = e[i].y;
@@ -225,7 +232,7 @@ export const MTTabs = (props) => {
                     height: e[i].h,
                     static: card.static
                 }
-                dimensionsResponse = await modifyCardPosition(newDimensions);
+                await modifyCardPosition(newDimensions);
             }
             return card;
         })
@@ -235,23 +242,19 @@ export const MTTabs = (props) => {
     const createLayout = () => {
         let layout = [];
 
-        if(!!(localCards)){
-            if(localCards.length !== 0){
-                layout = localCards.map((card, index) => {
-                    return {
-                        i: index.toString(), 
-                        x: card.dimensions.x === null ? index : card.dimensions.x, 
-                        y: card.dimensions.y === null ? 0 : card.dimensions.y, 
-                        w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width, 
-                        h: card.dimensions.height === null || !(card.dimensions.height) ? 1 : card.dimensions.height,
-                        static: isEdit ? card.static : true,
-                        resizeHandles: ["se"]
-                    }
-                })
-            }
+        if(localCards.length !== 0){
+            layout = localCards.map((card, index) => {
+                return {
+                    i: index.toString(), 
+                    x: card.dimensions.x === null ? index : card.dimensions.x, 
+                    y: card.dimensions.y === null ? 0 : card.dimensions.y, 
+                    w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width, 
+                    h: card.dimensions.height === null || !(card.dimensions.height) ? 1 : card.dimensions.height,
+                    static: isEdit ? card.static : true,
+                    resizeHandles: ["se"]
+                }
+            })
         }
-
-        // console.log(layout)
 
         // Initialize the AddCard option if there is only that option. (No cards in till)
         if(layout.length === 0){
@@ -306,7 +309,7 @@ export const MTTabs = (props) => {
                                         key={tab.id} 
                                         value={i}
                                         label={tab.name}
-                                        onClick={() => {setLocalCards([]); setSelectedTabId(tab.id);}} />
+                                        onClick={() => handleTabId(tab.id)} />
                             }   
                         })}
                     </TabList>
@@ -354,7 +357,7 @@ export const MTTabs = (props) => {
                                                                         </Box>
                                                                     </div>)
                                                         })}
-                                                        <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, index)}>
+                                                        <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, card.id)}>
                                                             <Box className={classes.item}>
                                                                 <Typography>+</Typography>
                                                             </Box>
