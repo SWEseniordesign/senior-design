@@ -182,7 +182,7 @@ router.post('/getall', verifyJWT, async function(req, res){
  * Edit a tab's name and color
  *
  * @route POST /tab/edit
- * @expects JWT in header of request; ObjectId in JSON in body of request
+ * @expects JWT in header of request; info in JSON in body of request
  * @success 200 POST, returns {updated, code}
  * @error 400 Bad Request, No Request Body passed
  *        400 Bad Request, Type1: ObjectId is not 12 bytes
