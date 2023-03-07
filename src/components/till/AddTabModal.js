@@ -45,7 +45,6 @@ export const AddTabModal = (props) => {
         let tabs = localTabState.tabs.get();
 
         let addResponse = await createTab({tillId: tillId, name: newTabName, color: newTabColor.hex, cards: []});
-        console.log(tillId)
         if(addResponse.code === 201){
             localTabState.tabs.merge([{id: tabs[tabs.length - 1].id + 1, name: newTabName, color: newTabColor.hex}]);
             setSaveMessage("Tab Created!");

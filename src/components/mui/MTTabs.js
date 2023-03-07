@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, Skeleton, IconButton } from "@mui/material";
+import { Tab, Typography, Box, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -12,10 +12,11 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { AddItemModal } from "../../components/till/AddItemModal";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { COLOR_PALETTE } from "../../Constants";
-import { getAllTabs, getTab } from "../../requests/tabs-req";
-import { getAllCards, getCard } from "../../requests/cards-req";
+import { getAllTabs } from "../../requests/tabs-req";
+import { getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { useQuery } from "react-query";
 import { none, useHookstate } from "@hookstate/core";
+import './MTTabs.css'
 
 
 const useStyle = makeStyles({
@@ -129,9 +130,9 @@ export const MTTabs = (props) => {
     const ResponsiveLayout = WidthProvider(Responsive);
 
     useEffect(() => {
-        if(till?.formattedTill.tabs.length > 0){
+        if(till?.formattedTill?.tabs.length > 0){
             fetchTabs();
-            if(tabs?.tabs.length > 0){
+            if(!(tabs?.err) && tabs?.tabs.length > 0){
                 localTabState.tabs[localTabState.tabs.get().length-1].set(none);
                 localTabState.tabs.merge(tabs.tabs)
                 localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}])
@@ -146,13 +147,15 @@ export const MTTabs = (props) => {
     }, [selectedTabId]);
 
     useEffect(() => {
-        setLocalCards(cards?.cards);
+        setLocalCards(!!(cards?.cards) ? cards?.cards : []);
     }, [cards]);
 
+    //* Handles tab change
     const tabChange = (event, newValue) => {
         setValue(newValue)
     }
 
+    //* Sets the openAddModal to true
     const handleOpenAddModal = () => {
         setOpenAddModal(true);
     }
@@ -193,31 +196,48 @@ export const MTTabs = (props) => {
     }
 
     //* Sets new dimensions to the card that has been moved.
-    const handleLayoutChange = (e) => {
+    const handleLayoutChange =  async (e) => {
+        let newDimensions;
+        console.log(e)
         localCards?.map((card, i) => {
-            if(card.id.toString() === e[i].i){
+            if(i.toString() === e[i].i){
                 card.dimensions.x = e[i].x;
                 card.dimensions.y = e[i].y;
                 card.dimensions.w = e[i].w;
                 card.dimensions.h = e[i].h;
+                newDimensions = {
+                    cardId: card.id,
+                    x: e[i].x,
+                    y: e[i].y,
+                    width: e[i].w,
+                    height: e[i].h,
+                    static: card.static
+                }
             }
             return card;
         })
+        let dimensionsResponse = await modifyCardPosition(newDimensions);
+        if(dimensionsResponse.code !== 201){
+            console.log("Cannot move card.");
+        }
     }
 
     //* Initializes the layout of the cards.
     const createLayout = () => {
         let layout = [];
 
+        console.log(localCards)
+
         if(!!(localCards)){
             if(localCards.length !== 0){
                 layout = localCards.map((card, index) => {
+                    console.log(!!(card.dimensions.width));
                     return {
                         i: index.toString(), 
                         x: card.dimensions.x === null ? index : card.dimensions.x, 
                         y: card.dimensions.y === null ? 0 : card.dimensions.y, 
-                        w: card.dimensions.width === null ? 1 : card.dimensions.width, 
-                        h: card.dimensions.height === null ? 1 : card.dimensions.height,
+                        w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width, 
+                        h: card.dimensions.height === null || !(card.dimensions.height) ? 1 : card.dimensions.height,
                         static: isEdit ? card.static : true,
                         resizeHandles: ["se"]
                     }
@@ -259,6 +279,7 @@ export const MTTabs = (props) => {
         opacity: '0.5'
     }
 
+    console.log(localCards)
 
     const classes = useStyle();
 
@@ -281,13 +302,13 @@ export const MTTabs = (props) => {
                                         key={tab.id} 
                                         value={i}
                                         label={tab.name}
-                                        onClick={(e) => setSelectedTabId(tab.id)} />
+                                        onClick={() => {setLocalCards([]); setSelectedTabId(tab.id);}} />
                             }   
                         })}
                     </TabList>
                 </div>
                     <TabPanel value={value} index={value}>
-                        {!isEdit ? 
+                        {isEdit ? 
                             <ResponsiveLayout 
                                 className={classes.layout} 
                                 layouts={{lg: createLayout()}} 
@@ -307,15 +328,15 @@ export const MTTabs = (props) => {
                                                         </div>
                                                         <div>
                                                             {card.static ? 
-                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockIcon fontSize="small" />
                                                                 </IconButton> 
                                                                 :
-                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
+                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockOpenIcon fontSize="small" />
                                                                 </IconButton>
                                                             }
-                                                            <IconButton size="small" onClick={(e) => removeCard(e, index)}>
+                                                            <IconButton size="small" onClick={(e) => removeCard(e, card.id)}>
                                                                     <HighlightOffIcon fontSize="small" />
                                                             </IconButton>
                                                         </div>
@@ -344,7 +365,7 @@ export const MTTabs = (props) => {
                                     <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
                                         <Typography variant="h6">+</Typography>
                                     </Box>
-                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={cards} />
+                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={localCards} tabId={selectedTabId} />
                                 </div>
                             </ResponsiveLayout>
                             // : <Skeleton className={classes.loader} variant={'rectangle'} />

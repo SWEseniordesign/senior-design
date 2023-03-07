@@ -102,18 +102,6 @@ const Dashboard = () => {
         getBusAndTills();
     }, [])
 
-    /*useEffect (() => {
-        async function getTills(){
-            const tills = []
-            for(let tillId of business.tills) {
-                const newTill = await getTill({id: tillId})
-                tills.push(newTill.formattedTill)
-            }
-            setTills(tills)
-        }
-        if(business.tills) getTills();
-    }, [business])*/
-
     return (
             <div className={classes.root}>
                 {checkLoggedInStatus_Redirect(navigate) && <div className={classes.container}>
