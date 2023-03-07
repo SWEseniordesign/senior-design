@@ -84,7 +84,7 @@ get all Tabs for a till
 */
 export async function getAllTabs (obj) {
     let data;
-    await fetch('http://localhost:8080/tab/getAll', {
+    await fetch('http://localhost:8080/tab/getall', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

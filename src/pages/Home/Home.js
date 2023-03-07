@@ -14,8 +14,8 @@ import { pageState } from "../../states/pageState";
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
-import { createTab, getTab } from "../../requests/tabs-req";
-import { createCard, getCard } from "../../requests/cards-req";
+import { createTab, getTab, getAllTabs } from "../../requests/tabs-req";
+import { createCard, getCard, getAllCards } from "../../requests/cards-req";
 import { createItem, getItem } from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 
@@ -171,9 +171,10 @@ export const Home = () => {
         let userId = {id: '63c450b6f3dcafbb59f7ece5'};
 
 
-        let id = {email: 'test@unb.ca'};
+        let tillId = {tillId: 'yoyoyoyoyoyo'};
+        let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
         
-        let error = await getAllTills();
+        let error = await getAllCards(tabId);
 
         
         console.log(error);
