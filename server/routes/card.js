@@ -49,7 +49,8 @@ router.post('/get', verifyJWT, function(req, res){
                             w: card.dimensions.width,
                             h: card.dimensions.height,
                         },
-                        items: card.items
+                        items: card.items,
+                        static: card.static
                     };
                     return res.status(200).send({formattedCard, code: 200});
                 }
@@ -86,6 +87,7 @@ router.post('/create', verifyJWT, async (req, res) => {
         color: req.body.color,
         dimensions: req.body.dimensions,
         items: req.body.items,
+        static: req.body.static
     });
     let tabId = req.body.tabId;
 
@@ -110,10 +112,10 @@ router.post('/create', verifyJWT, async (req, res) => {
             let formattedCard = {
                 id: card._id,
                 name: card.name,
-                managerPassword: card.managerPassword,
-                employees: card.employees,
-                tabs: card.tabs,
-                props: card.props
+                color: card.color,
+                dimensions: card.dimensions,
+                items: card.items,
+                static: card.static
             };
             //Attempts to update tab to include new card
             tab.cards.push(new ObjectId(formattedCard.id));
@@ -197,7 +199,8 @@ router.post('/getall', verifyJWT, async function(req, res){
             name: card.name,
             color: card.color,
             dimensions: card.dimensions,
-            items: items
+            items: items,
+            static: card.static
         }
         cards.push(formattedCard);
     }

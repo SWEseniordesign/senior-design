@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { boolean } = require('yargs');
 
 const CardSchema = new mongoose.Schema({
     name: {
@@ -13,6 +14,9 @@ const CardSchema = new mongoose.Schema({
     },
     items: {
         type: [mongoose.Schema.Types.ObjectId]
+    },
+    static: {
+        type: boolean
     }
 });
 
