@@ -77,6 +77,7 @@ export const AccessTill = () => {
                 setAlertMessage({message: error.err, status: 'warning'});
             } else if(!!(error.token)) {
                 userState.token.set(error.token);
+                userState.tillId.set(error.objId);
                 userState.isLoggedIn.set(true);
                 navigate(`/view-till/${error.objId}`);
             }
@@ -89,7 +90,6 @@ export const AccessTill = () => {
 
     return (
         <div className={classes.root}>
-            {isLoggedIn_Redirect(navigate) && 
             <Paper className={classes.paper} elevation={5} sx={{
                 backgroundColor: COLOR_PALETTE.BABY_BLUE
             }}>
@@ -153,7 +153,7 @@ export const AccessTill = () => {
                         </Alert>
                     </Snackbar>
                 </div>
-            </Paper>}
+            </Paper>
         </div>
     );
 }
