@@ -6,6 +6,8 @@ const User = require('../models/User');
 const Business = require('../models/Business');
 const Till = require('../models/Till');
 const verifyJWT = require('../middleware/auth');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 /**
@@ -41,6 +43,7 @@ router.post('/get', verifyJWT, function(req, res){
                     if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
                     let formattedTill = {
                         id: till._id,
+                        loginId: till.loginId,
                         name: till.name,
                         managerPassword: till.managerPassword,
                         employees: till.employees,
@@ -111,13 +114,14 @@ router.post('/create', verifyJWT, async (req, res) => {
         }
     }
 
+    let formattedTill;
     //Attempt to save till and update the businesses tills
     new_till.save(function(err, till) {
         if(err) {
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
-            let formattedTill = {
+            formattedTill = {
                 id: till._id.toString(),
                 name: till.name,
                 managerPassword: till.managerPassword,
@@ -133,7 +137,20 @@ router.post('/create', verifyJWT, async (req, res) => {
                     return res.status(500).send({err: 'Internal Server Error', code: 500});
                 }
             });
-            return res.status(201).send({formattedTill, code: 201});
+
+            Till.findByIdAndUpdate(formattedTill.id, {loginId: formattedTill.id.slice(-6)}, function(err, till){
+                if(err){
+                    console.log(err);
+                    Till.findByIdAndDelete(formattedTill.id, function(err, till){
+                        if(err) return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    });
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+                else{
+                    formattedTill.loginId = till.loginId;
+                    return res.status(201).send({formattedTill, code: 201});
+                }
+            });
         }
     });
 });
@@ -173,6 +190,7 @@ router.post('/getall', verifyJWT, async function(req, res){
     let business = {
         id: businessResult._id.toString(),
         name: businessResult.name,
+        type: businessResult.type,
         ownerId: businessResult.ownerId.toString(),
         admins: businessResult.admins,
         tills: businessResult.tills
@@ -190,6 +208,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         if(till === null) return res.status(404).send({err: 'Till does not exist', code: 404});
         let formattedTill = {
             id: till._id,
+            loginId: till.loginId,
             name: till.name,
             managerPassword: till.managerPassword,
             employees: till.employees,
@@ -251,6 +270,32 @@ router.post('/props', verifyJWT, async function(req, res){
 
     let find_till = await Till.findOne({name: req.body.name}).exec();
     if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
+});
+
+/**
+ * Verify a employee's credentials
+ *
+ * @route POST /till/auth
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/auth', async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    let till = await Till.findOne({loginId: req.body.tillid}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+    if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
+    if(till.employees.indexOf(req.body.email) === -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
+    if(till.managerPassword !== parseInt(req.body.password)) return res.status(401).send({err: 'Incorrect Password', code: 401});
+
+    //Create JWT via email and tillid
+    const payload = {
+        email: req.body.email,
+        tillId: req.body.tillid
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '8h'});
+    if(!token) return res.status(500).send({err: 'Internal server error', code: 500});
+    return res.status(200).send({token: "Bearer " + token, objId: till._id.toString(), code: 200}); 
 });
 
 module.exports = router;

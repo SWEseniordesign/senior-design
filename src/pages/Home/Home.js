@@ -126,9 +126,9 @@ export const Home = () => {
         navigate('/create-business');
     }
 
-    /*   
-        * Checks if the user has a business. 
-        * Activated when page renders (in useEffect). 
+    /*
+        * Checks if the user has a business.
+        * Activated when page renders (in useEffect).
     */
     const userHasBusiness = async() => {
         let response;
@@ -142,6 +142,72 @@ export const Home = () => {
    useEffect(() => {
     userHasBusiness();
    }, []);
+
+   //This is temporary to allow me to test creating data
+
+    const handleCreateData = async () => {
+       let employee = {
+           email: 'bob@unb.ca',
+           isManager: false
+       };
+       let business = {
+           name: 'Larrys Fryss',
+           ownerId: '63c866337fd04bd174567bc1',
+           type: 'Wholesale',
+           admins: [],
+           tills: []
+       };
+       let businessAdmins = {
+           name: 'McDonalds',
+           admins: ['6377f3e996d92774ba4dcce8']
+       }
+
+       let tab = {
+           tillId: '63be021d79729847f8035ba9',
+           name: 'Drinks',
+           color: 'blue',
+           cards: []
+       }
+       let card = {
+           tabId: '64076d826deedfc9db3032cb',
+           name: 'Balls',
+           color: 'pink',
+           dimensions: {x: 1, y: 2, width: 3, height: 4},
+           items: [],
+           static: true
+       }
+       let cardId = {id: '63c4454e4ffdaf5afa747913'};
+       let item = {
+           cardId: '63c44500cc60f58fb8b2b1f3',
+           name: 'test dog',
+           price: 20,
+           image: null,
+           props: [],
+           stock: 55
+       }
+       let user = {
+           fname: 'Colby',
+           lname: 'Bruh',
+           email: 'cBruh@bruh.bruh',
+           password: 'balls',
+           businessId: '63c03e39d4e646c1151dd54c'
+       };
+       let till = {
+           businessId: '63d2b33a2a75670dbd74fb3b',
+           name: 'Mega Balls',
+           managerPassword: '99999',
+           employees: [],
+           tabs: [],
+           props: []
+       };
+       let userId = {id: '63c450b6f3dcafbb59f7ece5'};
+
+
+       let id = {email: 'test@unb.ca'};
+
+       let error = await createCard(card);
+       console.log(error);
+   }
 
     return (
         <div className={classes.root}>

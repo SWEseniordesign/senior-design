@@ -9,6 +9,7 @@ import { userState } from "../../states/userState";
 import { pageState } from "../../states/pageState";
 import { useHookstate } from "@hookstate/core";
 import { getUserBusiness } from "../../requests/users-req";
+import { token } from "morgan";
 // import { login } from "../../requests/users-req";
 
 const useStyles = makeStyles({
@@ -58,7 +59,8 @@ const Header = () => {
 
     //* Handles an access till button press. It routes the user to the access till page.
     const handleAccessTill = () => {
-        navigate('/access-till');
+        if(userState.token.get() === '') navigate('/access-till');
+        else navigate(`/view-till/${userState.tillId.get()}`);
     }
     
     //* Handles a sign up button press. It routes the user to the create account page.
