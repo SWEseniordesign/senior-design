@@ -42,6 +42,7 @@ router.post('/get', verifyJWT, function(req, res){
     })
 });
 
+
 /**
  * Create a employee from employee info
  *
@@ -62,11 +63,6 @@ router.post('/create', verifyJWT, async (req, res) => {
         email: req.body.email,
         isManager: req.body.isManager
     });
-    let tillId = req.body.tillId;
-
-    //verify ObjectId is valid
-    if(!(mongoose.isValidObjectId(tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    if(!((String)(new ObjectId(tillId)) === tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Check if an employee in the system already has that email
     let find_employee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
@@ -78,31 +74,13 @@ router.post('/create', verifyJWT, async (req, res) => {
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
-        else {
-            //formats the return object to send to frontend
-            let formattedEmployee = {
-                id: employee._id,
-                email: employee.email,
-                isManager: employee.isManager
-            }
-            
-            //Finds Till and adds employee if applicable
-            Till.findById(tillId, function(err, till){
-                if(err) {
-                    console.log(err);
-                    return res.status(500).send({err: 'Internal Server Error', code: 500});
-                }
-                if(till.employees.includes(employee.email)) return res.status(400).send({err: 'Employee already exists in Till', code: 400});
-                till.employees.push(employee.email);
-                till.save(function(err, tillSaved){
-                    if(err) {
-                        console.log(err);
-                        return res.status(500).send({err: 'Internal Server Error', code: 500});
-                    }
-                });
-            });
-            return res.status(201).send({formattedEmployee, code: 201});
+        //formats the return object to send to frontend
+        let formattedEmployee = {
+            id: employee._id,
+            email: employee.email,
+            isManager: employee.isManager
         }
+        return res.status(201).send({formattedEmployee, code: 201});
     });
 });
 

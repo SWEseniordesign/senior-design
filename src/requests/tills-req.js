@@ -64,11 +64,11 @@ export async function getAllTills (obj) {
 }
 
 /*
-modify a Till's employees
+Add a Employee to a Till
 */
-export async function addEmployees (obj) {
+export async function addEmployee (obj) {
     let data;
-    await fetch('http://localhost:8080/till/employees', {
+    await fetch('http://localhost:8080/till/addemployee', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
