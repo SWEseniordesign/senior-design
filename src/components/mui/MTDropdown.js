@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { COLOR_PALETTE } from "../../Constants";
 import { getUserName } from "../../requests/users-req";
 import { useQuery } from "react-query";
@@ -11,7 +12,7 @@ const MTDropdown = (props) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const uState = useHookstate(userState);
-    const {label, menuItems=[], variant, isAccount, menuOpenAction} = props; // Parameters that can be passed into the custom dropdown
+    const {label, menuItems=[], variant, isAccount, menuOpenAction, isIconButton, tooltip} = props; // Parameters that can be passed into the custom dropdown
     const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
 
     //* Handles when the menu (dropdown) opens
@@ -37,7 +38,15 @@ const MTDropdown = (props) => {
         <div>
             {!isAccount ? 
                 <div>
-                    <Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button>
+                    {!(isIconButton) ? 
+                        <Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button>
+                    :
+                        <Tooltip title={tooltip}>
+                            <IconButton onClick={handleOpenMenu}>
+                                <MoreVertIcon fontSize="small"/>
+                            </IconButton>
+                        </Tooltip>
+                    }
                     <Menu 
                         anchorEl={anchorEl}
                         anchorOrigin={{

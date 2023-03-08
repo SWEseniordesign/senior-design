@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, IconButton } from "@mui/material";
+import { Tab, Typography, Box, IconButton, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -8,7 +8,6 @@ import { AddTabModal } from "../till/AddTabModal";
 import { AddCardModal } from "../../components/till/AddCardModal";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { AddItemModal } from "../../components/till/AddItemModal";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { COLOR_PALETTE } from "../../Constants";
@@ -17,6 +16,7 @@ import { getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { useQuery } from "react-query";
 import { none, useHookstate } from "@hookstate/core";
 import './MTTabs.css'
+import MTDropdown from "./MTDropdown";
 
 
 const useStyle = makeStyles({
@@ -82,8 +82,6 @@ const useStyle = makeStyles({
         alignItems: 'center',
         minHeight: '7vh',
         height: '100%',
-        border: '1px solid lightgrey',
-        borderRadius: '5px'
     },
     dragDots: {
         height: '2px',
@@ -101,6 +99,14 @@ const useStyle = makeStyles({
     loader: {
         width: '100%',
         height: '100%'
+    },
+    itemControls: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+        border: '1px solid lightgrey',
     }
 })
 
@@ -113,7 +119,7 @@ const c = [
 
 export const MTTabs = (props) => {
 
-    const {till, openEditModal, setOpenEditModal, children, isEdit, isLoadingTill} = props;
+    const {till, openEditModal, setOpenEditModal, isEdit, isLoadingTill} = props;
 
     const [value, setValue] = useState(0);
     const [openAddModal, setOpenAddModal] = useState(false);
@@ -176,7 +182,7 @@ export const MTTabs = (props) => {
     //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
     const handleAddItem = (e, i) => {
         let card = localCards?.find((card) => card.id === i);
-        setCardItems(card.items);
+        setCardItems([card, [card.items]]);
         setOpenAddItem(true);
     }
 
@@ -282,10 +288,10 @@ export const MTTabs = (props) => {
         return layout
     }
 
+    //* CSS style for the add cards
     const addTabStyle = {
         fontSize: '16px',
-        bgcolor: 'lightgrey',
-        opacity: '0.5'
+        bgcolor: 'rgba(194, 194, 194, 0.5)',
     }
 
     const classes = useStyle();
@@ -315,7 +321,7 @@ export const MTTabs = (props) => {
                     </TabList>
                 </div>
                     <TabPanel value={value} index={value}>
-                        {isEdit ? 
+                        {isEdit ? !isLoadingTabs && !isLoadingCards ? 
                             <ResponsiveLayout 
                                 className={classes.layout} 
                                 layouts={{lg: createLayout()}} 
@@ -333,7 +339,7 @@ export const MTTabs = (props) => {
                                                                 return <div key={i} className={classes.dragDots} />
                                                             })}
                                                         </div>
-                                                        <div>
+                                                        <div style={{display: 'flex'}}>
                                                             {card.static ? 
                                                                 <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockIcon fontSize="small" />
@@ -343,28 +349,41 @@ export const MTTabs = (props) => {
                                                                     <LockOpenIcon fontSize="small" />
                                                                 </IconButton>
                                                             }
-                                                            <IconButton size="small" onClick={(e) => removeCard(e, card.id)}>
-                                                                    <HighlightOffIcon fontSize="small" />
-                                                            </IconButton>
+                                                            <MTDropdown isIconButton menuItems={[
+                                                                {id: 1, title: 'Edit', action: () => {}},
+                                                                {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
+                                                            ]} />
                                                         </div>
                                                     </div>
                                                     <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
                                                             return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                        <Box className={classes.item}>
-                                                                            <Typography>{item.label}</Typography>
-                                                                            {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
+                                                                        <Box className={classes.item} sx={{
+                                                                            bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                                                            borderRadius: '10px',
+                                                                        }}>
+                                                                            {/* <div className={classes.itemControls}>
+                                                                                <MTDropdown isIconButton menuItems={[
+                                                                                    {id: 1, title: 'Edit', action: () => {}},
+                                                                                    {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
+                                                                                ]} />
+                                                                            </div> */}
+                                                                            <Typography>{item.name}</Typography>
+                                                                            {!!(item.price) ? <Typography variant={'subtitle2'}>${item.price}</Typography> : ''}
                                                                         </Box>
                                                                     </div>)
                                                         })}
                                                         <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, card.id)}>
-                                                            <Box className={classes.item}>
+                                                            <Box className={classes.item} sx={{
+                                                                bgcolor: 'rgba(255, 255, 255, 0.8)',
+                                                                borderRadius: '10px',
+                                                            }}>
                                                                 <Typography>+</Typography>
                                                             </Box>
                                                         </div>
                                                     </div>
                                                 </Box>
-                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems} />
+                                                {openAddItem && <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems[1][0]} card={cardItems[0]} />}
                                             </div>
                                             
                                 })}
@@ -375,7 +394,7 @@ export const MTTabs = (props) => {
                                     <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={localCards} tabId={selectedTabId} />
                                 </div>
                             </ResponsiveLayout>
-                            // : <Skeleton className={classes.loader} variant={'rectangle'} />
+                            : <Skeleton className={classes.loader} variant={'rectangle'} />
                         : 
                             <ResponsiveLayout 
                                 className={classes.layout} 
@@ -399,7 +418,7 @@ export const MTTabs = (props) => {
                                                         })}
                                                     </div>
                                                 </Box>
-                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} />
+                                                {/* <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} /> */}
                                             </div>
                                 })}
                             </ResponsiveLayout>

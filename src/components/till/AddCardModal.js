@@ -38,8 +38,6 @@ export const AddCardModal = (props) => {
     const handleAddCard = async (e) => {
         setLoading(true);
 
-        console.log(cards)
-
         let newCard = {
             tabId: tabId,
             name: newCardName,

@@ -83,6 +83,7 @@ router.post('/create', verifyJWT, async function(req, res){
         stock: req.body.stock
     });
     let cardId = req.body.cardId;
+    console.log(cardId);
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(cardId))){

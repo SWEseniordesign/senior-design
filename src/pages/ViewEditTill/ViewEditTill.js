@@ -1,4 +1,4 @@
-import { IconButton, Typography } from "@mui/material";
+import { IconButton, Skeleton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import MtButton from "../../components/mui/MTButton";
@@ -37,8 +37,16 @@ const useStyles = makeStyles({
         alignItems: 'flex-start',
     },
     noTillErrorMessage: {
+        width: '100%',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        marginLeft: '10%'
+    },
+    loader: {
+        width: '100%',
+        height: '100%'
     }
     
 })
@@ -62,9 +70,10 @@ export const ViewEditTill = () => {
                 //? The following JSX is for when the till is being edited. (In edit mode)
                 <div className={classes.root}>
                     <div className={classes.actions}>
-                        {!isLoadingTill && <Typography sx={{
+                        {!isLoadingTill ? <Typography sx={{
                             fontSize: '24px'
-                        }}>{till?.formattedTill?.name}</Typography>}
+                        }}>{till?.formattedTill?.name}</Typography> : 
+                        <Skeleton className={classes.loader} variant={'rectangle'} />}
                         <div className={classes.action_buttons}>
                             <MtButton label={'Manage Employees'} variant={'outlined'} />
                             <MtButton label={'View Transactions History'} variant={'outlined'} />
