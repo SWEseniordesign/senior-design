@@ -19,12 +19,32 @@ export async function createEmployee (obj) {
     return data;
 }
 
+
 /*
 Get an employee
 */
 export async function getEmployee (obj) {
     let data;
     await fetch('http://localhost:8080/employee/get', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+
+/*
+Modifies an Employees isManager field
+*/
+export async function editIsManager (obj) {
+    let data;
+    await fetch('http://localhost:8080/employee/editmanager', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

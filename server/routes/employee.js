@@ -6,6 +6,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const Till = require('../models/Till');
 const Employee = require('../models/Employee');
 
+
 /**
  * Get a employee from email
  *
@@ -76,7 +77,7 @@ router.post('/create', verifyJWT, async (req, res) => {
         }
         //formats the return object to send to frontend
         let formattedEmployee = {
-            id: employee._id,
+            id: employee._id.toString(),
             email: employee.email,
             isManager: employee.isManager
         }
@@ -84,20 +85,37 @@ router.post('/create', verifyJWT, async (req, res) => {
     });
 });
 
+
 /**
- * TODO: not implemented
  * Modify an employee's isManager field
  *
- * @route POST /employee/manager
+ * @route POST /employee/editmanager
  * @expects 
  * @success 
  * @error 
  */
-router.post('/manager', verifyJWT, async (req, res) => {
+router.post('/editmanager', verifyJWT, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_employee = await Employee.findOne({email: req.body.email}).exec();
-    if(!find_employee) return res.status(403).send({err: 'Employee does not exist', code: 403});
+    //Check if an employee in the system already has that email
+    let foundEmployee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
+    if(!foundEmployee) return res.status(404).send({err: 'Employee not found', code: 404});
+
+    //Update info & save
+    foundEmployee.isManager = req.body.isManager;
+    foundEmployee.save(function(err, employee){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        //formats the return object to send to frontend
+        let formattedEmployee = {
+            id: employee._id.toString(),
+            email: employee.email,
+            isManager: employee.isManager
+        }
+        return res.status(201).send({formattedEmployee, code: 201});
+    });
 });
 
 module.exports = router;

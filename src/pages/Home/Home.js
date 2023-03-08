@@ -13,7 +13,7 @@ import { pageState } from "../../states/pageState";
 
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill, getAllTills, addEmployee } from "../../requests/tills-req";
+import { createTill, getTill, getAllTills, addEmployee, removeEmployee } from "../../requests/tills-req";
 import { createTab, getTab } from "../../requests/tabs-req";
 import { createCard, getCard } from "../../requests/cards-req";
 import { createItem, getItem } from "../../requests/items-req";
@@ -116,7 +116,7 @@ export const Home = () => {
     
     const handleCreateData = async () => {
         let employee = {
-            email: 'duncan@unb.ca',
+            email: 'colby@unb.ca',
             isManager: true,
             tillId: '64079e7cfbc83db9e075f8d0'
         };
@@ -175,7 +175,7 @@ export const Home = () => {
 
         let id = {email: 'test@unb.ca'};
         
-        let error = await addEmployee(employee);
+        let error = await removeEmployee(employee);
 
         
         console.log(error);
