@@ -12,7 +12,6 @@ import { getUserName } from "../../requests/users-req";
 import { getAllTills } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
-
 const useStyle = makeStyles({
     root: {
         height: 'calc(100vh - 101px)',
