@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Employee = require('../models/Employee');
 const verifyJWT = require('../middleware/auth');
+const mongoose = require('mongoose');
+const ObjectId = require('mongoose').Types.ObjectId;
+const Till = require('../models/Till');
+const Employee = require('../models/Employee');
 
 /**
  * Get a employee from email
@@ -40,7 +43,6 @@ router.post('/get', verifyJWT, function(req, res){
 });
 
 /**
- * TODO: link employees to a specified Till
  * Create a employee from employee info
  *
  * @route POST /employee/create
@@ -60,9 +62,14 @@ router.post('/create', verifyJWT, async (req, res) => {
         email: req.body.email,
         isManager: req.body.isManager
     });
+    let tillId = req.body.tillId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(tillId)) === tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Check if an employee in the system already has that email
-    let find_employee = await Employee.findOne({email: req.body.email}).exec();
+    let find_employee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
     if(find_employee) return res.status(403).send({err: 'Employee already exists', code: 403});
 
     //Attempt to save the new employee
@@ -76,9 +83,24 @@ router.post('/create', verifyJWT, async (req, res) => {
             let formattedEmployee = {
                 id: employee._id,
                 email: employee.email,
-                isManager: employee.isManager,
-                employeeId: employee.employeeId
-            };
+                isManager: employee.isManager
+            }
+            
+            //Finds Till and adds employee if applicable
+            Till.findById(tillId, function(err, till){
+                if(err) {
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+                if(till.employees.includes(employee.email)) return res.status(400).send({err: 'Employee already exists in Till', code: 400});
+                till.employees.push(employee.email);
+                till.save(function(err, tillSaved){
+                    if(err) {
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                });
+            });
             return res.status(201).send({formattedEmployee, code: 201});
         }
     });

@@ -117,7 +117,8 @@ export const Home = () => {
     const handleCreateData = async () => {
         let employee = {
             email: 'bob@unb.ca',
-            isManager: false
+            isManager: false,
+            tillId: '64079e7cfbc83db9e075f8d0'
         };
         let business = {
             name: 'Larrys Fryss',
@@ -174,7 +175,7 @@ export const Home = () => {
 
         let id = {email: 'test@unb.ca'};
         
-        let error = await createCard(card);
+        let error = await createEmployee(employee);
 
         
         console.log(error);
