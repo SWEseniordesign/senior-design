@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider } from "@mui/material";
+import { Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider, CircularProgress, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -8,9 +8,8 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { getBusiness } from "../../requests/businesses-req";
 import { getUserName } from "../../requests/users-req";
-import { getTill, getAllTills } from "../../requests/tills-req";
+import { getAllTills } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
 
@@ -59,14 +58,13 @@ const Dashboard = () => {
         {name: 'Combos', orders: 35},
         {name: 'Snacks', orders: 10}
     ];
-
+ 
     const [business, setBusiness] = useState({})
     const [owner, setOwner] = useState({})
     const [tills, setTills] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const handleNavigateTill = (till) => {
-        console.log("Clicked Till: " + till.id)
-
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
         //? Leaving this for now since it can be tested
         navigate(`/edit-till/${till.id}`)
@@ -98,21 +96,10 @@ const Dashboard = () => {
             setBusiness(result.business);
             setOwner(user.formattedUser);
             setTills(result.tills);
+            setLoading(false);
         }
         getBusAndTills();
     }, [])
-
-    /*useEffect (() => {
-        async function getTills(){
-            const tills = []
-            for(let tillId of business.tills) {
-                const newTill = await getTill({id: tillId})
-                tills.push(newTill.formattedTill)
-            }
-            setTills(tills)
-        }
-        if(business.tills) getTills();
-    }, [business])*/
 
     return (
             <div className={classes.root}>
@@ -124,44 +111,38 @@ const Dashboard = () => {
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
                                         <Box ml={4} mr={4} mt={8}>
                                             <Box mb={2}>
-                                                { owner.fname ?
-                                                    <Typography variant='h3' sx={{
-                                                                    fontFamily: FONT_FAMILY,
-                                                                    fontWeight: '400',
-                                                                    fontSize: '36px',
-                                                                    lineHeight: '40px',
-                                                                    display: 'flex'}}>
-                                                        Welcome, {owner.fname}!
-                                                    </Typography>
-                                                : null }
+                                                <Typography variant='h3' sx={{
+                                                                fontFamily: FONT_FAMILY,
+                                                                fontWeight: '400',
+                                                                fontSize: '36px',
+                                                                lineHeight: '40px',
+                                                                display: 'flex'}}>
+                                                    {loading ? <Skeleton width={'80%'} /> : `Welcome, ${owner.fname}!`}
+                                                </Typography>
                                             </Box>
                                             <Divider/>
-                                            { business.name ?
                                                 <Typography mt={2} variant='h2' sx={{
                                                                 fontFamily: FONT_FAMILY,
                                                                 fontWeight: '600',
                                                                 fontSize: '48px',
                                                                 lineHeight: '60px',
                                                                 display: 'flex'}}>
-                                                    {business.name}
+                                                    {loading ? <Skeleton width={'80%'} /> : business.name}
                                                 </Typography>
-                                            : null}
-                                            { business.type ?
                                                 <Typography variant='h5' sx={{
                                                                 fontFamily: FONT_FAMILY,
                                                                 fontWeight: '200',
                                                                 fontSize: '28px',
                                                                 lineHeight: '36px',
                                                                 display: 'flex'}}>
-                                                    {business.type}
+                                                    {loading ? <Skeleton width={'80%'} /> : business.type}
                                                 </Typography>
-                                            : null}
                                         </Box>
                                     </Card>
                                 </Grid2>
                                 <Grid2 id='grid-left-bottom' xs={12} md={12} sx={{position: 'absolute', bottom: 0, left: 0, height: '60%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box m={4}>
+                                        <Box m={4} sx={{height: "100%"}}>
                                             <Typography mb={2} variant='h3' sx={{
                                                             fontFamily: FONT_FAMILY,
                                                             fontWeight: '400',
@@ -171,20 +152,26 @@ const Dashboard = () => {
                                                 Monthly Report
                                             </Typography>
                                             <Divider/>
-                                            <ResponsiveContainer height={400} width={"100%"}>
-                                                <PieChart>
-                                                    <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={"80%"} >
-                                                        {pieData.map((entry, index) => (
-                                                            <Cell
-                                                            key={`cell-${index}`}
-                                                            fill={PIE_COLORS[index % PIE_COLORS.length]}
-                                                            />
-                                                        ))}
-                                                    </Pie>
-                                                    <Tooltip content={<CustomTooltip />} />
-                                                    <Legend />
-                                                </PieChart>
-                                            </ResponsiveContainer>
+                                            <Box m={2} sx={{height: "70%", alignItems: 'center'}}>
+                                                { loading ? 
+                                                    (<CircularProgress />) :
+                                                    ( <ResponsiveContainer>
+                                                            <PieChart>
+                                                                <Pie data={pieData} dataKey="orders" nameKey="name" outerRadius={"80%"} >
+                                                                    {pieData.map((entry, index) => (
+                                                                        <Cell
+                                                                        key={`cell-${index}`}
+                                                                        fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                                                        />
+                                                                    ))}
+                                                                </Pie>
+                                                                <Tooltip content={<CustomTooltip />} />
+                                                                <Legend />
+                                                            </PieChart>
+                                                        </ResponsiveContainer>
+                                                    )
+                                                }
+                                            </Box>
                                         </Box>
                                     </Card>
                                 </Grid2>
@@ -209,11 +196,31 @@ const Dashboard = () => {
                                                             fontSize: '20px',
                                                             lineHeight: '48px',
                                                             display: 'flex'}}>
-                                                 {business.name}
+                                                 {loading ? <Skeleton width={'40%'} /> : business.name}
                                             </Typography>
-                                            <Box id='list-container' mt={4}>
-                                                <List sx={{overflow: "auto", maxHeight: 600}}>
-                                                    { tills.length ? tills.map((till) => {
+                                            <Divider/>
+                                            <Box id='list-container' mt={4} sx={{overflow: 'auto', height: '80%'}}>
+                                                <List>
+                                                    {loading ? 
+                                                    // Skeleton List
+                                                    [1,2,3].map((i) => {
+                                                        return (
+                                                            <ListItem key={i} disablePadding>
+                                                                <ListItemButton>
+                                                                    <ListItemAvatar>
+                                                                        <Skeleton variant="circular" width={40} height={40} />
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText
+                                                                        primary={<Skeleton />}
+                                                                        secondary={<Skeleton />}
+                                                                    />
+                                                                </ListItemButton>
+                                                            </ListItem>
+                                                        )
+                                                    })
+                                                    :
+                                                    // List
+                                                    tills.map((till) => {
                                                         return (
                                                             <ListItem
                                                                 key={till.id}
@@ -239,7 +246,7 @@ const Dashboard = () => {
                                                                 </ListItemButton>
                                                             </ListItem>
                                                         )
-                                                    }) : <Typography> No tills found </Typography> }
+                                                    })}
                                                 </List>
                                             </Box>
                                             <Fab color="primary" aria-label="add" sx={{position: 'absolute', bottom: 20, right: 20}}>

@@ -190,6 +190,7 @@ router.post('/getall', verifyJWT, async function(req, res){
     let business = {
         id: businessResult._id.toString(),
         name: businessResult.name,
+        type: businessResult.type,
         ownerId: businessResult.ownerId.toString(),
         admins: businessResult.admins,
         tills: businessResult.tills
