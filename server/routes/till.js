@@ -6,6 +6,8 @@ const User = require('../models/User');
 const Business = require('../models/Business');
 const Till = require('../models/Till');
 const verifyJWT = require('../middleware/auth');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 /**
@@ -270,7 +272,6 @@ router.post('/props', verifyJWT, async function(req, res){
 });
 
 /**
- * TODO: implement
  * Verify a employee's credentials
  *
  * @route POST /till/auth
@@ -281,12 +282,19 @@ router.post('/props', verifyJWT, async function(req, res){
 router.post('/auth', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let till = await Till.findOne({tillid: req.body.tillid}).exec();
+    let till = await Till.findOne({loginId: req.body.tillid}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
-    if(till.employees.indexOf(req.body.email)!== -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
-    if(till.managerPassword!== req.body.password) return res.status(401).send({err: 'Incorrect Password', code: 401});
-    let objId = till._id.toString();
-    return res.status(200).send({objId, code: 200});
+    if(till.employees.indexOf(req.body.email) === -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
+    if(till.managerPassword !== parseInt(req.body.password)) return res.status(401).send({err: 'Incorrect Password', code: 401});
+
+    //Create JWT via email and tillid
+    const payload = {
+        email: req.body.email,
+        tillId: req.body.tillid
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '8h'});
+    if(!token) return res.status(500).send({err: 'Internal server error', code: 500});
+    return res.status(200).send({token: "Bearer " + token, objId: till._id.toString(), code: 200}); 
 });
 
 module.exports = router;
