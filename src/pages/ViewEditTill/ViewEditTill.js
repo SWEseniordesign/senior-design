@@ -81,6 +81,7 @@ export const ViewEditTill = () => {
                             <MtButton label={'SAVE'} variant={'contained'} />
                         </div>
                     </div>
+                    {console.log(!!(till))}
                     {!!(till) ? 
                         <div className={classes.tabbar}>
                             <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />

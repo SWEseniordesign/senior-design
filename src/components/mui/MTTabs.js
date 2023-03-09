@@ -65,10 +65,10 @@ const useStyle = makeStyles({
     grid: {
         display: 'grid',
         gap: '12px',
-        gridTemplateColumns: 'auto auto auto',
-        padding: '12px',
+        gridTemplateColumns: '32% 32% 32%',
+        margin: '12px',
 
-        height: '100%', 
+        height: '100%',
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
         '&::-webkit-scrollbar':{
@@ -82,12 +82,13 @@ const useStyle = makeStyles({
         alignItems: 'center',
         minHeight: '7vh',
         height: '100%',
+        border: '2px solid black'
     },
     dragDots: {
         height: '2px',
         width: '2px',
         backgroundColor: COLOR_PALETTE.NAVY_BLUE,
-        opacity: 0.4,
+        opacity: 0.7,
     },
     addCard: {
         height: '100%',
@@ -107,15 +108,9 @@ const useStyle = makeStyles({
         alignItems: 'center',
         cursor: 'pointer',
         border: '1px solid lightgrey',
+        overflowWrap: 'break-word',
     }
 })
-
-// Can be removed once the backend call is created/called
-const c = [
-    {id: 0, label: 'Test1', dimensions: {x: 0, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
-    {id: 1, label: "Test2", dimensions: {x: 1, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
-    {id: 2, label: "Test3", dimensions: {x: 2, y: 0, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false}
-]
 
 export const MTTabs = (props) => {
 
@@ -136,16 +131,23 @@ export const MTTabs = (props) => {
     const ResponsiveLayout = WidthProvider(Responsive);
 
     useEffect(() => {
-        if(till?.formattedTill?.tabs.length > 0){
+        if(!openAddModal){
+            localTabState.tabs.set([]);
             fetchTabs();
+        }
+    }, [openAddModal])
+
+    useEffect(() => {
+        if(till?.formattedTill?.tabs.length > 0){
             if(!(tabs?.err) && tabs?.tabs.length > 0){
                 localTabState.tabs[localTabState.tabs.get().length-1].set(none);
                 localTabState.tabs.merge(tabs.tabs)
+                setSelectedTabId(tabs.tabs[0].id);
                 localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}])
             }
         }
     }, [till, tabs]);
-    
+
     useEffect(() => {
         if(selectedTabId !== ''){
             fetchCards();
@@ -301,7 +303,7 @@ export const MTTabs = (props) => {
             <TabContext value={value}>
                 <div className={classes.tabBar}>
                     <TabList onChange={tabChange}>
-                        {tabState.tabs.get().map((tab, i) => {
+                        {localTabState.tabs.get().map((tab, i) => {
                             if(tab.name === '+'){
                                 return <Tab 
                                         sx={addTabStyle}
@@ -355,7 +357,7 @@ export const MTTabs = (props) => {
                                                             ]} />
                                                         </div>
                                                     </div>
-                                                    <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
+                                                    <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
                                                             return (<div key={index} style={{gridColumn: 1 / 2}}>
                                                                         <Box className={classes.item} sx={{

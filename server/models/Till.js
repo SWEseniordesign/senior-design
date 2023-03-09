@@ -10,7 +10,7 @@ const TillSchema = new mongoose.Schema({
         required: true
     },
     employees: {
-        type: [Number]
+        type: [String]
     },
     tabs: {
         type: [mongoose.Schema.Types.ObjectId]
