@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, IconButton, Skeleton } from "@mui/material";
+import { Tab, Typography, Box, IconButton, Skeleton, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -25,10 +25,7 @@ const useStyle = makeStyles({
     },
     tabBar: {
         width: 'inherit',
-        borderBottom: '1px solid black',
-    },
-    addTab: {
-
+        borderBottom: `1px solid ${COLOR_PALETTE.NAVY_BLUE}`
     },
     paper: {
         position: 'absolute',
@@ -65,8 +62,8 @@ const useStyle = makeStyles({
     grid: {
         display: 'grid',
         gap: '12px',
-        gridTemplateColumns: '32% 32% 32%',
-        margin: '12px',
+        gridTemplateColumns: '31% 31% 31%',
+        margin: '0px 12px 12px 12px',
 
         height: '100%',
         msOverflowStyle: 'none',
@@ -77,12 +74,12 @@ const useStyle = makeStyles({
     },
     item: {
         display: 'flex',
-        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '7vh',
-        height: '100%',
-        border: '2px solid black'
+        width: '100%',
+        minHeight: '100%',
+        maxHeight: 'max-content',
+        border: `1px solid ${COLOR_PALETTE.NAVY_BLUE}`
     },
     dragDots: {
         height: '2px',
@@ -100,15 +97,6 @@ const useStyle = makeStyles({
     loader: {
         width: '100%',
         height: '100%'
-    },
-    itemControls: {
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-        border: '1px solid lightgrey',
-        overflowWrap: 'break-word',
     }
 })
 
@@ -198,6 +186,21 @@ export const MTTabs = (props) => {
             return card;
         })
         setLocalCards(newCards);
+    }
+
+    //* Filters out the item that wants to be removed.
+    const removeItem = (e, cardId, itemId) => {
+        let newCards = localCards?.map((card) => {
+            if(card.id === cardId){
+                console.log(card.items)
+
+                card.items = card.items.filter((item) => item.id !== itemId);
+            }
+            return card;
+        });
+        console.log(newCards);
+        setLocalCards(newCards);
+
     }
 
     //* Changes the static property of the card to unlock/lock it.
@@ -297,20 +300,22 @@ export const MTTabs = (props) => {
     }
 
     const classes = useStyle();
+    const layout = createLayout();
 
     return (
         <div className={classes.root}>
             <TabContext value={value}>
                 <div className={classes.tabBar}>
-                    <TabList onChange={tabChange}>
+                    <TabList onChange={tabChange} variant={'fullWidth'}>
                         {localTabState.tabs.get().map((tab, i) => {
                             if(tab.name === '+'){
-                                return <Tab 
+                                return <Tooltip title={"Add Tab"} arrow>
+                                    <Tab 
                                         sx={addTabStyle}
                                         key={tab.id} 
                                         value={tab.id}
                                         onClick={handleOpenAddModal}
-                                        label={tab.name} />
+                                        label={tab.name} /></Tooltip>
                             } else {
                                 return <Tab 
                                         sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
@@ -326,7 +331,7 @@ export const MTTabs = (props) => {
                         {isEdit ? !isLoadingTabs && !isLoadingCards ? 
                             <ResponsiveLayout 
                                 className={classes.layout} 
-                                layouts={{lg: createLayout()}} 
+                                layouts={{lg: layout}} 
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
@@ -335,7 +340,12 @@ export const MTTabs = (props) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.name}</Typography>
+                                                        <Typography variant={'h5'} sx={{ 
+                                                            marginLeft: '12px', 
+                                                            overflow: 'hidden', 
+                                                            width: '40%', 
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'}}>{card.name}</Typography>
                                                         <div className='draggableHandle'>
                                                             {Array.from(Array(6), (e, i) => {
                                                                 return <div key={i} className={classes.dragDots} />
@@ -351,7 +361,7 @@ export const MTTabs = (props) => {
                                                                     <LockOpenIcon fontSize="small" />
                                                                 </IconButton>
                                                             }
-                                                            <MTDropdown isIconButton menuItems={[
+                                                            <MTDropdown isIconButton tooltip={'Card Options'} menuItems={[
                                                                 {id: 1, title: 'Edit', action: () => {}},
                                                                 {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
                                                             ]} />
@@ -364,24 +374,22 @@ export const MTTabs = (props) => {
                                                                             bgcolor: 'rgba(255, 255, 255, 0.5)',
                                                                             borderRadius: '10px',
                                                                         }}>
-                                                                            {/* <div className={classes.itemControls}>
-                                                                                <MTDropdown isIconButton menuItems={[
-                                                                                    {id: 1, title: 'Edit', action: () => {}},
-                                                                                    {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
-                                                                                ]} />
-                                                                            </div> */}
-                                                                            <Typography>{item.name}</Typography>
-                                                                            {!!(item.price) ? <Typography variant={'subtitle2'}>${item.price}</Typography> : ''}
+                                                                            <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
+                                                                                {id: 1, title: 'Edit', action: () => {}},
+                                                                                {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
+                                                                            ]} />
                                                                         </Box>
                                                                     </div>)
                                                         })}
                                                         <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, card.id)}>
-                                                            <Box className={classes.item} sx={{
-                                                                bgcolor: 'rgba(255, 255, 255, 0.8)',
-                                                                borderRadius: '10px',
-                                                            }}>
-                                                                <Typography>+</Typography>
-                                                            </Box>
+                                                            <Tooltip title={"Add Item"} arrow>
+                                                                <Box className={classes.item} sx={{
+                                                                    bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                                                    borderRadius: '10px',
+                                                                }}>
+                                                                    <Typography>+</Typography>
+                                                                </Box>
+                                                            </Tooltip>
                                                         </div>
                                                     </div>
                                                 </Box>
@@ -390,9 +398,11 @@ export const MTTabs = (props) => {
                                             
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
-                                    <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
-                                        <Typography variant="h6">+</Typography>
-                                    </Box>
+                                    <Tooltip title={"Add Card"} arrow>
+                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
+                                            <Typography variant="h6">+</Typography>
+                                        </Box>
+                                    </Tooltip>
                                     <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={localCards} tabId={selectedTabId} />
                                 </div>
                             </ResponsiveLayout>

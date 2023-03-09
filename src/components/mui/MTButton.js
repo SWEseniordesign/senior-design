@@ -3,11 +3,16 @@ import Button from '@mui/material/Button';
 import { makeStyles } from "@mui/styles";
 import { LoadingButton } from '@mui/lab';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   MTButton: {
     height: '2.5rem',
+  },
+  responsive: {
+      [theme.breakpoints.down('lg')]: {
+          width: '100%'
+      }
   }
-})
+}))
 
 export default function MtButton(props) {    
   const classes = useStyles(props);
@@ -22,8 +27,22 @@ export default function MtButton(props) {
     label,
     width,
     loading,
-    isLoadingButton 
+    isLoadingButton,
+    endIcon,
+    makeResponsive 
   } = props;
+
+  const getWidth = () => {
+    if(!isFullWidth){
+      if(!!(width)){
+        return width;
+      } else {
+        return 'auto';
+      }
+    } else {
+      return '100%';
+    }
+  }
   
   return (
     <>
@@ -31,9 +50,10 @@ export default function MtButton(props) {
       <Button 
         className={classes.MTButton} 
         variant={variant} 
-        onClick={onClick} 
+        onClick={onClick}
+        endIcon={endIcon} 
         sx={{
-          width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
+          width: !!(makeResponsive) ? getWidth() : '100%',
         }}
         type={!!(type) ? type : 'button'}>
           {label}

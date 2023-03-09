@@ -7,12 +7,32 @@ import { getUserName } from "../../requests/users-req";
 import { useQuery } from "react-query";
 import { userState } from "../../states/userState";
 import { useHookstate } from "@hookstate/core";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+    button: {
+        height: '5rem',
+        width: '100%',
+        overflow: 'hidden',
+        overflowWrap: 'anywhere',
+        whiteSpace: 'normal',
+    }
+});
 
 const MTDropdown = (props) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const uState = useHookstate(userState);
-    const {label, menuItems=[], variant, isAccount, menuOpenAction, isIconButton, tooltip} = props; // Parameters that can be passed into the custom dropdown
+    const {
+        label, 
+        customLabel,
+        menuItems=[], 
+        variant, 
+        isAccount, 
+        menuOpenAction, 
+        isIconButton, 
+        tooltip, 
+        hasDropdownIcon } = props; // Parameters that can be passed into the custom dropdown
     const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
 
     //* Handles when the menu (dropdown) opens
@@ -34,12 +54,18 @@ const MTDropdown = (props) => {
         }
     }, [uState.token.get()])
 
+    const classes = useStyles();
+
+    console.log(tooltip)
+
     return (
         <div>
             {!isAccount ? 
                 <div>
                     {!(isIconButton) ? 
-                        <Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button>
+                        hasDropdownIcon ? 
+                            <Tooltip title={tooltip} arrow><Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> : 
+                            <Tooltip title={tooltip} arrow><Button className={classes.button} color={'info'} variant={variant} onClick={handleOpenMenu}>{label}</Button></Tooltip>
                     :
                         <Tooltip title={tooltip}>
                             <IconButton onClick={handleOpenMenu}>
