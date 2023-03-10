@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const verifyJWT = require('../middleware/auth');
-const mongoose = require('mongoose');
-const ObjectId = require('mongoose').Types.ObjectId;
-const Till = require('../models/Till');
+const {verifyJWT, verifyJWTAdmin, verifyJWTOwner} = require('../middleware/auth');
 const Employee = require('../models/Employee');
 
 
@@ -55,7 +52,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        403 Forbidden, Employee already exists
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTAdmin, async (req, res) => {
     //check if req body exists 
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -94,7 +91,7 @@ router.post('/create', verifyJWT, async (req, res) => {
  * @success 
  * @error 
  */
-router.post('/editmanager', verifyJWT, async (req, res) => {
+router.post('/editmanager', verifyJWTOwner, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Check if an employee in the system already has that email

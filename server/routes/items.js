@@ -4,7 +4,7 @@ const Item = require('../models/Item');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Card = require('../models/Card');
-const verifyJWT = require('../middleware/auth');
+const {verifyJWT, verifyJWTAdmin} = require('../middleware/auth');
 
 /**
  * Get a item from ObjectId
@@ -70,7 +70,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        404 Not Found, Item not found
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async function(req, res){
+router.post('/create', verifyJWTAdmin, async function(req, res){
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -133,7 +133,7 @@ router.post('/create', verifyJWT, async function(req, res){
  * @success 
  * @error 
  */
-router.get('/name', verifyJWT, async (req, res) => {
+router.get('/name', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
@@ -149,7 +149,7 @@ router.get('/name', verifyJWT, async (req, res) => {
  * @success 
  * @error 
  */
-router.get('/image', verifyJWT, async (req, res) => {
+router.get('/image', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
@@ -165,7 +165,7 @@ router.get('/image', verifyJWT, async (req, res) => {
  * @success 
  * @error 
  */
-router.get('/props', verifyJWT, async (req, res) => {
+router.get('/props', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
@@ -181,7 +181,7 @@ router.get('/props', verifyJWT, async (req, res) => {
  * @success 
  * @error 
  */
-router.get('/stock', verifyJWT, async (req, res) => {
+router.get('/stock', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_item = await Item.findOne({name: req.body.name}).exec();
     if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});

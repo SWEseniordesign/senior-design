@@ -192,6 +192,11 @@ let testEmployee = {
     isManager: true
 };
 
+let testEmployee2 = {
+    email: 'john@test.ca',
+    isManager: false
+};
+
 let testTab = {
     name: 'Sandwiches',
     managerPassword: 123,
@@ -249,6 +254,7 @@ module.exports = {
     testItem1C,
     testItem2C,
     testEmployee,
+    testEmployee2,
     testTab,
     testCard,
     testItem,

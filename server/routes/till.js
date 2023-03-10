@@ -6,8 +6,7 @@ const User = require('../models/User');
 const Business = require('../models/Business');
 const Till = require('../models/Till');
 const Employee = require('../models/Employee');
-const verifyJWT = require('../middleware/auth');
-const bcrypt = require('bcrypt');
+const {verifyJWT, verifyJWTAdmin, verifyJWTOwner} = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 
 
@@ -76,7 +75,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        404 Not Found, Till not found
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTOwner, async (req, res) => {
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -230,7 +229,7 @@ router.post('/getall', verifyJWT, async function(req, res){
  * @success 
  * @error 
  */
-router.post('/addemployee', verifyJWT, async function(req, res){
+router.post('/addemployee', verifyJWTAdmin, async function(req, res){
     //check if req body exists 
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -332,11 +331,13 @@ router.post('/auth', async function(req, res){
     if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
     if(till.employees.indexOf(req.body.email) === -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
     if(till.managerPassword !== parseInt(req.body.password)) return res.status(401).send({err: 'Incorrect Password', code: 401});
+    let employee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
 
     //Create JWT via email and tillid
     const payload = {
         email: req.body.email,
-        tillId: req.body.tillid
+        tillId: req.body.tillid,
+        admin: employee.isManager
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '8h'});
     if(!token) return res.status(500).send({err: 'Internal server error', code: 500});
@@ -352,7 +353,7 @@ router.post('/auth', async function(req, res){
  * @success 
  * @error 
  */
-router.post('/removeemployee', async function(req, res){
+router.post('/removeemployee', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Find the Till
@@ -381,7 +382,6 @@ router.post('/removeemployee', async function(req, res){
         }
         return res.status(200).send({formattedTill, code: 200}); 
     });
-    
 });
 
 
@@ -394,7 +394,7 @@ router.post('/removeemployee', async function(req, res){
  * @success 
  * @error 
  */
-router.post('/tabs', verifyJWT, async function(req, res){
+router.post('/tabs', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_till = await Till.findOne({name: req.body.name}).exec();
@@ -411,7 +411,7 @@ router.post('/tabs', verifyJWT, async function(req, res){
  * @success 
  * @error 
  */
-router.post('/props', verifyJWT, async function(req, res){
+router.post('/props', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_till = await Till.findOne({name: req.body.name}).exec();

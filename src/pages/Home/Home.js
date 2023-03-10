@@ -117,8 +117,7 @@ export const Home = () => {
     const handleCreateData = async () => {
         let employee = {
             email: 'colby@unb.ca',
-            isManager: true,
-            tillId: '64079e7cfbc83db9e075f8d0'
+            isManager: true
         };
         let business = {
             name: 'Larrys Fryss',
@@ -175,7 +174,7 @@ export const Home = () => {
 
         let id = {email: 'test@unb.ca'};
         
-        let error = await removeEmployee(employee);
+        let error = await createBusiness(business);
 
         
         console.log(error);
