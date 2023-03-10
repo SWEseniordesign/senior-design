@@ -12,7 +12,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import './ViewEditTill.css'
-import { COLOR_PALETTE } from "../../Constants";
+import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import CartDrawer from "../../components/drawer/CartDrawer";
@@ -107,11 +107,11 @@ const useStyles = makeStyles({
         cursor: 'pointer'
     },
     drawer: {
-        width: 60,
+        width: 20,
         flexShrink: 0,
       },
       drawerPaper: {
-        width: 300,
+        width: 340,
         borderRight: "none",
       },
       drawerHeader: {
@@ -119,6 +119,9 @@ const useStyles = makeStyles({
         alignItems: "center",
         //padding
         justifyContent: "flex-end",
+      },
+      drawerTitle: {
+        marginLeft: "16px",
       },
 })
 
@@ -147,8 +150,8 @@ export const ViewEditTill = () => {
     const [testCards, setTestCards] = useState(c);
     const [cardItems, setCardItems] = useState([]);
     const [openDrawer, setOpenDrawer] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
-    //const [cartItems, setCartItems] = useState(testCartItems);
+    //const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState(testCartItems);
 
 
 
@@ -187,14 +190,16 @@ export const ViewEditTill = () => {
         }
     };
 
-    
+    const getSubtotal = () => {
+        return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    }
+      
 
     const handleCheckout = () => {
-        console.log("mimimi");
+        console.log("need to add checkout fucntionality");
     };
     
     const handleAddCartItemTest = () => {
-        console.log("mimimi");
         addItemToCart(testCartItems[1]);
     };
       
@@ -393,10 +398,20 @@ export const ViewEditTill = () => {
                                     <ChevronRight />
                                 </IconButton>
                             </div>
+                            <div className={classes.drawerTitle}>
+                                <Typography variant='h5' sx={{
+                                                                    fontFamily: FONT_FAMILY,
+                                                                    fontWeight: '200',
+                                                                    fontSize: '28px',
+                                                                    lineHeight: '36px',
+                                                                    display: 'flex'}}>
+                                    Cart
+                                </Typography>
+                            </div>
                             <List>
                                 <ListItem button>
                                 <ListItemIcon><SettingsIcon /></ListItemIcon>
-                                <ListItemText primary="Something" />
+                                <ListItemText primary="Something?" />
                                 </ListItem>
                             </List>
                             <List>
@@ -416,6 +431,19 @@ export const ViewEditTill = () => {
                                     <Typography>{`$${(item.price * item.quantity).toFixed(2)}`}</Typography>
                                     </ListItem>
                                 ))}
+                                <ListItem>
+                                    <ListItemText primary="Subtotal" />
+                                    <Typography>{`$${getSubtotal().toFixed(2)}`}</Typography>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText primary="Tax (15%)" />
+                                    <Typography>{`$${(getSubtotal() * 0.15).toFixed(2)}`}</Typography>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText primary="Total" />
+                                    <Typography>{`$${(getSubtotal() * 1.15).toFixed(2)}`}</Typography>
+                                </ListItem>
+
                                 <ListItem>
                                     <Button variant="contained" color="primary" onClick={handleAddCartItemTest}>
                                     Add Item Test
