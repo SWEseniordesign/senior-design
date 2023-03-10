@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
@@ -16,6 +16,8 @@ import { COLOR_PALETTE } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import CartDrawer from "../../components/drawer/CartDrawer";
+
+import { ChevronRight } from "@mui/icons-material";
 
 const useStyles = makeStyles({
     root: {
@@ -96,8 +98,21 @@ const useStyles = makeStyles({
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer'
-    }
-    
+    },
+    drawer: {
+        width: 240,
+        flexShrink: 0,
+      },
+      drawerPaper: {
+        width: 240,
+        borderRight: "none",
+      },
+      drawerHeader: {
+        display: "flex",
+        alignItems: "center",
+        //padding
+        justifyContent: "flex-end",
+      },
 })
 
 
@@ -118,6 +133,8 @@ export const ViewEditTill = () => {
     const [openAddCard, setOpenAddCard] = useState(false);
     const [testCards, setTestCards] = useState(c);
     const [cardItems, setCardItems] = useState([]);
+    const [openDrawer, setOpenDrawer] = useState(false);
+
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
@@ -302,10 +319,38 @@ export const ViewEditTill = () => {
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
                             <SettingsIcon fontSize="medium" />
                         </IconButton>
-                        <IconButton size="small" onClick={() => setIsCartOpen((isCartOpen) => !isCartOpen)}>
+                        
+                        
+                        <IconButton onClick={() => setOpenDrawer(!openDrawer)}>
                             <ShoppingCartIcon fontSize="medium" />
                         </IconButton>
-                        <CartDrawer isOpen={isCartOpen} onClose={handleCartClose} />
+
+                        <Drawer
+                            className={classes.drawer}
+                            classes={{
+                                paper: classes.drawerPaper,
+                            }}
+                            variant="persistent"
+                            anchor="right"
+                            open={openDrawer}
+                            >
+                            <div className={classes.drawerHeader}>
+                                <IconButton onClick={() => setOpenDrawer(false)}>
+                                    <ChevronRight />
+                                </IconButton>
+                            </div>
+                            <List>
+                                <ListItem button>
+                                <ListItemIcon><ShoppingCartIcon /></ListItemIcon>
+                                <ListItemText primary="Mimi" />
+                                </ListItem>
+                                <ListItem button>
+                                <ListItemIcon><ShoppingCartIcon /></ListItemIcon>
+                                <ListItemText primary="Checkout" />
+                                </ListItem>
+                            </List>
+                        </Drawer>
+
                     </div>
                 </div>
             :
