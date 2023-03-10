@@ -3,7 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const verifyJWT = require('../middleware/auth');
+const {verifyJWTOwner} = require('../middleware/auth');
 
 
 /**
@@ -34,7 +34,9 @@ router.post('/login', async function(req, res) {
             const payload = {
                 email: find_user.email,
                 fname: find_user.fname,
-                lname: find_user.lname
+                lname: find_user.lname,
+                admin: true,
+                owner: true
             };
             const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '1h'});
             if(!token) return res.status(500).send({err: 'Internal server error', code: 500})
@@ -92,7 +94,7 @@ router.post('/register', async function(req, res) {
  *        404 Not Found, User not found
  *        500 Internal Server Error
  */
-router.post('/business', verifyJWT, async (req, res) => {
+router.post('/business', verifyJWTOwner, async (req, res) => {
     //find user by its objectId
     let find_user = await User.findOne({email: req.user.email}).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
     if(find_user === null) return res.status(404).send({err: 'User does not exists', code: 404});
@@ -115,7 +117,7 @@ router.post('/business', verifyJWT, async (req, res) => {
  * @success 
  * @error 
  */
-router.post('/password', verifyJWT, async (req, res) => {
+router.post('/password', verifyJWTOwner, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
     let find_user = await User.findOne({email: req.body.email}).exec();
     if(!find_user) return res.status(403).send({err: 'User already exists', code: 403});
@@ -130,7 +132,7 @@ router.post('/password', verifyJWT, async (req, res) => {
  * @success 
  * @error 
  */
-router.post('/name', verifyJWT, async (req, res) => {
+router.post('/name', verifyJWTOwner, async (req, res) => {
     //find user by its JWT
     let find_user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user', code: 500})});
     if(find_user === null) return res.status(404).send({err: 'User does not exists', code: 404});

@@ -4,7 +4,7 @@ const Tab = require('../models/Tab');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Till = require('../models/Till');
-const verifyJWT = require('../middleware/auth');
+const {verifyJWT, verifyJWTAdmin} = require('../middleware/auth');
 
 
 /**
@@ -69,7 +69,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        404 Not Found, Tab not found
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTAdmin, async (req, res) => {
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -190,7 +190,7 @@ router.post('/getall', verifyJWT, async function(req, res){
  *        401 Unauthorized, Invalid Token
  *        500 Internal Server Error
  */
-router.post('/edit', verifyJWT, async function(req, res){
+router.post('/edit', verifyJWTAdmin, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -225,7 +225,7 @@ router.post('/edit', verifyJWT, async function(req, res){
  * @success 
  * @error 
  */
-router.post('/cards', verifyJWT, async function(req, res){
+router.post('/cards', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_tab = await Tab.findOne({name: req.body.name}).exec();
