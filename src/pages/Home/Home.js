@@ -18,7 +18,7 @@ import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab } from "../../requests/tabs-req";
-import { createCard, getCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
+import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
 import { createItem, getItem, deleteItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 
@@ -176,7 +176,7 @@ export const Home = () => {
            items: [],
            static: true
        }
-       let cardId = {id: '63c4454e4ffdaf5afa747913'};
+       //let cardId = {id: '63c4454e4ffdaf5afa747913'};
        let item = {
            cardId: '63c44500cc60f58fb8b2b1f3',
            name: 'test dog',
@@ -218,10 +218,11 @@ export const Home = () => {
             static: true,
             cardId: '64079e7dfbc83db9e075f8df'
         }
-        let itemId = {
-            itemId: '640a910a86afaff6948328e9'
+        let cardId = {
+            cardId: '6407a19fc3bdeb878d9a9d1e',
+            tabId: '64079e7dfbc83db9e075f8f9'
         }
-        let error = await deleteItem(itemId);
+        let error = await deleteCard(cardId);
        let id = {email: 'test@unb.ca'};
        console.log(error);
    }
