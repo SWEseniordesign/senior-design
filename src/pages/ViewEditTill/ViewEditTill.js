@@ -72,7 +72,7 @@ export const ViewEditTill = () => {
                             <Grid2 xs={12} lg={4}>
                                 {!isLoadingTill ? <Typography sx={{
                                 fontSize: '24px'
-                                }}>{till?.formattedTill?.name}</Typography> : 
+                                }}>{till?.formattedTill?.name}</Typography> :
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
@@ -83,7 +83,7 @@ export const ViewEditTill = () => {
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>
-                            {!!(till) ? 
+                            {!!(till) ?
                                 <div className={classes.tabbar}>
                                     <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
                                     <Tooltip title={"List of Tabs"} arrow>

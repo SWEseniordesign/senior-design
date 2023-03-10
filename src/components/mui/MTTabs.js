@@ -154,7 +154,7 @@ export const MTTabs = (props) => {
     //* Handles updating the selected tabId
     const handleTabId = (tabID) => {
         if(tabID !== selectedTabId){
-            setLocalCards([]); 
+            setLocalCards([]);
             setSelectedTabId(tabID);
         }
     }
@@ -261,10 +261,10 @@ export const MTTabs = (props) => {
         if(localCards.length !== 0){
             layout = localCards.map((card, index) => {
                 return {
-                    i: index.toString(), 
-                    x: card.dimensions.x === null ? index : card.dimensions.x, 
-                    y: card.dimensions.y === null ? 0 : card.dimensions.y, 
-                    w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width, 
+                    i: index.toString(),
+                    x: card.dimensions.x === null ? index : card.dimensions.x,
+                    y: card.dimensions.y === null ? 0 : card.dimensions.y,
+                    w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width,
                     h: card.dimensions.height === null || !(card.dimensions.height) ? 1 : card.dimensions.height,
                     static: isEdit ? card.static : true,
                     resizeHandles: ["se"]
@@ -301,7 +301,7 @@ export const MTTabs = (props) => {
                         {localTabState.tabs.get().map((tab, i) => {
                             if(tab.name === '+'){
                                 return <Tooltip key={i} title={"Add Tab"} arrow>
-                                    <Tab 
+                                    <Tab
                                         sx={addTabStyle}
                                         key={tab.id} 
                                         value={tab.id.toString()}
@@ -319,12 +319,12 @@ export const MTTabs = (props) => {
                     </TabList>
                 </div>
                     <TabPanel value={value.toString()} index={value}>
-                        {isEdit ? !isLoadingTabs && !isLoadingCards ? 
-                            <ResponsiveLayout 
-                                className={classes.layout} 
-                                layouts={{lg: handleLayoutRefresh && layout}} 
+                        {isEdit ? !isLoadingTabs && !isLoadingCards ?
+                            <ResponsiveLayout
+                                className={classes.layout}
+                                layouts={{lg: handleLayoutRefresh && layout}}
                                 draggableHandle=".draggableHandle"
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
                                 rowHeight={175}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
@@ -332,10 +332,10 @@ export const MTTabs = (props) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'} sx={{ 
-                                                            marginLeft: '12px', 
-                                                            overflow: 'hidden', 
-                                                            width: '40%', 
+                                                        <Typography variant={'h5'} sx={{
+                                                            marginLeft: '12px',
+                                                            overflow: 'hidden',
+                                                            width: '40%',
                                                             textOverflow: 'ellipsis',
                                                             whiteSpace: 'nowrap'}}>{card.name}</Typography>
                                                         <div className='draggableHandle'>
@@ -344,10 +344,10 @@ export const MTTabs = (props) => {
                                                             })}
                                                         </div>
                                                         <div style={{display: 'flex'}}>
-                                                            {card.static ? 
+                                                            {card.static ?
                                                                 <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockIcon fontSize="small" />
-                                                                </IconButton> 
+                                                                </IconButton>
                                                                 :
                                                                 <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockOpenIcon fontSize="small" />
@@ -387,7 +387,7 @@ export const MTTabs = (props) => {
                                                 </Box>
                                                 {openAddItem && <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems[1][0]} card={cardItems[0]} />}
                                             </div>
-                                            
+
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
                                     <Tooltip title={"Add Card"} arrow>
@@ -399,11 +399,11 @@ export const MTTabs = (props) => {
                                 </div>
                             </ResponsiveLayout>
                             : <Skeleton className={classes.loader} variant={'rectangle'} />
-                        : 
-                            <ResponsiveLayout 
-                                className={classes.layout} 
-                                layouts={{lg: createLayout()}} 
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                        :
+                            <ResponsiveLayout
+                                className={classes.layout}
+                                layouts={{lg: createLayout()}}
+                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
                                 >
                                 {localCards.map((card, index) => {
                                     return  <div key={index.toString()}>

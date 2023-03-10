@@ -6,11 +6,6 @@ import { LoadingButton } from '@mui/lab';
 const useStyles = makeStyles((theme) => ({
   MTButton: {
     height: '2.5rem',
-  },
-  responsive: {
-      [theme.breakpoints.down('lg')]: {
-          width: '100%'
-      }
   }
 }))
 

@@ -24,14 +24,14 @@ const MTDropdown = (props) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const uState = useHookstate(userState);
     const {
-        label, 
+        label,
         customLabel,
-        menuItems=[], 
-        variant, 
-        isAccount, 
-        menuOpenAction, 
-        isIconButton, 
-        tooltip, 
+        menuItems=[],
+        variant,
+        isAccount,
+        menuOpenAction,
+        isIconButton,
+        tooltip,
         hasDropdownIcon } = props; // Parameters that can be passed into the custom dropdown
     const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
 
@@ -60,9 +60,9 @@ const MTDropdown = (props) => {
         <div>
             {!isAccount ? 
                 <div>
-                    {!(isIconButton) ? 
-                        hasDropdownIcon ? 
-                            <Tooltip title={tooltip} arrow><Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> : 
+                    {!(isIconButton) ?
+                        hasDropdownIcon ?
+                            <Tooltip title={tooltip} arrow><Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> :
                             <Tooltip title={tooltip} arrow><Button className={classes.button} color={'info'} variant={variant} onClick={handleOpenMenu}>{label}</Button></Tooltip>
                     :
                         <Tooltip title={tooltip}>
