@@ -26,7 +26,7 @@ export const MTTable = (props) => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
-    const [openEditModal, setOpenEditModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState();
     const [editRowId, setEditRowId] = useState();
 
     const handleChangePage = (event, newPage) => {
@@ -68,7 +68,7 @@ export const MTTable = (props) => {
                         {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row) => {
                             if(row.id !== -1){
                                 return <TableRow>
-                                            <TableCell>{row.label}</TableCell>
+                                            <TableCell>{row.name}</TableCell>
                                             <TableCell><Box sx={{ 
                                                 bgcolor: row.color, 
                                                 border: '1px solid grey', 

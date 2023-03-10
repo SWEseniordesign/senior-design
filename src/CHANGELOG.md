@@ -5,7 +5,8 @@ Create a new version whenever we update main/master.
 
 Add items closer to the version number so the date go from newest to oldest (top to bottom).
 
-### *Version 0.2.3*
+### *Version 0.2.6*
+- 2023/03/06 - [Support Redirects in React Router](https://sd-onlinepos.atlassian.net/browse/ON-123)
 - 2023/03/06 - [User is logged out on Refresh](https://sd-onlinepos.atlassian.net/browse/ON-119)
 - 2023/03/06 - [Load individual tills by URL](https://sd-onlinepos.atlassian.net/browse/ON-125)
 - 2023/02/20 - [Create Card](https://sd-onlinepos.atlassian.net/browse/ON-87)

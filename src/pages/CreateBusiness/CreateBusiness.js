@@ -83,7 +83,7 @@ export const CreateBusiness = () => {
 
     return (
         <div className={classes.root}>
-            {!(checkUserForBusiness(navigate)) && 
+            {checkUserForBusiness(navigate) && 
                 <Paper className={classes.paper} square elevation={5} sx={{
                     backgroundColor: COLOR_PALETTE.BABY_BLUE
                 }}>
