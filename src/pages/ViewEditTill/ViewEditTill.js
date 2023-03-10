@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
+import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
@@ -18,6 +18,13 @@ import "react-resizable/css/styles.css";
 import CartDrawer from "../../components/drawer/CartDrawer";
 
 import { ChevronRight } from "@mui/icons-material";
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+
+import HamburgerPic from './testItemPics/hamburger.jpg';
+import HotdogPic from './testItemPics/hotdog.jpg';
+import CocaColaPic from './testItemPics/coca-cola.jpg';
+
 
 const useStyles = makeStyles({
     root: {
@@ -100,11 +107,11 @@ const useStyles = makeStyles({
         cursor: 'pointer'
     },
     drawer: {
-        width: 240,
+        width: 60,
         flexShrink: 0,
       },
       drawerPaper: {
-        width: 240,
+        width: 300,
         borderRight: "none",
       },
       drawerHeader: {
@@ -123,6 +130,12 @@ const c = [
     {id: 2, label: "Test3", dimensions: {x: 2, y: 0, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false}
 ]
 
+const testCartItems = [
+    {id: 0, title: "Hamburger", price: 3.50, quantity: 1, image: HamburgerPic},
+    {id: 1, title: "Hotdog", price: 2.00, quantity: 1, image: HotdogPic},
+    {id: 2, title: "Coca Cola", price: 1.75, quantity: 1, image: CocaColaPic}
+]
+
 export const ViewEditTill = () => {
 
     const [isEdit, setIsEdit] = useState(true);
@@ -134,6 +147,9 @@ export const ViewEditTill = () => {
     const [testCards, setTestCards] = useState(c);
     const [cardItems, setCardItems] = useState([]);
     const [openDrawer, setOpenDrawer] = useState(false);
+    const [cartItems, setCartItems] = useState([]);
+    //const [cartItems, setCartItems] = useState(testCartItems);
+
 
 
     const ResponsiveLayout = WidthProvider(Responsive);
@@ -145,6 +161,44 @@ export const ViewEditTill = () => {
     const handleCartClose = () => {
         setIsCartOpen(false);
     };
+
+    const addItemToCart = (item) => {
+        const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+        if (existingItem) {
+            const updatedCartItems = cartItems.map((cartItem) =>
+            cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
+            );
+            setCartItems(updatedCartItems);
+        } else {
+            setCartItems([...cartItems, { ...item, quantity: 1 }]);
+        }
+    };
+
+    const removeItemFromCart = (item) => {
+        const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+        if (existingItem.quantity > 1) {
+          const updatedCartItems = cartItems.map((cartItem) =>
+            cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem
+          );
+          setCartItems(updatedCartItems);
+        } else {
+          const updatedCartItems = cartItems.filter((cartItem) => cartItem.id !== item.id);
+          setCartItems(updatedCartItems);
+        }
+    };
+
+    
+
+    const handleCheckout = () => {
+        console.log("mimimi");
+    };
+    
+    const handleAddCartItemTest = () => {
+        console.log("mimimi");
+        addItemToCart(testCartItems[1]);
+    };
+      
+
 
     //* Sets the openAddCard state to true to open the addCard modal.
     const handleAddCard = () => {
@@ -341,14 +395,39 @@ export const ViewEditTill = () => {
                             </div>
                             <List>
                                 <ListItem button>
-                                <ListItemIcon><ShoppingCartIcon /></ListItemIcon>
-                                <ListItemText primary="Mimi" />
-                                </ListItem>
-                                <ListItem button>
-                                <ListItemIcon><ShoppingCartIcon /></ListItemIcon>
-                                <ListItemText primary="Checkout" />
+                                <ListItemIcon><SettingsIcon /></ListItemIcon>
+                                <ListItemText primary="Something" />
                                 </ListItem>
                             </List>
+                            <List>
+                                {cartItems.map((item) => (
+                                    <ListItem key={item.id}>
+                                    <ListItemIcon>
+                                        <img src={item.image} alt={item.title} style={{ width: "50px", height: "50px" }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.title} secondary={`$${item.price.toFixed(2)}`} />
+                                    <IconButton onClick={() => removeItemFromCart(item)}>
+                                        <RemoveIcon />
+                                    </IconButton>
+                                    <Typography>{item.quantity}</Typography>
+                                    <IconButton onClick={() => addItemToCart(item)}>
+                                        <AddIcon />
+                                    </IconButton>
+                                    <Typography>{`$${(item.price * item.quantity).toFixed(2)}`}</Typography>
+                                    </ListItem>
+                                ))}
+                                <ListItem>
+                                    <Button variant="contained" color="primary" onClick={handleAddCartItemTest}>
+                                    Add Item Test
+                                    </Button>
+                                </ListItem>
+                                <ListItem>
+                                    <Button variant="contained" color="primary" onClick={handleCheckout}>
+                                    Checkout
+                                    </Button>
+                                </ListItem>
+                            </List>
+
                         </Drawer>
 
                     </div>
