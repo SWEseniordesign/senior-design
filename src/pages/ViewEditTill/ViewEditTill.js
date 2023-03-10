@@ -398,6 +398,12 @@ export const ViewEditTill = () => {
                                     <ChevronRight />
                                 </IconButton>
                             </div>
+                            <List>
+                                <ListItem button>
+                                <ListItemIcon><SettingsIcon /></ListItemIcon>
+                                <ListItemText primary="Something?" />
+                                </ListItem>
+                            </List>
                             <div className={classes.drawerTitle}>
                                 <Typography variant='h5' sx={{
                                                                     fontFamily: FONT_FAMILY,
@@ -408,12 +414,6 @@ export const ViewEditTill = () => {
                                     Cart
                                 </Typography>
                             </div>
-                            <List>
-                                <ListItem button>
-                                <ListItemIcon><SettingsIcon /></ListItemIcon>
-                                <ListItemText primary="Something?" />
-                                </ListItem>
-                            </List>
                             <List>
                                 {cartItems.map((item) => (
                                     <ListItem key={item.id}>
@@ -445,14 +445,10 @@ export const ViewEditTill = () => {
                                 </ListItem>
 
                                 <ListItem>
-                                    <Button variant="contained" color="primary" onClick={handleAddCartItemTest}>
-                                    Add Item Test
-                                    </Button>
+                                    <MtButton variant="contained" onClick={handleAddCartItemTest} label={'Add Item Test'} />
                                 </ListItem>
                                 <ListItem>
-                                    <Button variant="contained" color="primary" onClick={handleCheckout}>
-                                    Checkout
-                                    </Button>
+                                    <MtButton variant="contained" onClick={handleCheckout} label={'CHECKOUT'} />
                                 </ListItem>
                             </List>
 
