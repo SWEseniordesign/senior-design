@@ -7,6 +7,7 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MTTextField from '../../components/mui/MTTextField' 
 import MTButton from "../../components/mui/MTButton";
@@ -110,6 +111,9 @@ const Dashboard = () => {
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
     const [submitTriggered, setSubmitTriggered] = useState(false);
 
+    const [isSameBusDialogOpen, setIsSameBusDialogOpen] = useState(false);
+    const closeSameBusDialog = () => setIsSameBusDialogOpen(false);
+
     const getBus = async() => {
         const bus = await getBusiness()
         setBusName(bus.formattedBus.name)
@@ -159,8 +163,12 @@ const Dashboard = () => {
                 //tills: []
             }
             let response = await editBusiness(updatedBusiness);
-
-            if(!(response) || response.code !== 201){
+            if(response.code === 403) {
+                console.log("business exists")
+                setAlertMessage({message: 'Business with same name already exists', status: 'warning'});
+                setIsSameBusDialogOpen(true);
+            }
+            else if(!(response) || response.code !== 201){
                 setAlertMessage({message: !(response) ? 'Failed to update business.' : response.err, status: 'warning'});
             } else {
                 setAlertMessage({message: 'Business Updated!', status: 'success'});
@@ -249,6 +257,23 @@ const Dashboard = () => {
                                                     </Dialog>
                                                 </div>
                                             )}
+                                            <Dialog
+                                                open={isSameBusDialogOpen}
+                                                onClose={handleClose}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Business already exists"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        Business with the same name already exists. 
+                                                        Please choose a different name.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSameBusDialog} isFullWidth></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
                                         </Box>
                                     </Card>
                                 </Grid2>
