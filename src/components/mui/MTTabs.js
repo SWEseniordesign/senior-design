@@ -77,8 +77,8 @@ const useStyle = makeStyles({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        minHeight: '100%',
-        maxHeight: 'max-content',
+        minHeight: '100px',
+        maxHeight: '100px',
         border: `1px solid ${COLOR_PALETTE.NAVY_BLUE}`
     },
     dragDots: {
@@ -108,6 +108,7 @@ export const MTTabs = (props) => {
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openAddItem, setOpenAddItem] = useState(false);
     const [openAddCard, setOpenAddCard] = useState(false);
+    const [handleLayoutRefresh, setHandleLayoutRefresh] = useState(true);
     const [localCards, setLocalCards] = useState([]);
     const [cardItems, setCardItems] = useState([]);
     const [selectedTabId, setSelectedTabId] = useState('');
@@ -118,6 +119,7 @@ export const MTTabs = (props) => {
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
+    //* Once we add a new tab, clear the local tab state and re-fetch the tabs
     useEffect(() => {
         if(!openAddModal){
             localTabState.tabs.set([]);
@@ -125,25 +127,28 @@ export const MTTabs = (props) => {
         }
     }, [openAddModal])
 
+    //* Once we have the till information and the tab information, we can store the tabs in the local state
     useEffect(() => {
         if(till?.formattedTill?.tabs.length > 0){
             if(!(tabs?.err) && tabs?.tabs.length > 0){
                 localTabState.tabs[localTabState.tabs.get().length-1].set(none);
                 localTabState.tabs.merge(tabs.tabs)
                 setSelectedTabId(tabs.tabs[0].id);
-                localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}])
+                localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
             }
         }
     }, [till, tabs]);
 
+    //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
         if(selectedTabId !== ''){
             fetchCards();
         }
     }, [selectedTabId]);
 
+    //* When the cards have been fetched by
     useEffect(() => {
-        setLocalCards(!!(cards?.cards) ? cards?.cards : []);
+        setLocalCards(!!(cards?.cards) && !(cards.err) ? cards?.cards : []);
     }, [cards]);
 
     //* Handles updating the selected tabId
@@ -265,20 +270,6 @@ export const MTTabs = (props) => {
                     resizeHandles: ["se"]
                 }
             })
-        }
-
-        // Initialize the AddCard option if there is only that option. (No cards in till)
-        if(layout.length === 0){
-            layout.push({
-                i: '0',
-                x: 0,
-                y: 0,
-                w: 1,
-                h: 1,
-                static: false,
-                resizeHandles: []
-            });
-        } else { // Initialize the AddCard option but if there is cards in the till. 
             layout.push({
                 i: layout.length.toString(),
                 x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
@@ -304,36 +295,37 @@ export const MTTabs = (props) => {
 
     return (
         <div className={classes.root}>
-            <TabContext value={value}>
+            <TabContext value={value.toString()}>
                 <div className={classes.tabBar}>
                     <TabList onChange={tabChange} variant={'fullWidth'}>
                         {localTabState.tabs.get().map((tab, i) => {
                             if(tab.name === '+'){
-                                return <Tooltip title={"Add Tab"} arrow>
+                                return <Tooltip key={i} title={"Add Tab"} arrow>
                                     <Tab 
                                         sx={addTabStyle}
                                         key={tab.id} 
-                                        value={tab.id}
+                                        value={tab.id.toString()}
                                         onClick={handleOpenAddModal}
                                         label={tab.name} /></Tooltip>
                             } else {
                                 return <Tab 
                                         sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
                                         key={tab.id} 
-                                        value={i}
+                                        value={i.toString()}
                                         label={tab.name}
                                         onClick={() => handleTabId(tab.id)} />
                             }   
                         })}
                     </TabList>
                 </div>
-                    <TabPanel value={value} index={value}>
+                    <TabPanel value={value.toString()} index={value}>
                         {isEdit ? !isLoadingTabs && !isLoadingCards ? 
                             <ResponsiveLayout 
                                 className={classes.layout} 
-                                layouts={{lg: layout}} 
+                                layouts={{lg: handleLayoutRefresh && layout}} 
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                                rowHeight={175}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards?.map((card, index) => {
@@ -382,7 +374,7 @@ export const MTTabs = (props) => {
                                                                     </div>)
                                                         })}
                                                         <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, card.id)}>
-                                                            <Tooltip title={"Add Item"} arrow>
+                                                            <Tooltip key={index} title={"Add Item"} arrow>
                                                                 <Box className={classes.item} sx={{
                                                                     bgcolor: 'rgba(255, 255, 255, 0.9)',
                                                                     borderRadius: '10px',

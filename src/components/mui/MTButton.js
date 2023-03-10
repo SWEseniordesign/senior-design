@@ -56,7 +56,10 @@ export default function MtButton(props) {
           onClick={onClick}
           endIcon={endIcon}
           sx={{
-            width: !!(makeResponsive) ? getWidth() : '100%',
+            width: !(makeResponsive) ? getWidth() : {
+              lg: '100%',
+              xs: '100%'
+            },
             background: backgroundColor,
             color: textColor,
             borderColor: borderColor

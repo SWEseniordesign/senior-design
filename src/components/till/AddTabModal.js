@@ -42,17 +42,13 @@ export const AddTabModal = (props) => {
         setLoading(true);
         localTabState.tabs[localTabState.tabs.get().length-1].set(none);
 
-        console.log(tillId)
-
         let addResponse = await createTab({tillId: tillId, name: newTabName, color: newTabColor.hex, cards: []});
         if(addResponse.code === 201){
-            // localTabState.tabs.merge([{name: newTabName, color: newTabColor.hex, cards: []}]);
             setSaveMessage("Tab Created!");
         } else {
             setSaveMessage("Error create the tab");
         }
-
-        localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}]);
+        localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}]);
 
         setLoading(false);
 

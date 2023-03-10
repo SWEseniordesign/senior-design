@@ -76,10 +76,10 @@ export const ViewEditTill = () => {
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={4} lg={3.5} xl={3}><MtButton label={'Manage Employees'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={4.5} lg={4.7} xl={4}><MtButton label={'View Transactions History'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton label={'Edit Till'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton label={'SAVE'} variant={'contained'} /></Grid2>
+                                <Grid2 xs={12} md={4} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={4.5} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton makeResponsive label={'SAVE'} variant={'contained'} /></Grid2>
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>

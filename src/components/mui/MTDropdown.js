@@ -56,8 +56,6 @@ const MTDropdown = (props) => {
 
     const classes = useStyles();
 
-    console.log(tooltip)
-
     return (
         <div>
             {!isAccount ? 
