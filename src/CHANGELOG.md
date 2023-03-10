@@ -5,6 +5,14 @@ Create a new version whenever we update main/master.
 
 Add items closer to the version number so the date go from newest to oldest (top to bottom).
 
+### *Version 0.2.6*
+- 2023/03/06 - [Support Redirects in React Router](https://sd-onlinepos.atlassian.net/browse/ON-123)
+- 2023/03/06 - [User is logged out on Refresh](https://sd-onlinepos.atlassian.net/browse/ON-119)
+- 2023/03/06 - [Load individual tills by URL](https://sd-onlinepos.atlassian.net/browse/ON-125)
+- 2023/02/20 - [Create Card](https://sd-onlinepos.atlassian.net/browse/ON-87)
+- 2023/02/08 - [Create Layout for Till View Page](https://sd-onlinepos.atlassian.net/browse/ON-103)
+- 2023/01/24 - [Setup Unit Testing with Sample Tests](https://sd-onlinepos.atlassian.net/browse/ON-108)
+
 ### *Version 0.1.10*
  - 2023/01/18 - [Backend cleanup](https://sd-onlinepos.atlassian.net/browse/ON-85) 
  - 2023/01/16 - [Create Login Page](https://sd-onlinepos.atlassian.net/browse/ON-61) 

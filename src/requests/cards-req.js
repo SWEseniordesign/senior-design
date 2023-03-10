@@ -45,11 +45,29 @@ export async function getCard (obj) {
 }
 
 /*
+Get all cards and items within them from tabId
+*/
+export async function getAllCards (obj) {
+    let data;
+    await fetch('http://localhost:8080/card/getall', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
 modify a card's dimensions
 */
-export async function changeDimensions (obj) {
+export async function modifyCardPosition (obj) {
     let data;
-    await fetch('http://localhost:8080/card/dimensions', {
+    await fetch('http://localhost:8080/card/modifyposition', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -1,13 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Menu, MenuItem, Button, Tooltip, Avatar, IconButton } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { COLOR_PALETTE } from "../../Constants";
+import { getUserName } from "../../requests/users-req";
+import { useQuery } from "react-query";
 import { userState } from "../../states/userState";
+import { useHookstate } from "@hookstate/core";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+    button: {
+        height: '5rem',
+        width: '100%',
+        overflow: 'hidden',
+        overflowWrap: 'anywhere',
+        whiteSpace: 'normal',
+    }
+});
 
 const MTDropdown = (props) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const {label, menuItems=[], variant, isAccount, menuOpenAction} = props; // Parameters that can be passed into the custom dropdown
+    const uState = useHookstate(userState);
+    const {
+        label, 
+        customLabel,
+        menuItems=[], 
+        variant, 
+        isAccount, 
+        menuOpenAction, 
+        isIconButton, 
+        tooltip, 
+        hasDropdownIcon } = props; // Parameters that can be passed into the custom dropdown
+    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
 
     //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {
@@ -22,11 +48,31 @@ const MTDropdown = (props) => {
         setAnchorEl(null);
     }
 
+    useEffect(() => {
+        if(uState.token.get() !== ''){
+            userRefetch();
+        }
+    }, [uState.token.get()])
+
+    const classes = useStyles();
+
+    console.log(tooltip)
+
     return (
         <div>
             {!isAccount ? 
                 <div>
-                    <Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button>
+                    {!(isIconButton) ? 
+                        hasDropdownIcon ? 
+                            <Tooltip title={tooltip} arrow><Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> : 
+                            <Tooltip title={tooltip} arrow><Button className={classes.button} color={'info'} variant={variant} onClick={handleOpenMenu}>{label}</Button></Tooltip>
+                    :
+                        <Tooltip title={tooltip}>
+                            <IconButton onClick={handleOpenMenu}>
+                                <MoreVertIcon fontSize="small"/>
+                            </IconButton>
+                        </Tooltip>
+                    }
                     <Menu 
                         anchorEl={anchorEl}
                         anchorOrigin={{
@@ -57,7 +103,7 @@ const MTDropdown = (props) => {
                     <Tooltip title={'Account Settings'}>
                         <IconButton onClick={handleOpenMenu}>
                             {/* Update the avatar once we have a update backend fn to get user info */}
-                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>O</Avatar>
+                            <Avatar sx={{width: 32, height: 32, bgcolor: COLOR_PALETTE.BLUE_GROTTO}}>{!userLoading ? user?.formattedUser?.fname.charAt(0) : ':)'}</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu 

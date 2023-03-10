@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material';
 import { COLOR_PALETTE } from './Constants';
 
-const theme = createTheme({
+export const theme = createTheme({
     palette: {
         primary:{
             main: COLOR_PALETTE.BLUE_GROTTO
@@ -14,5 +14,3 @@ const theme = createTheme({
         }
     }
 })
-
-export default theme;

@@ -1,0 +1,13 @@
+.draggableHandle {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    gap: 7px;
+    border-radius: 0px 0px 5px 5px;
+    background-color: rgba(195, 195, 195, 0.75);
+    
+}

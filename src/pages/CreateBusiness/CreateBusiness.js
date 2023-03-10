@@ -1,12 +1,13 @@
-import { Alert, Grid, Paper, Snackbar, Typography } from "@mui/material";
+import { Alert, Grid, Paper, Snackbar, Typography, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import MTTextField from '../../components/mui/MTTextField' 
 import MTButton from "../../components/mui/MTButton";
 import { createBusiness } from "../../requests/businesses-req";
 import MTSelect from "../../components/mui/MTSelect";
-import { userState } from "../../states/userState";
+import { checkUserForBusiness } from "../helper/routesHelper";
 
 const useStyles = makeStyles({
     root: {
@@ -30,6 +31,7 @@ const useStyles = makeStyles({
 
 export const CreateBusiness = () => {
 
+    const navigate = useNavigate();
     const classes = useStyles();
 
     const [businessName, setBusinessName] = useState('');
@@ -64,6 +66,7 @@ export const CreateBusiness = () => {
                 setAlertMessage({message: 'Business Created!', status: 'success'});
                 setBusinessName('');
                 setBusinessType('');
+                navigate('/dashboard');
             }
 
             setOpen(true);
@@ -80,40 +83,49 @@ export const CreateBusiness = () => {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper} square elevation={5} sx={{
-                backgroundColor: COLOR_PALETTE.BABY_BLUE
-            }}>
-                <div className={classes.container}>
-                    <div className={classes.title}>
-                        <Typography sx={{
-                            fontFamily: FONT_FAMILY,
-                            fontWeight: '600',
-                            fontSize: '48px',
-                            lineHeight: '56px',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}>Create Business</Typography>
+            {checkUserForBusiness(navigate) && 
+                <Paper className={classes.paper} square elevation={5} sx={{
+                    backgroundColor: COLOR_PALETTE.BABY_BLUE
+                }}>
+                    <div className={classes.container}>
+                        <div className={classes.title}>
+                            <Typography sx={{
+                                fontFamily: FONT_FAMILY,
+                                fontWeight: '600',
+                                fontSize: '48px',
+                                lineHeight: '56px',
+                                display: 'flex',
+                                alignItems: 'center'
+                            }}>Create Business</Typography>
+                        </div>
+                        <form id="create-account-form" onSubmit={handleSubmit}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <MTButton label={'CREATE'} variant={'contained'} type={'submit'} isFullWidth></MTButton>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <div>
+                                        <Link component={'button'} variant={'body2'} underline="always" onClick={() => navigate('/')} sx={{
+                                            fontSize: '16px'
+                                        }}>I don't want to create my business right now.</Link>
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </form>
+                        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                            <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
+                                {alertMessage.message}
+                            </Alert>
+                        </Snackbar>
                     </div>
-                    <form id="create-account-form" onSubmit={handleSubmit}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <MTButton label={'CREATE'} variant={'contained'} type={'submit'} isFullWidth></MTButton>
-                            </Grid>
-                        </Grid>
-                    </form>
-                    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
-                            {alertMessage.message}
-                        </Alert>
-                    </Snackbar>
-                </div>
-            </Paper>
+                </Paper>
+            }
         </div>
     );
 }

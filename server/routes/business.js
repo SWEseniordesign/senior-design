@@ -4,26 +4,31 @@ const Business = require('../models/Business');
 const User = require('../models/User');
 const verifyJWT = require('../middleware/auth');
 
-/*
-    * DONE (at least for now)  
-    Gets a business based on the businesses name
-*/
+
+/**
+ * Gets a business from stored JWT
+ *
+ * @route POST /business/get
+ * @expects JWT in header of request
+ * @success 200 OK, returns {formattedBus, code}
+ * @error 401 Unauthorized, Invalid Token
+ *        403 Forbidden, User does not exist
+ *        404 Not Found, User has no business
+ *        500 Internal Server Error
+ */
 router.post('/get', verifyJWT, async function(req, res){
-    //Check if there is a body in the request
-    //if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
-    
-    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user from jwt', code: 500})});
+    //Find user from JWT
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
 
     //Find the business then format it and return
-    let name = req.body.name;
     Business.findOne({ownerId: user._id}, function(err, business){
         if(err){
             console.log(err);
-            return res.status(500).send({err: 'Unable to get business', code: 500});
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
             //If business is not found
-            if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
+            if(business === null) return res.status(404).send({err: `Business associated to User does not exist`, code: 404});
             let formattedBus = {
                 id: business._id,
                 name: business.name,
@@ -32,9 +37,52 @@ router.post('/get', verifyJWT, async function(req, res){
                 admins: business.admins,
                 tills: business.tills
             };
-            return res.status(201).send({formattedBus, code: 201});
+            return res.status(200).send({formattedBus, code: 200});
         }
-    })
+    });
+});
+
+/** 
+ * TODO:  write unit test, and fix ui of pop-up if business name is duplicate
+*    Edits a business's name and type
+*    @route POST /business/edit
+*    @expects JSON object with {name: "", type: ""}
+*    @success 200 OK, {updatedBusiness{}, code: 200}
+*    @error  404 Not Found, User does not exist or Business with {name} does not exist
+*            403 Forbidden, Business already exists
+*            500 Internal Server Error
+*/
+router.post('/edit', verifyJWT, async function(req, res) {
+    //Find the currently logged in user
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
+    if(user === null) return res.status(404).send({err: 'User does not exist', code: 404});
+
+    //Find the user's business
+    let name = req.body.name;
+    Business.findOne({ownerId: user._id}, async function(err, business){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal server error.', code: 500});
+        } else {
+            //If business is not found
+            if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
+
+            //Check if a business with the same name already exists
+            let findBusinessDup = await Business.findOne({name: req.body.name}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
+            if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
+
+            //Update the business name and type
+            business.name = req.body.name;
+            business.type = req.body.type;
+            business.save(function(err, updatedBusiness) {
+                if(err) {
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal server error.', code: 500});
+                }
+                return res.status(200).send({updatedBusiness, code: 200});
+            });
+        }
+    });
 });
 
 /** 
@@ -80,16 +128,27 @@ router.post('/edit', verifyJWT, async function(req, res) {
     })
 });
 
-/*
-    * DONE
-    Posts a business & links it to a user
-*/
+
+/**
+ * Creates a business from JSON object
+ *
+ * @route POST /business/create
+ * @expects JWT in header of request, business info in JSON in body of request
+ * @success 201 Created, returns {formattedBus, code}
+ * @error 400 Bad Request, No Request body passed
+ *        401 Unauthorized, Invalid Token
+ *        403 Forbidden: User does not exist
+ *        403 Forbidden, User already has a business
+ *        403 Forbidden, Business already exists with provided name
+ *        404 Not Found, User has no business
+ *        500 Internal Server Error
+ */
 router.post('/create', verifyJWT, async (req, res) => {
     //Check if there is a body in the request
-    if(!req.body) return res.status(400).send({err: 'No request body'});
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Check if a user exist & if they have a businessId assigned to them
-    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Error finding user from jwt', code: 500})});
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
     if(user.businessId !== null) return res.status(403).send({err: 'User has a business ID', code: 403});
 
@@ -110,7 +169,7 @@ router.post('/create', verifyJWT, async (req, res) => {
     new_business.save(function(err, business) {
         if(err) {
             console.log(err);
-            return res.status(500).send({err: 'Error saving Business', code: 403});
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
         let formattedBus = {
             id: business._id,
@@ -125,24 +184,35 @@ router.post('/create', verifyJWT, async (req, res) => {
         user.save(function(err, owner){
             if(err) {
                 console.log(err);
-                return res.status(500).send({err: 'Error updating user', code: 403});
+                return res.status(500).send({err: 'Internal Server Error', code: 500});
             }
         });
         return res.status(201).send({formattedBus, code: 201});
     });
 });
 
-/*
-    TODO: find a better way to check which users were not found, filter out users that are already admins for the business, & ensure
-    * NOT WORKING 100%
-    Modify a businesses' admins
-*/
+
+/**
+ * TODO: re-think this request, may need total overhaul, not working, errors not solidified
+ * Modify a businesses' admins from JSON object
+ *
+ * @route POST /business/admins
+ * @expects JWT in header of request
+ * @success 200 POST, returns {formattedBus, code}
+ * @error 400 Bad Request, No Request body passed
+ *        401 Unauthorized, Invalid Token
+ *        403 Forbidden: User does not exist
+ *        403 Forbidden, User already has a business
+ *        403 Forbidden, Business already exists with provided name
+ *        404 Not Found, User has no business
+ *        500 Internal Server Error
+ */
 router.post('/admins', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //checks if the users exist
     let result = await User.find({ '_id': { $in: req.body.admins } });
-    if(result.length != req.body.admins.length) return res.status(400).send({err: 'Unable to find admin(s)', code: 403});
+    if(result.length !== req.body.admins.length) return res.status(400).send({err: 'Unable to find admin(s)', code: 403});
     
     //checks if the admin to be added is already an admin of that business
     Business.findOne({name: req.body.name}, function(err, business){
@@ -165,7 +235,7 @@ router.post('/admins', verifyJWT, async function(req, res){
     update.save(function(err, business) {
         if(err) {
             console.log(err);
-            return res.status(500).send({err: 'Unable to update businesses admins', code: 500});
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
         let formattedBus = {
             id: business._id,
@@ -175,14 +245,20 @@ router.post('/admins', verifyJWT, async function(req, res){
             admins: business.admins,
             tills: business.tills
         };
-        return res.status(201).send({formattedBus, code: 201});
+        return res.status(200).send({formattedBus, code: 200});
     });
 });
 
-/*
-   TODO 
-    Modify a businesses' tills
-*/
+
+/**
+ * TODO: not implemented & not working; expects, success, & error not solidified
+ * Modify a businesses' tills from JSON object
+ *
+ * @route POST /business/edittills
+ * @expects JWT in header of request
+ * @success 200 POST, returns {formattedBus, code}
+ * @error 
+ */
 router.post('/edittills', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -190,10 +266,16 @@ router.post('/edittills', verifyJWT, async function(req, res){
     if(find_business) return res.status(403).send({err: 'Business already exists', code: 403});
 });
 
-/*
-   TODO 
-    fetch a businesses' tills
-*/
+
+/**
+ * TODO: not implemented & not working; expects, success, & error not solidified
+ * Get a businesses' tills from JSON object
+ *
+ * @route POST /business/edittills
+ * @expects JWT in header of request
+ * @success 200 GET, returns {formattedBus, code}
+ * @error 
+ */
 router.post('/tills', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
