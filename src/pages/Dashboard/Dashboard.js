@@ -240,7 +240,7 @@ const Dashboard = () => {
                                                                     </ListItemAvatar>
                                                                     <ListItemText
                                                                         primary={till.name}
-                                                                        secondary={till.employees.length + " employees"}
+                                                                        secondary={till.employees?.length + " employees"}
                                                                     />
                                                                 </ListItemButton>
                                                             </ListItem>

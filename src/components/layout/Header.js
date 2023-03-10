@@ -137,8 +137,8 @@ const Header = () => {
                     </div>
                     <div className={classes.separator}></div>
                     <div className={classes.dropdownContainer}>
-                        <MTDropdown label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
-                        <MTDropdown label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
+                        <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
+                        <MTDropdown hasDropdownIcon label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
                     </div>
                     {uState.token.get() === "" ?
                         <div className={classes.signUpLoginContainer}>

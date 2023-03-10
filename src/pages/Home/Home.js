@@ -17,8 +17,8 @@ import { pageState } from "../../states/pageState";
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
-import { createTab, getTab } from "../../requests/tabs-req";
-import { createCard, getCard } from "../../requests/cards-req";
+import { createTab, getTab, getAllTabs, editTab } from "../../requests/tabs-req";
+import { createCard, getCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { createItem, getItem } from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 
@@ -203,6 +203,23 @@ export const Home = () => {
        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
 
 
+        let tillId = {tillId: 'yoyoyoyoyoyo'};
+        let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
+        let updatedTabInfo = {
+            name: 'Salad',
+            color: '#8AFF8A',
+            tabId: '64079e7cfbc83db9e075f8db'
+        }
+        let cardPosition = {
+            x: 0,
+            y: 0,
+            height: 1,
+            width: 2,
+            static: true,
+            cardId: '64079e7dfbc83db9e075f8df'
+        }
+
+        let error = await modifyCardPosition(cardPosition);
        let id = {email: 'test@unb.ca'};
 
        let error = await createCard(card);
