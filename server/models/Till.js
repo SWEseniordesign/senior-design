@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const TillSchema = new mongoose.Schema({
+    loginId: {
+        type: String,
+        unique: true
+    },
     name: {
         type: String,
         required: true,

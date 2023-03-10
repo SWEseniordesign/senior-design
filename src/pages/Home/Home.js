@@ -1,8 +1,11 @@
 import { Typography, Button, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { COLOR_PALETTE } from "../../Constants";
+import { userState } from "../../states/userState";
+import { useHookstate } from "@hookstate/core";
+import MTButton from '../../components/mui/MTButton'
 import { useLocation, useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
@@ -80,6 +83,8 @@ const useStyle = makeStyles({
 export const Home = () => {
 
     const classes = useStyle();
+    const uState = useHookstate(userState);
+    const [hasBusiness, setHasBusiness] = useState(false);
 
     const navigate = useNavigate();
 
@@ -92,6 +97,10 @@ export const Home = () => {
 
     const handleLogin = () => {
         navigate('/login');
+    }
+
+    const handleDashboard = () => {
+        navigate('/dashboard');
     }
 
     useEffect(() => {
@@ -112,63 +121,86 @@ export const Home = () => {
         setOpenAlert(false);
     };
 
-    //This is temporary to allow me to test creating data
-    
+
+    const handleCreateBusiness = () => {
+        navigate('/create-business');
+    }
+
+    /*
+        * Checks if the user has a business.
+        * Activated when page renders (in useEffect).
+    */
+    const userHasBusiness = async() => {
+        let response;
+        if(userState.token.get() !== ''){
+            response = await getUserBusiness();
+        }
+
+        if(!!(response)) setHasBusiness(response.business);
+    }
+
+   useEffect(() => {
+    userHasBusiness();
+   }, []);
+
+   //This is temporary to allow me to test creating data
+
     const handleCreateData = async () => {
-        let employee = {
-            email: 'bob@unb.ca',
-            isManager: false
-        };
-        let business = {
-            name: 'Larrys Fryss',
-            ownerId: '63c866337fd04bd174567bc1',
-            type: 'Wholesale',
-            admins: [],
-            tills: []
-        };
-        let businessAdmins = {
-            name: 'McDonalds',
-            admins: ['6377f3e996d92774ba4dcce8']
-        }
-        
-        let tab = {
-            tillId: '63be021d79729847f8035ba9',
-            name: 'Drinks',
-            color: 'blue',
-            cards: []
-        }
-        let card = {
-            tabId: '63c44024140e3d9f771083c8',
-            name: 'Dog',
-            color: 'yellow',
-            dimensions: {x: 1, y: 2, width: 3, height: 4},
-            items: []
-        }
-        let cardId = {id: '63c4454e4ffdaf5afa747913'};
-        let item = {
-            cardId: '63c44500cc60f58fb8b2b1f3',
-            name: 'test dog',
-            price: 20,
-            image: null,
-            props: [],
-            stock: 55
-        }
-        let user = {
-            fname: 'Colby',
-            lname: 'Bruh',
-            email: 'cBruh@bruh.bruh',
-            password: 'balls',
-            businessId: '63c03e39d4e646c1151dd54c'
-        };
-        let till = {
-            businessId: '63c00db199361ea1767b451e',
-            name: null,
-            managerPassword: '99999',
-            employees: [],
-            tabs: [],
-            props: []
-        };
-        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
+       let employee = {
+           email: 'bob@unb.ca',
+           isManager: false
+       };
+       let business = {
+           name: 'Larrys Fryss',
+           ownerId: '63c866337fd04bd174567bc1',
+           type: 'Wholesale',
+           admins: [],
+           tills: []
+       };
+       let businessAdmins = {
+           name: 'McDonalds',
+           admins: ['6377f3e996d92774ba4dcce8']
+       }
+
+       let tab = {
+           tillId: '63be021d79729847f8035ba9',
+           name: 'Drinks',
+           color: 'blue',
+           cards: []
+       }
+       let card = {
+           tabId: '64076d826deedfc9db3032cb',
+           name: 'Balls',
+           color: 'pink',
+           dimensions: {x: 1, y: 2, width: 3, height: 4},
+           items: [],
+           static: true
+       }
+       let cardId = {id: '63c4454e4ffdaf5afa747913'};
+       let item = {
+           cardId: '63c44500cc60f58fb8b2b1f3',
+           name: 'test dog',
+           price: 20,
+           image: null,
+           props: [],
+           stock: 55
+       }
+       let user = {
+           fname: 'Colby',
+           lname: 'Bruh',
+           email: 'cBruh@bruh.bruh',
+           password: 'balls',
+           businessId: '63c03e39d4e646c1151dd54c'
+       };
+       let till = {
+           businessId: '63d2b33a2a75670dbd74fb3b',
+           name: 'Mega Balls',
+           managerPassword: '99999',
+           employees: [],
+           tabs: [],
+           props: []
+       };
+       let userId = {id: '63c450b6f3dcafbb59f7ece5'};
 
 
         let tillId = {tillId: 'yoyoyoyoyoyo'};
@@ -186,12 +218,13 @@ export const Home = () => {
             static: true,
             cardId: '64079e7dfbc83db9e075f8df'
         }
-        
-        let error = await modifyCardPosition(cardPosition);
 
-        
-        console.log(error);
-    }
+        let error = await modifyCardPosition(cardPosition);
+       let id = {email: 'test@unb.ca'};
+
+       let error = await createCard(card);
+       console.log(error);
+   }
 
     return (
         <div className={classes.root}>
@@ -199,11 +232,20 @@ export const Home = () => {
                 <div className={classes.heroTitle}>
                     <Typography sx={{fontSize: '64px', fontWeight: 'bold', lineHeight: '66px', alignContent: 'center', justifyContent: 'center'}}>A customized sales experience.</Typography>
                 </div>
-                <div className={classes.buttonBox}>
-                    <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
-                    <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
-                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
-                </div>
+                {uState.token.get() === "" ?
+                    <div className={classes.buttonBox}>
+                        <MTButton variant="contained" onClick={handleSignUp} label={'SIGN UP'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
+                        <MTButton variant="outlined" onClick={handleLogin} label={'LOGIN'} textColor={COLOR_PALETTE.NAVY_BLUE} borderColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
+                    </div>
+                :
+                    <div className={classes.buttonBox}>
+                        {hasBusiness ?
+                            <MTButton variant="contained" onClick={handleDashboard} label={'VIEW BUSINESS DASHBOARD'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
+                        :
+                            <MTButton variant="contained" onClick={handleCreateBusiness} label={'CREATE BUSINESS'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
+                        }
+                    </div>
+                }
             </div>
             <div className={classes.singleSectionBox}>
                 <Grid container spacing={6}>

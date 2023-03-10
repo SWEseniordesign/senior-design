@@ -156,7 +156,7 @@ router.post('/getall', verifyJWT, async function(req, res){
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
     if(!((String)(new ObjectId(tabId)) === tabId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
- 
+
     //Find the tab
     let findTab = await Tab.findById(tabId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(findTab === null) return res.status(404).send({err: 'Tab does not exist', code: 404});
@@ -169,7 +169,7 @@ router.post('/getall', verifyJWT, async function(req, res){
 
     //Check if tab has cards
     if(tab.cards.length === 0) return res.status(404).send({err: 'Tab does not have cards', code: 404});
-    
+
     //Find the cards stored in tab
     let cards = [];
     for (let cardId of tab.cards) {

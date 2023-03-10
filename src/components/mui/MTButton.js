@@ -26,10 +26,13 @@ export default function MtButton(props) {
     type, 
     label,
     width,
+    backgroundColor,
+    textColor,
+    borderColor,
     loading,
     isLoadingButton,
     endIcon,
-    makeResponsive 
+    makeResponsive
   } = props;
 
   const getWidth = () => {
@@ -43,26 +46,29 @@ export default function MtButton(props) {
       return '100%';
     }
   }
-  
+
   return (
-    <>
-    {!isLoadingButton ? 
-      <Button 
-        className={classes.MTButton} 
-        variant={variant} 
-        onClick={onClick}
-        endIcon={endIcon} 
-        sx={{
-          width: !!(makeResponsive) ? getWidth() : '100%',
-        }}
-        type={!!(type) ? type : 'button'}>
-          {label}
+  <>
+    {!isLoadingButton ?
+        <Button
+          className={classes.MTButton}
+          variant={variant}
+          onClick={onClick}
+          endIcon={endIcon}
+          sx={{
+            width: !!(makeResponsive) ? getWidth() : '100%',
+            background: backgroundColor,
+            color: textColor,
+            borderColor: borderColor
+          }}
+          type={!!(type) ? type : 'button'}>
+            {label}
       </Button>
     :
-      <LoadingButton 
-        className={classes.MTButton} 
-        variant={variant} 
-        onClick={onClick} 
+      <LoadingButton
+        className={classes.MTButton}
+        variant={variant}
+        onClick={onClick}
         sx={{
           width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
         }}
