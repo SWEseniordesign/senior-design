@@ -221,8 +221,6 @@ export const Home = () => {
 
         let error = await modifyCardPosition(cardPosition);
        let id = {email: 'test@unb.ca'};
-
-       let error = await createCard(card);
        console.log(error);
    }
 
