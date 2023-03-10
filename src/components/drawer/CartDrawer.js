@@ -2,9 +2,9 @@ import React from "react";
 
 const CartDrawer = ({ isOpen, onClose }) => {
   const cartItems = [
-    { name: "Item 1", price: 10.0 },
-    { name: "Item 2", price: 20.0 },
-    { name: "Item 3", price: 30.0 },
+    { name: "Burger", price: 3.05 },
+    { name: "Sandwich", price: 2.50 },
+    { name: "Coke", price: 1.50 },
   ];
 
   return (
