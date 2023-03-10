@@ -38,17 +38,21 @@ router.post('/get', verifyJWT, async function(req, res){
 });
 
 /** 
- * TODO: check that it's proper code numbers, check proper comment format, and make pop-up if business name is duplicate
-    Edits a business's name and type
+ * TODO:  write unit test, and fix ui of pop-up if business name is duplicate
+*    Edits a business's name and type
+*    @route POST /business/edit
+*    @expects JSON object with {name: "", type: ""}
+*    @success 200 OK, {updatedBusiness{}, code: 200}
+*    @error  404 Not Found, User does not exist or Business with {name} does not exist
+*            403 Forbidden, Business already exists
+*            500 Internal Server Error
 */
 router.post('/edit', verifyJWT, async function(req, res) {
-    //Check if there is a body in the request
-    //if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
-    
+    //Find the currently logged in user
     let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
     if(user === null) return res.status(404).send({err: 'User does not exist', code: 404});
 
-    //Find the business then format it and return
+    //Find the user's business
     let name = req.body.name;
     Business.findOne({ownerId: user._id}, async function(err, business){
         if(err){
@@ -58,11 +62,11 @@ router.post('/edit', verifyJWT, async function(req, res) {
             //If business is not found
             if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
 
-            //Check if a business with the same name exists
+            //Check if a business with the same name already exists
             let findBusinessDup = await Business.findOne({name: req.body.name}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
             if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
 
-            //create updatedBus???
+            //Update the business name and type
             business.name = req.body.name;
             business.type = req.body.type;
             business.save(function(err, updatedBusiness) {
