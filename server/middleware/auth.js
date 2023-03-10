@@ -20,7 +20,6 @@ function verifyJWT(req, res, next) {
             return res.status(401).send({err: 'Invalid token', code: 401});
         }
         req.user = decoded;
-        console.log(decoded);
         next();
     });
 }
@@ -44,7 +43,6 @@ function verifyJWTAdmin(req, res, next) {
             console.log(err);
             return res.status(401).send({err: 'Invalid token', code: 401});
         }
-        console.log(decoded);
         if(!decoded.admin) return res.status(401).send({err: 'Unauthorized to perform request', code: 401});
         req.user = decoded;
         next();

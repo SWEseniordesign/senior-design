@@ -19,7 +19,7 @@ import { createBusiness, getBusiness, addAdmins } from "../../requests/businesse
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab } from "../../requests/tabs-req";
 import { createCard, getCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
-import { createItem, getItem } from "../../requests/items-req";
+import { createItem, getItem, deleteItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 
 
@@ -218,8 +218,10 @@ export const Home = () => {
             static: true,
             cardId: '64079e7dfbc83db9e075f8df'
         }
-
-        let error = await modifyCardPosition(cardPosition);
+        let itemId = {
+            itemId: '640a910a86afaff6948328e9'
+        }
+        let error = await deleteItem(itemId);
        let id = {email: 'test@unb.ca'};
        console.log(error);
    }
@@ -238,7 +240,10 @@ export const Home = () => {
                 :
                     <div className={classes.buttonBox}>
                         {hasBusiness ?
+                        <div className={classes.buttonBox}>
                             <MTButton variant="contained" onClick={handleDashboard} label={'VIEW BUSINESS DASHBOARD'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
+                            <MTButton variant="contained" onClick={handleCreateData} label={'create data'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
+                            </div>
                         :
                             <MTButton variant="contained" onClick={handleCreateBusiness} label={'CREATE BUSINESS'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
                         }
