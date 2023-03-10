@@ -273,8 +273,8 @@ router.post('/delete', verifyJWTAdmin, function(req, res){
     let tabId = req.body.tabId.toString();
 
     //verify ObjectId is valid
-    if(!(mongoose.isValidObjectId(cardId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    if(!((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+    if(!(mongoose.isValidObjectId(cardId)) && !(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(cardId)) === cardId) && !((String)(new ObjectId(tabId)) === tabId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     Card.findById(cardId, async function(err, card){
         if(err){
@@ -311,11 +311,11 @@ router.post('/delete', verifyJWTAdmin, function(req, res){
                 }
 
                 //Check if Card is in Tab
-                let indexofItem = tab.cards.indexOf(cardId);
-                if(indexofItem === -1) return res.status(404).send({err: 'Card Not Found in Tab', code: 404});
+                let indexofCard = tab.cards.indexOf(cardId);
+                if(indexofCard === -1) return res.status(404).send({err: 'Card Not Found in Tab', code: 404});
 
                 //Remove Card and save
-                tab.cards.splice(indexofItem, 1);
+                tab.cards.splice(indexofCard, 1);
                 tab.save(function(err, tillSaved){
                     if(err) {
                         console.log(err);

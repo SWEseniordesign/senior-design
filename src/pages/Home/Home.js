@@ -17,7 +17,7 @@ import { pageState } from "../../states/pageState";
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
-import { createTab, getTab, getAllTabs, editTab } from "../../requests/tabs-req";
+import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
 import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
 import { createItem, getItem, deleteItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
@@ -204,7 +204,7 @@ export const Home = () => {
 
 
         let tillId = {tillId: 'yoyoyoyoyoyo'};
-        let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
+        //let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
         let updatedTabInfo = {
             name: 'Salad',
             color: '#8AFF8A',
@@ -218,11 +218,11 @@ export const Home = () => {
             static: true,
             cardId: '64079e7dfbc83db9e075f8df'
         }
-        let cardId = {
-            cardId: '6407a19fc3bdeb878d9a9d1e',
-            tabId: '64079e7dfbc83db9e075f8f9'
+        let tabId = {
+            tillId: '64079e7cfbc83db9e075f8d0',
+            tabId: '6408ed7cd6ce8120f2794123'
         }
-        let error = await deleteCard(cardId);
+        let error = await deleteTab(tabId);
        let id = {email: 'test@unb.ca'};
        console.log(error);
    }
