@@ -1,8 +1,9 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Paper, Card, Typography, Box, Fab, IconButton, Grid } from "@mui/material";
+import { Paper, Card, Typography, Box, Fab, IconButton, Grid, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider, CircularProgress, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import BusinessIcon from '@mui/icons-material/Business';
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -14,9 +15,11 @@ import MTButton from "../../components/mui/MTButton";
 import MTSelect from "../../components/mui/MTSelect";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
-import { getBusiness, editBusiness } from "../../requests/businesses-req";
+import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
-
+import { getBusiness, editBusiness } from "../../requests/businesses-req";
+import { getAllTills } from "../../requests/tills-req";
+import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({
     root: {
@@ -75,6 +78,7 @@ const useStyle = makeStyles({
 const Dashboard = () => {
 
     const classes = useStyle();
+    const navigate = useNavigate();
 
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
 
@@ -84,6 +88,18 @@ const Dashboard = () => {
         {name: 'Combos', orders: 35},
         {name: 'Snacks', orders: 10}
     ];
+ 
+    const [business, setBusiness] = useState({})
+    const [owner, setOwner] = useState({})
+    const [tills, setTills] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    const handleNavigateTill = (till) => {
+        //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
+        //? Leaving this for now since it can be tested
+        navigate(`/edit-till/${till.id}`)
+
+    }
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active) {
@@ -185,6 +201,18 @@ const Dashboard = () => {
         setOpen(false);
     };
     
+    useEffect (() => {
+        async function getBusAndTills(){
+            const result = await getAllTills();
+            const user = await getUserName();
+            setBusiness(result.business);
+            setOwner(user.formattedUser);
+            setTills(result.tills);
+            setLoading(false);
+        }
+        getBusAndTills();
+    }, [])
+
     return (
             <div className={classes.root}>
                 {/* <Paper className={classes.board} elevation={5} sx={{
@@ -196,9 +224,9 @@ const Dashboard = () => {
                             <Grid2 container sx={{height: '100%', width: '100%', position: 'relative'}}>
                                 <Grid2 id='grid-left-top' xs={12} md={12} sx={{position: 'absolute', top:0, left: 0, height: '40%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={8}>
+                                        <Box ml={4} mr={4} mt={8}>
                                             <Box mb={2}>
-                                                <Typography sx={{
+                                                <Typography variant='h3' sx={{
                                                                 fontFamily: FONT_FAMILY,
                                                                 fontWeight: '400',
                                                                 fontSize: '36px',
@@ -279,12 +307,12 @@ const Dashboard = () => {
                                 </Grid2>
                                 <Grid2 id='grid-left-bottom' xs={12} md={12} sx={{position: 'absolute', bottom: 0, left: 0, height: '60%'}}>
                                     <Card className={classes.widget} sx={{backgroundColor: COLOR_PALETTE.BABY_BLUE}} elevation={3}>
-                                        <Box ml={4} mt={4} mr={4}>
-                                            <Typography sx={{
+                                        <Box m={4} sx={{height: "100%"}}>
+                                            <Typography mb={2} variant='h3' sx={{
                                                             fontFamily: FONT_FAMILY,
-                                                            fontWeight: '600',
+                                                            fontWeight: '400',
                                                             fontSize: '36px',
-                                                            lineHeight: '44px',
+                                                            lineHeight: '40px',
                                                             display: 'flex'}}>
                                                 Monthly Report
                                             </Typography>
