@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon, Button } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
@@ -16,14 +16,6 @@ import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import CartDrawer from "../../components/drawer/CartDrawer";
-
-import { ChevronRight } from "@mui/icons-material";
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-
-import HamburgerPic from './testItemPics/hamburger.jpg';
-import HotdogPic from './testItemPics/hotdog.jpg';
-import CocaColaPic from './testItemPics/coca-cola.jpg';
 
 
 const useStyles = makeStyles({
@@ -106,23 +98,6 @@ const useStyles = makeStyles({
         alignItems: 'center',
         cursor: 'pointer'
     },
-    drawer: {
-        width: 20,
-        flexShrink: 0,
-      },
-      drawerPaper: {
-        width: 340,
-        borderRight: "none",
-      },
-      drawerHeader: {
-        display: "flex",
-        alignItems: "center",
-        //padding
-        justifyContent: "flex-end",
-      },
-      drawerTitle: {
-        marginLeft: "16px",
-      },
 })
 
 
@@ -131,12 +106,6 @@ const c = [
     {id: 0, label: 'Test1', dimensions: {x: 0, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
     {id: 1, label: "Test2", dimensions: {x: 1, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
     {id: 2, label: "Test3", dimensions: {x: 2, y: 0, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false}
-]
-
-const testCartItems = [
-    {id: 0, title: "Hamburger", price: 3.50, quantity: 1, image: HamburgerPic},
-    {id: 1, title: "Hotdog", price: 2.00, quantity: 1, image: HotdogPic},
-    {id: 2, title: "Coca Cola", price: 1.75, quantity: 1, image: CocaColaPic}
 ]
 
 export const ViewEditTill = () => {
@@ -149,61 +118,10 @@ export const ViewEditTill = () => {
     const [openAddCard, setOpenAddCard] = useState(false);
     const [testCards, setTestCards] = useState(c);
     const [cardItems, setCardItems] = useState([]);
-    const [openDrawer, setOpenDrawer] = useState(false);
-    //const [cartItems, setCartItems] = useState([]);
-    const [cartItems, setCartItems] = useState(testCartItems);
 
-
+    const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
 
     const ResponsiveLayout = WidthProvider(Responsive);
-
-    const [isCartOpen, setIsCartOpen] = useState(false);
-    const handleCartOpen = () => {
-        setIsCartOpen(true);
-    };
-    const handleCartClose = () => {
-        setIsCartOpen(false);
-    };
-
-    const addItemToCart = (item) => {
-        const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
-        if (existingItem) {
-            const updatedCartItems = cartItems.map((cartItem) =>
-            cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
-            );
-            setCartItems(updatedCartItems);
-        } else {
-            setCartItems([...cartItems, { ...item, quantity: 1 }]);
-        }
-    };
-
-    const removeItemFromCart = (item) => {
-        const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
-        if (existingItem.quantity > 1) {
-          const updatedCartItems = cartItems.map((cartItem) =>
-            cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem
-          );
-          setCartItems(updatedCartItems);
-        } else {
-          const updatedCartItems = cartItems.filter((cartItem) => cartItem.id !== item.id);
-          setCartItems(updatedCartItems);
-        }
-    };
-
-    const getSubtotal = () => {
-        return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-    }
-      
-
-    const handleCheckout = () => {
-        console.log("need to add checkout fucntionality");
-    };
-    
-    const handleAddCartItemTest = () => {
-        addItemToCart(testCartItems[1]);
-    };
-      
-
 
     //* Sets the openAddCard state to true to open the addCard modal.
     const handleAddCard = () => {
@@ -378,82 +296,10 @@ export const ViewEditTill = () => {
                         <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
                             <SettingsIcon fontSize="medium" />
                         </IconButton>
-                        
-                        
-                        <IconButton onClick={() => setOpenDrawer(!openDrawer)}>
+                        <IconButton onClick={() => setCartDrawerOpen(!cartDrawerOpen)}>
                             <ShoppingCartIcon fontSize="medium" />
                         </IconButton>
-
-                        <Drawer
-                            className={classes.drawer}
-                            classes={{
-                                paper: classes.drawerPaper,
-                            }}
-                            variant="persistent"
-                            anchor="right"
-                            open={openDrawer}
-                            >
-                            <div className={classes.drawerHeader}>
-                                <IconButton onClick={() => setOpenDrawer(false)}>
-                                    <ChevronRight />
-                                </IconButton>
-                            </div>
-                            <List>
-                                <ListItem button>
-                                <ListItemIcon><SettingsIcon /></ListItemIcon>
-                                <ListItemText primary="Something?" />
-                                </ListItem>
-                            </List>
-                            <div className={classes.drawerTitle}>
-                                <Typography variant='h5' sx={{
-                                                                    fontFamily: FONT_FAMILY,
-                                                                    fontWeight: '200',
-                                                                    fontSize: '28px',
-                                                                    lineHeight: '36px',
-                                                                    display: 'flex'}}>
-                                    Cart
-                                </Typography>
-                            </div>
-                            <List>
-                                {cartItems.map((item) => (
-                                    <ListItem key={item.id}>
-                                    <ListItemIcon>
-                                        <img src={item.image} alt={item.title} style={{ width: "50px", height: "50px" }} />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.title} secondary={`$${item.price.toFixed(2)}`} />
-                                    <IconButton onClick={() => removeItemFromCart(item)}>
-                                        <RemoveIcon />
-                                    </IconButton>
-                                    <Typography>{item.quantity}</Typography>
-                                    <IconButton onClick={() => addItemToCart(item)}>
-                                        <AddIcon />
-                                    </IconButton>
-                                    <Typography>{`$${(item.price * item.quantity).toFixed(2)}`}</Typography>
-                                    </ListItem>
-                                ))}
-                                <ListItem>
-                                    <ListItemText primary="Subtotal" />
-                                    <Typography>{`$${getSubtotal().toFixed(2)}`}</Typography>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Tax (15%)" />
-                                    <Typography>{`$${(getSubtotal() * 0.15).toFixed(2)}`}</Typography>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="Total" />
-                                    <Typography>{`$${(getSubtotal() * 1.15).toFixed(2)}`}</Typography>
-                                </ListItem>
-
-                                <ListItem>
-                                    <MtButton variant="contained" onClick={handleAddCartItemTest} label={'Add Item Test'} />
-                                </ListItem>
-                                <ListItem>
-                                    <MtButton variant="contained" onClick={handleCheckout} label={'CHECKOUT'} />
-                                </ListItem>
-                            </List>
-
-                        </Drawer>
-
+                        <CartDrawer openDrawer={cartDrawerOpen} setOpenDrawer={setCartDrawerOpen} />
                     </div>
                 </div>
             :
