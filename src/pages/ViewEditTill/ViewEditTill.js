@@ -59,7 +59,8 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
-    const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
+
+    const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}), { refetchOnWindowFocus: false });
 
     const handleEditTill = () => {
         setIsEdit(true);

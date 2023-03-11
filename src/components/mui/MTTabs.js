@@ -18,6 +18,7 @@ import { none, useHookstate } from "@hookstate/core";
 import './MTTabs.css'
 import MTDropdown from "./MTDropdown";
 import { deleteItem } from "../../requests/items-req";
+import { EditItemModal } from "../till/EditItemModal";
 
 
 const useStyle = makeStyles({
@@ -103,20 +104,32 @@ const useStyle = makeStyles({
 
 export const MTTabs = (props) => {
 
-    const {till, openEditModal, setOpenEditModal, isEdit, isLoadingTill} = props;
+    const {till, openEditModal, setOpenEditModal, isEdit} = props;
 
     const [value, setValue] = useState(0);
     const [openAddModal, setOpenAddModal] = useState(false);
     const [openAddItem, setOpenAddItem] = useState(false);
     const [openAddCard, setOpenAddCard] = useState(false);
+    const [openEditItem, setOpenEditItem] = useState(false);
+
     const [handleLayoutRefresh, setHandleLayoutRefresh] = useState(false);
     const [localCards, setLocalCards] = useState([]);
     const [cardItems, setCardItems] = useState([]);
     const [selectedTabId, setSelectedTabId] = useState('');
     const localTabState = useHookstate(tabState);
 
-    const {isLoading: isLoadingTabs, data: tabs, refetch: fetchTabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), { enabled: false });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: selectedTabId}), { enabled: false });
+    const {isLoading: isLoadingTabs, data: tabs, refetch: fetchTabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), 
+    {
+        enabled: false, 
+        refetchOnWindowFocus: false,
+    });
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: selectedTabId}), 
+    {
+        enabled: false, 
+        refetchOnWindowFocus: false,
+    });
+
+    let itemObject;
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
@@ -147,6 +160,7 @@ export const MTTabs = (props) => {
 
     //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
+        setHandleLayoutRefresh(false);
         if(selectedTabId !== ''){
             if(!openAddCard){
                 fetchCards();
@@ -192,6 +206,11 @@ export const MTTabs = (props) => {
         setOpenAddItem(true);
     }
 
+    const handleEditItem = (e, item, card) => {
+        setCardItems([item, card]);
+        setOpenEditItem(true);
+    }
+
     //* Filters out the card that wants to be removed.
     const removeCard = async (e, i) => {
 
@@ -230,12 +249,9 @@ export const MTTabs = (props) => {
 
     //* Remove a tab.
     const removeTab = async (e, rowIdToDelete) => {
-        console.log(rowIdToDelete);
         let deleteResponse = await deleteTab({tabId: rowIdToDelete, tillId: till.formattedTill.id});
         if(deleteResponse.code === 200){
-            let newTabs = localTabState.tabs.get().filter((tab) => tab.id !== rowIdToDelete);
-            // localTabState.tabs.set(newTabs)
-            console.log(localTabState.tabs.get());
+            localTabState.tabs.get().filter((tab) => tab.id !== rowIdToDelete);
         } else {
             console.log(deleteResponse.err);
         }
@@ -399,7 +415,7 @@ export const MTTabs = (props) => {
                                                                 </IconButton>
                                                             }
                                                             <MTDropdown isIconButton tooltip={'Card Options'} menuItems={[
-                                                                {id: 1, title: 'Edit', action: () => {}},
+                                                                {id: 1, title: 'Edit', action: () => {}}, //! Still need to do!
                                                                 {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
                                                             ]} />
                                                         </div>
@@ -412,7 +428,7 @@ export const MTTabs = (props) => {
                                                                             borderRadius: '10px',
                                                                         }}>
                                                                             <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
-                                                                                {id: 1, title: 'Edit', action: () => {}},
+                                                                                {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
                                                                                 {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
                                                                             ]} />
                                                                         </Box>
@@ -430,6 +446,7 @@ export const MTTabs = (props) => {
                                                         </div>
                                                     </div>
                                                 </Box>
+                                                {openEditItem && <EditItemModal open={openEditItem} setOpen={setOpenEditItem} item={cardItems[0]} card={cardItems[1]} />}
                                                 {openAddItem && <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems[1][0]} card={cardItems[0]} />}
                                             </div>
 

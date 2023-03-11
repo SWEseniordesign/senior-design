@@ -44,8 +44,6 @@ export const ListTabsModel = (props) => {
 
     const classes = useStyles();
 
-    console.log(tabState.tabs.get())
-
     return (
         <Modal
             open={open}

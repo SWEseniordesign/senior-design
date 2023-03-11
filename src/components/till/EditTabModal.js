@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
-import { editTab } from "../../requests/tabs-req";
+import { updateTab } from "../../requests/tabs-req";
 import { tabState } from "../../states/tabState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
@@ -45,7 +45,7 @@ export const EditTabModal = (props) => {
                 localTabState.tabs[i].merge({name: newTabName, color: newTabColor.hex});
             }
         })        
-        let editResponse = await editTab({ tabId: tabEditId, name: newTabName, color: newTabColor });
+        let editResponse = await updateTab({ tabId: tabEditId, name: newTabName, color: newTabColor });
         if(editResponse.success){
             setSaveMessage("Tab Saved!");
         } else {
