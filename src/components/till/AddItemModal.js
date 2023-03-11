@@ -36,7 +36,7 @@ export const AddItemModal = (props) => {
 
     const handleAddItem = async (e) => {
         setLoading(true);
-        
+        console.log(card.id);
         let addResponse = await createItem(
             {
                 cardId: card.id, 
@@ -47,6 +47,8 @@ export const AddItemModal = (props) => {
                 stock: 1
             }
         );
+
+        console.log(addResponse);
 
         if(addResponse.code === 201){
             items.push({id: items.length !== 0 ? items[items.length-1].id + 1 : 0, name: newItemName, price: newItemPrice})

@@ -31,7 +31,7 @@ const useStyles = makeStyles({
 //* The modal that pops up when the user wants to view the list of tabs.
 export const ListTabsModel = (props) => {
 
-    const {open, setOpen} = props;
+    const {open, setOpen, deleteTabFunc} = props;
 
     const handleCloseModal = () => {
         setOpen(false);
@@ -44,6 +44,8 @@ export const ListTabsModel = (props) => {
 
     const classes = useStyles();
 
+    console.log(tabState.tabs.get())
+
     return (
         <Modal
             open={open}
@@ -53,7 +55,7 @@ export const ListTabsModel = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'}>List of Tabs</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={tabState.tabs.get()} hasPagination actionIsEdit />
+                <MTTable columns={tableColumns} rows={tabState.tabs.get()} hasPagination isActionDropdown action={deleteTabFunc} />
             </Paper>
         </Modal>
     )

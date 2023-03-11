@@ -32,7 +32,8 @@ const MTDropdown = (props) => {
         menuOpenAction,
         isIconButton,
         tooltip,
-        hasDropdownIcon } = props; // Parameters that can be passed into the custom dropdown
+        hasDropdownIcon,
+        textColor } = props; // Parameters that can be passed into the custom dropdown
     const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
 
     //* Handles when the menu (dropdown) opens
@@ -62,7 +63,7 @@ const MTDropdown = (props) => {
                 <div>
                     {!(isIconButton) ?
                         hasDropdownIcon ?
-                            <Tooltip title={tooltip} arrow><Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> :
+                            <Tooltip title={tooltip} arrow><Button color={!!(textColor) ? textColor : 'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> :
                             <Tooltip title={tooltip} arrow><Button className={classes.button} color={'info'} variant={variant} onClick={handleOpenMenu}>{label}</Button></Tooltip>
                     :
                         <Tooltip title={tooltip}>
