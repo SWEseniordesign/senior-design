@@ -117,11 +117,11 @@ export async function changeColor (obj) {
 }
 
 /*
-modify a card's items
+modify a card's name & color
 */
-export async function changeItems (obj) {
+export async function updateCard (obj) {
     let data;
-    await fetch('http://localhost:8080/card/items', {
+    await fetch('http://localhost:8080/card/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

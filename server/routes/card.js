@@ -331,36 +331,40 @@ router.post('/delete', verifyJWTAdmin, function(req, res){
 
 
 /**
- * TODO: not implemented & not working;
- * Modify a card's items
+ * Update a Card's name & color
  *
- * @route POST /card/items
+ * @route POST /card/update
  * @expects 
  * @success 
  * @error 
  */
-router.post('/items', verifyJWTAdmin, async function(req, res){
+router.post('/update', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_card = await Card.findOne({name: req.body.name}).exec();
-    if(!find_card) return res.status(403).send({err: 'Card does not exist', code: 403});
-});
+    let updatedCard = {
+        name: req.body.name,
+        color: req.body.color,
+    };
+    let cardId = req.body.cardId;
 
+    if(!mongoose.isValidObjectId(cardId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
-/**
- * TODO: not implemented & not working;
- * Modify a card's color
- *
- * @route POST /card/color
- * @expects 
- * @success 
- * @error 
- */
-router.post('/color', verifyJWTAdmin, async function(req, res){
-    if(!req.body) return res.status(400).send({err: 'No request body'});
+    Card.updateOne({
+        _id: new ObjectId(cardId),
+        $or: [
+            { name:  { $ne: updatedCard.name  }},
+            { color: { $ne: updatedCard.color }}
+        ]
+    },
+    {
+        $set: {
+            name:  updatedCard.name,
+            color: updatedCard.color
+        }
+    }).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
 
-    let find_card = await Card.findOne({name: req.body.name}).exec();
-    if(!find_card) return res.status(403).send({err: 'Card does not exist', code: 403});
+    return res.status(200).send({updated: true, code: 200});
 });
 
 module.exports = router;

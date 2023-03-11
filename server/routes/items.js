@@ -207,6 +207,9 @@ router.post('/update', verifyJWTAdmin, async (req, res) => {
     };
     let itemId = req.body.itemId;
 
+    if(!mongoose.isValidObjectId(itemId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(itemId)) === itemId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
     Item.updateOne({
         _id: new ObjectId(itemId),
         $or: [
