@@ -188,18 +188,46 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
 
 
 /**
- * TODO: implement
- * Modify an item's name
+ * Update an Item's name, price, & stock
  *
- * @route POST /items/name
+ * @route POST /items/update
  * @expects 
  * @success 
  * @error 
  */
-router.get('/name', verifyJWTAdmin, async (req, res) => {
+router.post('/update', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
-    let find_item = await Item.findOne({name: req.body.name}).exec();
-    if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
+
+    let updatedItem = {
+        name: req.body.name,
+        price: req.body.price,
+        image: req.body.image,
+        props: req.body.props,
+        stock: req.body.stock
+    };
+    let itemId = req.body.itemId;
+
+    Item.updateOne({
+        _id: new ObjectId(itemId),
+        $or: [
+            { name:  { $ne: updatedItem.name  }},
+            { price: { $ne: updatedItem.price }},
+            { image: { $ne: updatedItem.image }},
+            { props: { $ne: updatedItem.props }},
+            { stock: { $ne: updatedItem.stock }}
+        ]
+    },
+    {
+        $set: {
+            name:  updatedItem.name,
+            price: updatedItem.price,
+            image: updatedItem.image,
+            props: updatedItem.props,
+            stock: updatedItem.stock
+        }
+    }).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
+
+    return res.status(200).send({updated: true, code: 200});
 });
 
 
