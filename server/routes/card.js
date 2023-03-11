@@ -151,7 +151,8 @@ router.post('/getall', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Store tabId
-    let tabId = req.body.tabId.toString();
+    let tabId = req.body.tabId;
+    console.log(tabId);
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
@@ -246,6 +247,85 @@ router.post('/modifyposition', verifyJWTAdmin, async function(req, res){
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
         return res.status(200).send({updated: true, code: 200});
+    });
+});
+
+
+/**
+ * Delete a card & the items in it from card's ObjectId
+ *
+ * @route POST /card/delete
+ * @expects JWT in header of request, ObjectId in JSON in body of request
+ * @success 200 GET, returns {formattedCard, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Card not found
+ *        404 Not Found, Item not found
+ *        500 Internal Server Error
+ */
+router.post('/delete', verifyJWTAdmin, function(req, res){
+    //Check if req body exists
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //find card by its objectid
+    let cardId = req.body.cardId;
+    let tabId = req.body.tabId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(cardId)) && !(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(cardId)) === cardId) && !((String)(new ObjectId(tabId)) === tabId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    Card.findById(cardId, async function(err, card){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        } else {
+            //If card not found
+            if(card === null) return res.status(404).send({err: `Card not found`, code: 404});
+
+            //Deletes items
+            for(let itemId of card.items){
+                itemId = itemId.toString();
+                Item.findByIdAndDelete(itemId, function(err, item){
+                    if(err){
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                });
+            }
+
+            //Delete Card
+            Card.deleteOne({_id: card._id}, function(err, cardDeleted){
+                if(err){
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+            });
+
+            //Remove Card from Tab
+            Tab.findById(tabId, function(err, tab){
+                if(err){
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+
+                //Check if Card is in Tab
+                let indexofCard = tab.cards.indexOf(cardId);
+                if(indexofCard === -1) return res.status(404).send({err: 'Card Not Found in Tab', code: 404});
+
+                //Remove Card and save
+                tab.cards.splice(indexofCard, 1);
+                tab.save(function(err, tillSaved){
+                    if(err) {
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                });
+            });
+            return res.status(200).send({deleted: true, code: 200});
+        }
     });
 });
 

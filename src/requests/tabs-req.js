@@ -96,3 +96,21 @@ export async function getAllTabs (obj) {
     .catch(err => console.log(err));   
     return data;
 }
+
+/*
+delete a Tab and it's cards & items
+*/
+export async function deleteTab (obj) {
+    let data;
+    await fetch('http://localhost:8080/tab/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}

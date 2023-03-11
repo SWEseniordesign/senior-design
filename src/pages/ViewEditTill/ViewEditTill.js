@@ -6,7 +6,7 @@ import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
     },
     tabbar: {
-        width: '100%',
+        width: '95%',
         display: 'flex',
         alignItems: 'flex-start',
         marginTop: '12px',
@@ -53,12 +53,23 @@ export const ViewEditTill = () => {
 
     const params = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
     const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
+
+    const handleEditTill = () => {
+        setIsEdit(true);
+        navigate(location.pathname.replace('view', 'edit'));
+    }
+
+    const handleViewTill = () => {
+        setIsEdit(false);
+        navigate(`${location.pathname.replace('edit', 'view')}`);
+    }
 
     const classes = useStyles();
 
@@ -67,23 +78,23 @@ export const ViewEditTill = () => {
             {isEdit ? 
                 //? The following JSX is for when the till is being edited. (In edit mode)
                 <div className={classes.root}>
-                    <Grid2 container spacing={2} sx={{width: '95%', border: '1px solid black', padding: '24px 8px 12px 24px'}}>
+                    <Grid2 container spacing={2} sx={{width: '95%', padding: '24px 8px 12px 24px'}}>
                         <Grid2 container className={classes.actions}>
                             <Grid2 xs={12} lg={4}>
                                 {!isLoadingTill ? <Typography sx={{
                                 fontSize: '24px'
-                                }}>{till?.formattedTill?.name}</Typography> : 
+                                }}>{till?.formattedTill?.name}</Typography> :
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={4} lg={3.5} xl={3}><MtButton label={'Manage Employees'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={4.5} lg={4.7} xl={4}><MtButton label={'View Transactions History'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton label={'Edit Till'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton label={'SAVE'} variant={'contained'} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton makeResponsive label={'View Till'} variant={'outlined'} onClick={handleViewTill} /></Grid2>
+                                {/* <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton makeResponsive label={'SAVE'} variant={'contained'} /></Grid2> */}
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>
-                            {!!(till) ? 
+                            {!!(till) ?
                                 <div className={classes.tabbar}>
                                     <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
                                     <Tooltip title={"List of Tabs"} arrow>
@@ -104,19 +115,32 @@ export const ViewEditTill = () => {
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
             <div className={classes.root}>
-                <div className={classes.actions}>
-                    <Typography sx={{
-                        fontSize: '24px'
-                    }}>Actions</Typography>
-                    <div className={classes.action_buttons}>
-                        <MtButton label={'Manage Employees'} variant={'outlined'} />
-                        <MtButton label={'View Transactions History'} variant={'outlined'} />
-                        <MtButton label={'Edit Till'} variant={'outlined'} />
-                    </div>
-                </div>
-                <div className={classes.tabbar}>
-                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}/>
-                </div>
+                    <Grid2 container spacing={2} sx={{width: '95%', padding: '24px 8px 12px 24px'}}>
+                        <Grid2 container className={classes.actions}>
+                            <Grid2 xs={12} lg={4}>
+                                {!isLoadingTill ? <Typography sx={{
+                                fontSize: '24px'
+                                }}>{till?.formattedTill?.name}</Typography> :
+                                <Skeleton className={classes.loader} variant={'rectangle'} />}
+                            </Grid2>
+                            <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
+                                <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>
+                            </Grid2>
+                        </Grid2>
+                        <Grid2 xs={12} lg={12}>
+                            {!!(till) ?
+                                <div className={classes.tabbar}>
+                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                </div>
+                                :
+                                <div className={classes.noTillErrorMessage}>
+                                    <Typography variant="h4">Problem loading till</Typography>
+                                    <Typography variant="subtitle">Either the user is not logged in or perhaps the till does not exist.</Typography>
+                                </div>
+                            }
+                        </Grid2>
+                    </Grid2>
             </div>
         }
         </div>

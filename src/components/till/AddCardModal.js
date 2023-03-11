@@ -57,13 +57,12 @@ export const AddCardModal = (props) => {
             static: false
         }
 
-        console.log(newCard);
-
         let addResponse = await createCard(newCard);
 
         if(addResponse.code === 201){
             if(cards.length === 0){ // If there is no cards (only the add card)
                 cards.push({
+                    id: addResponse.formattedCard.id,
                     name: newCardName, 
                     color: newCardColor.hex, 
                     dimensions: {
@@ -77,6 +76,7 @@ export const AddCardModal = (props) => {
                 })            
             } else { // If there are more than 1 card
                 cards.push({
+                    id: addResponse.formattedCard.id,
                     name: newCardName, 
                     color: newCardColor.hex, 
                     dimensions: {
@@ -89,9 +89,9 @@ export const AddCardModal = (props) => {
                     static: false
                 })
             }
-            setSaveMessage("Tab Created!");
+            setSaveMessage("Card Created!");
         } else {
-            setSaveMessage("Error create the tab");
+            setSaveMessage("Error create the card");
         }
 
         setLoading(false);

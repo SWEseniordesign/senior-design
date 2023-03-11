@@ -126,6 +126,68 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
 
 
 /**
+ * Delete a item from ObjectId
+ *
+ * @route POST /items/delete
+ * @expects JWT in header of request, ObjectId in JSON in body of request
+ * @success 200 Ok, returns {formattedItem, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Item not found
+ *        500 Internal Server Error
+ */
+router.post('/delete', verifyJWTAdmin, async function(req, res){
+    //Check if req body exists
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //find item by its objectid
+    let itemId = req.body.itemId;
+    let cardId = req.body.cardId;
+
+    //Verify objectId is valid
+    if(!mongoose.isValidObjectId(itemId) && !mongoose.isValidObjectId(cardId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(itemId)) === itemId) && !((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Find and delete item
+    let foundItem = await Item.findById(itemId).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
+    if(foundItem == null) return res.status(404).send({err: 'Item not found', code: 404});
+    Item.deleteOne({_id: foundItem._id}, function(err, item){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        return res.status(200).send({deleted: true, code: 200});
+    });
+
+    //Find Card
+    Card.findById(cardId, function(err, card){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        //If card not found 
+        if(card === null) return res.status(404).send({err: `Card not found`, code: 404});
+
+        //Find item in Card
+        let indexofItem = card.items.indexOf(itemId);
+        if(indexofItem === -1) return res.status(404).send({err: 'Card Not Found in Tab', code: 404});
+
+        //Remove Item and save
+        card.items.splice(indexofItem, 1);
+        card.save(function(err, tillSaved){
+            if(err) {
+                console.log(err);
+                return res.status(500).send({err: 'Internal Server Error', code: 500});
+            }
+        });
+        return res.status(200).send({deleted: true, code: 200});
+    });
+});
+
+
+/**
  * TODO: implement
  * Modify an item's name
  *
