@@ -218,11 +218,11 @@ export const Home = () => {
             static: true,
             cardId: '64079e7dfbc83db9e075f8df'
         }
-        let tabId = {
-            tillId: '64079e7cfbc83db9e075f8d0',
-            tabId: '6408ed7cd6ce8120f2794123'
+        let itemId = {
+            itemId: '64079e7efbc83db9e075f90f',
+            cardId: '64079e7efbc83db9e075f90a'
         }
-        let error = await deleteTab(tabId);
+        let error = await deleteItem(itemId);
        let id = {email: 'test@unb.ca'};
        console.log(error);
    }

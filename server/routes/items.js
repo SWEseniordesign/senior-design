@@ -144,10 +144,11 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
 
     //find item by its objectid
     let itemId = req.body.itemId;
+    let cardId = req.body.cardId;
 
     //Verify objectId is valid
-    if(!mongoose.isValidObjectId(itemId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    if(!((String)(new ObjectId(itemId)) === itemId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+    if(!mongoose.isValidObjectId(itemId) && !mongoose.isValidObjectId(cardId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(itemId)) === itemId) && !((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Find and delete item
     let foundItem = await Item.findById(itemId).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
@@ -157,6 +158,30 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
+        return res.status(200).send({deleted: true, code: 200});
+    });
+
+    //Find Card
+    Card.findById(cardId, function(err, card){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        //If card not found 
+        if(card === null) return res.status(404).send({err: `Card not found`, code: 404});
+
+        //Find item in Card
+        let indexofItem = card.items.indexOf(itemId);
+        if(indexofItem === -1) return res.status(404).send({err: 'Card Not Found in Tab', code: 404});
+
+        //Remove Item and save
+        card.items.splice(indexofItem, 1);
+        card.save(function(err, tillSaved){
+            if(err) {
+                console.log(err);
+                return res.status(500).send({err: 'Internal Server Error', code: 500});
+            }
+        });
         return res.status(200).send({deleted: true, code: 200});
     });
 });
