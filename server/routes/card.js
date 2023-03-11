@@ -151,7 +151,8 @@ router.post('/getall', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Store tabId
-    let tabId = req.body.tabId.toString();
+    let tabId = req.body.tabId;
+    console.log(tabId);
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
@@ -269,8 +270,8 @@ router.post('/delete', verifyJWTAdmin, function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //find card by its objectid
-    let cardId = req.body.cardId.toString();
-    let tabId = req.body.tabId.toString();
+    let cardId = req.body.cardId;
+    let tabId = req.body.tabId;
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(cardId)) && !(mongoose.isValidObjectId(tabId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
