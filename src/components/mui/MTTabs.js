@@ -19,6 +19,7 @@ import './MTTabs.css'
 import MTDropdown from "./MTDropdown";
 import { deleteItem } from "../../requests/items-req";
 import { EditItemModal } from "../till/EditItemModal";
+import { EditCardModal } from "../till/EditCardModal";
 
 
 const useStyle = makeStyles({
@@ -111,10 +112,11 @@ export const MTTabs = (props) => {
     const [openAddItem, setOpenAddItem] = useState(false);
     const [openAddCard, setOpenAddCard] = useState(false);
     const [openEditItem, setOpenEditItem] = useState(false);
-
+    const [openEditCard, setOpenEditCard] = useState(false);
     const [handleLayoutRefresh, setHandleLayoutRefresh] = useState(false);
     const [localCards, setLocalCards] = useState([]);
     const [cardItems, setCardItems] = useState([]);
+    const [helperState, setHelperState] = useState([]);
     const [selectedTabId, setSelectedTabId] = useState('');
     const localTabState = useHookstate(tabState);
 
@@ -128,8 +130,6 @@ export const MTTabs = (props) => {
         enabled: false, 
         refetchOnWindowFocus: false,
     });
-
-    let itemObject;
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
@@ -162,15 +162,15 @@ export const MTTabs = (props) => {
     useEffect(() => {
         setHandleLayoutRefresh(false);
         if(selectedTabId !== ''){
-            if(!openAddCard){
+            if(!openAddCard || !openEditCard){
                 fetchCards();
             } else if(selectedTabId !== ''){
                 fetchCards();
             }
         }
-    }, [selectedTabId, openAddCard]);
+    }, [selectedTabId, openAddCard, openEditCard]);
 
-    //* When the cards have been fetched by
+    //* When the cards have been fetched, set the local cards state with the fetched cards
     useEffect(() => {
         setLocalCards(!!(cards?.cards) && !(cards.err) ? cards?.cards : []);
         setHandleLayoutRefresh(true);
@@ -199,6 +199,12 @@ export const MTTabs = (props) => {
         setOpenAddCard(true);
     }
 
+    //* Sets the openEditCard state to true to open the editCard modal.
+    const handleEditCard = (e, card) => {
+        setHelperState(card);
+        setOpenEditCard(true);
+    }
+
     //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
     const handleAddItem = (e, i) => {
         let card = localCards?.find((card) => card.id === i);
@@ -206,6 +212,7 @@ export const MTTabs = (props) => {
         setOpenAddItem(true);
     }
 
+    //* Sets the openEditItem state to true to open the editItem modal.
     const handleEditItem = (e, item, card) => {
         setCardItems([item, card]);
         setOpenEditItem(true);
@@ -415,7 +422,7 @@ export const MTTabs = (props) => {
                                                                 </IconButton>
                                                             }
                                                             <MTDropdown isIconButton tooltip={'Card Options'} menuItems={[
-                                                                {id: 1, title: 'Edit', action: () => {}}, //! Still need to do!
+                                                                {id: 1, title: 'Edit', action: (e) => handleEditCard(e, card)},
                                                                 {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
                                                             ]} />
                                                         </div>
@@ -458,6 +465,7 @@ export const MTTabs = (props) => {
                                         </Box>
                                     </Tooltip>
                                     {openAddCard && <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={localCards} tabId={selectedTabId} />}
+                                    {openEditCard && <EditCardModal open={openEditCard} setOpen={setOpenEditCard} card={helperState} tabId={selectedTabId} />}
                                 </div>
                             </ResponsiveLayout>
                             : <Skeleton className={classes.loader} variant={'rectangle'} />

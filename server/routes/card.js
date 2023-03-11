@@ -347,6 +347,8 @@ router.post('/update', verifyJWTAdmin, async function(req, res){
     };
     let cardId = req.body.cardId;
 
+    console.log(req.body);
+
     if(!mongoose.isValidObjectId(cardId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
     if(!((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 

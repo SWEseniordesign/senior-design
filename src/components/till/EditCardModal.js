@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
+import { updateCard } from "../../requests/cards-req";
 import { updateTab } from "../../requests/tabs-req";
 import { tabState } from "../../states/tabState";
 import MtButton from "../mui/MTButton";
@@ -27,28 +28,24 @@ const useStyle = makeStyles({
     }
 })
 
-//* The modal that pops up when the user wants to edit a tab.
-export const EditTabModal = (props) => {
-    const {open, setOpen, tabEditId} = props;
+//* The modal that pops up when the user wants to edit a card.
+export const EditCardModal = (props) => {
+    const {open, setOpen, card, tabId} = props;
 
-    const [newTabName, setNewTabName] = useState('');
-    const [newTabColor, setNewTabColor] = useState('#FFFFFF');
+    const [newTabName, setNewTabName] = useState(card.name);
+    const [newTabColor, setNewTabColor] = useState(card.color);
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
-    const localTabState = useHookstate(tabState);
 
-    const handleAddTab = async (e) => {
+    const handleEditCard = async (e) => {
         setLoading(true);
-        localTabState.tabs.get().map((tab, i) => {
-            if(tab.id === tabEditId){
-                localTabState.tabs[i].merge({name: newTabName, color: newTabColor.hex});
-            }
-        })        
-        let editResponse = await updateTab({ tabId: tabEditId, name: newTabName, color: newTabColor.hex });
-        if(editResponse.success){
-            setSaveMessage("Tab Saved!");
+    
+        let editResponse = await updateCard({ cardId: card.id, name: newTabName, color: newTabColor.hex });
+
+        if(editResponse.updated){
+            setSaveMessage("Card Saved!");
         } else {
-            setSaveMessage("Error saving the tab");
+            setSaveMessage("Error saving the card");
         }
         setLoading(false);
 
@@ -66,10 +63,10 @@ export const EditTabModal = (props) => {
             handleOnClose={() => handleCloseModal()}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
-                    <Typography variant="h5">Editing Tab: {localTabState.tabs.get().filter((tab) => tab.id === tabEditId)[0]?.name}</Typography>
+                    <Typography variant="h5">Editing Card: {card.name}</Typography>
                     <MTTextField label={'New Title'} value={newTabName} onChangeFunc={setNewTabName}/>
                     <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
-                    <MtButton label={'SAVE'} variant={'contained'} onClick={() => handleAddTab()} width={'64%'} loading={loading} isLoadingButton />
+                    <MtButton label={'SAVE'} variant={'contained'} onClick={() => handleEditCard()} width={'64%'} loading={loading} isLoadingButton />
                     {saveMessage !== '' && <Typography variant="subtitle2">{saveMessage}</Typography>}
             </Paper>
         </MTModal>
