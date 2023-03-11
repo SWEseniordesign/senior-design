@@ -18,7 +18,7 @@ import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
-import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
+import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard, updateCard } from "../../requests/cards-req";
 import { createItem, getItem, deleteItem, updateItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 
@@ -169,9 +169,9 @@ export const Home = () => {
            cards: []
        }
        let card = {
-           tabId: '64076d826deedfc9db3032cb',
-           name: 'Balls',
-           color: 'pink',
+           cardId: '640cd70a0cbf6b214a69bafa',
+           name: 'Classic Pizza',
+           color: '#C4A484',
            dimensions: {x: 1, y: 2, width: 3, height: 4},
            items: [],
            static: true
@@ -222,7 +222,7 @@ export const Home = () => {
             tillId: '64079e7cfbc83db9e075f8d0',
             tabId: '6408ed7cd6ce8120f2794123'
         }
-        let error = await updateItem(item);
+        let error = await updateCard(card);
        let id = {email: 'test@unb.ca'};
        console.log(error);
    }

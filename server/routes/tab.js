@@ -192,7 +192,7 @@ router.post('/getall', verifyJWT, async function(req, res){
  *        401 Unauthorized, Invalid Token
  *        500 Internal Server Error
  */
-router.post('/edit', verifyJWTAdmin, async function(req, res){
+router.post('/update', verifyJWTAdmin, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
