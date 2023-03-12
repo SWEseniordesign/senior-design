@@ -42,13 +42,14 @@ router.post('/get', verifyJWT, function(req, res){
                     //If till not found
                     if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
                     let formattedTill = {
-                        id: till._id,
+                        id: till._id.toString(),
                         loginId: till.loginId,
                         name: till.name,
                         managerPassword: till.managerPassword,
                         employees: till.employees,
                         tabs: till.tabs,
-                        props: till.props
+                        props: till.props,
+                        transactions: till.transactions
                     };
                     return res.status(200).send({formattedTill, code: 200});
                 }
@@ -85,7 +86,8 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
         managerPassword: req.body.managerPassword,
         employees: req.body.employees,
         tabs: req.body.tabs,
-        props: req.body.props
+        props: req.body.props,
+        transactions: []
     });
     let businessId = req.body.businessId;
 
