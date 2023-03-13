@@ -21,6 +21,9 @@ const TillSchema = new mongoose.Schema({
     },
     props: {
         type: [String]
+    },
+    transactions: {
+        type: [mongoose.Schema.Types.ObjectId]
     }
 });
 

@@ -40,7 +40,7 @@ export const AddItemModal = (props) => {
 
     const handleAddItem = async (e) => {
         setLoading(true);
-        console.log(card)
+        
         let addResponse = await createItem(
             {
                 cardId: card.id, 

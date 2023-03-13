@@ -116,14 +116,14 @@ export const MTTabs = (props) => {
     const localCardState = useHookstate(cardState);
     const localItemState = useHookstate(itemState);
 
-    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), 
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}),
     {
-        enabled: true, 
+        enabled: true,
         refetchOnWindowFocus: false,
     });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}), 
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}),
     {
-        enabled: false, 
+        enabled: false,
         refetchOnWindowFocus: false,
     });
 
@@ -213,7 +213,7 @@ export const MTTabs = (props) => {
 
         if(deleteResponse.deleted){
             let newCards = localCards?.map((card) => {
-                if(card.id === cardId){    
+                if(card.id === cardId){
                     card.items = card.items.filter((item) => item.id !== itemId);
                 }
                 return card;
@@ -232,7 +232,7 @@ export const MTTabs = (props) => {
         } else {
             console.log(deleteResponse.err);
         }
-    }   
+    }
 
     //* Changes the static property of the card to unlock/lock it.
     const changeLockStatus = (e, cardId) => {
@@ -328,26 +328,26 @@ export const MTTabs = (props) => {
                                     return <Tooltip key={i} title={"Add Tab"} arrow>
                                         <Tab
                                             sx={addTabStyle}
-                                            key={tab.id} 
+                                            key={tab.id}
                                             value={tab.id}
                                             onClick={() => localTabState.isAdd.set(true)}
                                             label={tab.name} /></Tooltip>
                                 } else {
-                                    return <Tab 
+                                    return <Tab
                                             sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
-                                            key={i} 
+                                            key={i}
                                             value={i}
                                             label={tab.name}
                                             onClick={() => handleTabId(tab.id)} />
-                                }  
+                                }
                             } else if(!isEdit && tab.name !== '+'){
                                 return <Tab 
                                         sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
-                                        key={i} 
+                                        key={i}
                                         value={i}
                                         label={tab.name}
                                         onClick={() => handleTabId(tab.id)} />
-                            }  
+                            }
                         })}
                     </TabList>
                 </div>
@@ -437,8 +437,8 @@ export const MTTabs = (props) => {
                             </ResponsiveLayout>
                             : <Skeleton className={classes.loader} variant={'rectangle'} />
                         :
-                        !isLoadingTabs && !isLoadingCards ? 
-                            localCards.length > 0 ? 
+                        !isLoadingTabs && !isLoadingCards ?
+                            localCards.length > 0 ?
                                 <ResponsiveLayout
                                     className={classes.layout}
                                     layouts={{lg: layout}}
@@ -460,7 +460,7 @@ export const MTTabs = (props) => {
                                                                 bgcolor: 'rgba(255, 255, 255, 0.5)',
                                                                 borderRadius: '0 0 10px 0'}}>{card.name}</Typography>
                                                         </div>
-                                                        {card.items.length > 0 ? 
+                                                        {card.items.length > 0 ?
                                                             <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                                 {card.items.map((item, index) => {
                                                                     return (<div key={index} style={{gridColumn: 1 / 2}}>
@@ -477,14 +477,14 @@ export const MTTabs = (props) => {
                                                             </div>
                                                         :
                                                             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
-                                                                <Typography variant={'subtitle'} sx={{ 
+                                                                <Typography variant={'subtitle'} sx={{
                                                                     textAlign: 'center',
                                                                     width: 'fit-content',
                                                                     marginLeft: '10px',
                                                                     padding: '8px 12px 8px 12px',
                                                                     bgcolor: 'rgba(255, 255, 255, 0.5)',
                                                                     borderRadius: '10px 10px 10px 10px'
-                                                                }}>Card does not contain any items.</Typography>                                                                
+                                                                }}>Card does not contain any items.</Typography>
                                                             </div>
                                                         }
                                                     </Box>

@@ -84,17 +84,17 @@ export const MTTable = (props) => {
                                                     <MtButton label={"EDIT"} onClick={(e) => handleEditButton(e, row)} />
                                                 </TableCell>
                                             :
-                                                !(action) && 
-                                                    !isActionDropdown ? 
+                                                !(action) &&
+                                                    !isActionDropdown ?
                                                     <TableCell align='right'>
                                                         <MtButton label={"ACTION"} onClick={action} />
                                                     </TableCell>
                                                     :
                                                     <TableCell align='right'>
-                                                        <MTDropdown 
-                                                            textColor={'info'} 
-                                                            hasDropdownIcon 
-                                                            tooltip={'Tab Options'} 
+                                                        <MTDropdown
+                                                            textColor={'info'}
+                                                            hasDropdownIcon
+                                                            tooltip={'Tab Options'}
                                                             label={"Options"}
                                                             menuItems={[
                                                                 {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row)},

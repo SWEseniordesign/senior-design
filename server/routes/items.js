@@ -167,7 +167,7 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
-        //If card not found 
+        //If card not found
         if(card === null) return res.status(404).send({err: `Card not found`, code: 404});
 
         //Find item in Card

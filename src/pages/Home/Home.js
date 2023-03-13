@@ -243,7 +243,7 @@ export const Home = () => {
                         {hasBusiness ?
                             <div className={classes.buttonBox}>
                             <MTButton variant="contained" onClick={handleDashboard} label={'VIEW BUSINESS DASHBOARD'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
-                            { <MTButton variant="contained" onClick={handleCreateData} label={'create data'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  /> }
+                            {/* <MTButton variant="contained" onClick={handleCreateData} label={'create data'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  /> */}
                             </div>
                         :
                             <MTButton variant="contained" onClick={handleCreateBusiness} label={'CREATE BUSINESS'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />

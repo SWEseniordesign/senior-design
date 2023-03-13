@@ -63,8 +63,6 @@ export const AddCardModal = (props) => {
             static: false
         }
 
-        console.log(newCard);
-
         let addResponse = await createCard(newCard);
 
         if(addResponse.code === 201){
