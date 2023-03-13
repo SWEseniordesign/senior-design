@@ -109,4 +109,80 @@ router.post('/create', verifyJWT, async function(req, res){
     });
 });
 
+
+/**
+ * TODO
+ * Get a transaction from passed in info
+ *
+ * @route POST /transaction/get
+ * @expects JWT in header of request, transactionId in JSON in body of request
+ * @success 201 Created, returns {formattedTransaction, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        400 Bad Request, Invalid X input 
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, X not found
+ *        500 Internal Server Error
+ */
+router.post('/get', verifyJWT, async function(req, res){
+    //check if req body exists
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //Verify input
+    if(typeof req.body.transactionId === 'undefined' || !req.body.transactionId) return res.status(400).send({err: 'Invald transaction input', code: 400});
+
+    //verify ObjectId are valid
+    if(!(mongoose.isValidObjectId(req.body.transactionId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(req.body.transactionId)) === req.body.transactionId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+    
+    //Store Id
+    let transactionId = req.body.transactionId;
+
+
+    //get Transaction
+    Transaction.findById(transactionId, function(err, transaction){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        if(!transaction) return res.status(404).send({err: `Transaction not found`, code: 404});
+        let formattedTransaction = {
+            id: transaction._id.toString()
+        }
+
+        Employee.findById(transaction.employeeId, function(err, employee){
+            if(err){
+                console.log(err);
+                return res.status(500).send({err: 'Internal Server Error', code: 500});
+            }
+            if(!employee) return res.status(404).send({err: `Transaction not found`, code: 404});
+            formattedTransaction.employee = {
+                id: employee._id.toString(),
+                email: employee.email,
+                isManager: employee.isManager
+            }
+        });
+
+        let items = [];
+        for(let itemId of transaction.items){
+            Item.findById(itemId, function(err, item){
+                if(err){
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+                if(!item) return res.status(404).send({err: `Item not found`, code: 404});
+                items.push({
+                    id: item._id.toString(),
+                    price: item.price,
+                    name: item.name
+                });
+            });
+        }
+
+        formattedTransaction.items = items;
+        return res.status(200).send({formattedTransaction, code: 200});
+    });
+});
+
 module.exports = router;
