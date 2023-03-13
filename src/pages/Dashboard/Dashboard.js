@@ -299,7 +299,7 @@ const Dashboard = () => {
                                                     </DialogContentText>
                                                 </DialogContent>
                                                 <DialogActions>
-                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSameBusDialog} isFullWidth></MTButton>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSameBusDialog}></MTButton>
                                                 </DialogActions>
                                             </Dialog>
                                         </Box>
