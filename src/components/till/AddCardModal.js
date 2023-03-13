@@ -31,6 +31,8 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to add a card.
 export const AddCardModal = (props) => {
 
+    const {cards} = props;
+
     const [newCardName, setNewCardName] = useState('');
     const [newCardColor, setNewCardColor] = useState('');
     const [loading, setLoading] = useState(false);
@@ -46,14 +48,14 @@ export const AddCardModal = (props) => {
             tabId: localTabState.activeTab.get(),
             name: newCardName,
             color: newCardColor.hex,
-            dimensions: localCardState.cards.length === 0 ? {
+            dimensions: cards.length === 0 ? {
                 x: 0, 
                 y: 0, 
                 width: 1, 
                 height: 1
             } : {
-                x: localCardState.cards[localCardState.cards.length-1].dimensions.x + 1, 
-                y: localCardState.cards[localCardState.cards.length-1].dimensions.y, 
+                x: cards[cards.length-1].dimensions.x + 1, 
+                y: cards[cards.length-1].dimensions.y, 
                 width: 1, 
                 height: 1
             },
@@ -64,8 +66,8 @@ export const AddCardModal = (props) => {
         let addResponse = await createCard(newCard);
 
         if(addResponse.code === 201){
-            if(localCardState.cards.get().length === 0){ // If there is no cards (only the add card)
-                localCardState.cards.get().push({
+            if(cards.length === 0){ // If there is no cards (only the add card)
+                cards.push({
                     id: addResponse.formattedCard.id,
                     name: newCardName, 
                     color: newCardColor.hex, 
@@ -79,13 +81,13 @@ export const AddCardModal = (props) => {
                     static: false
                 })            
             } else { // If there are more than 1 card
-                localCardState.cards.get().push({
+                cards.push({
                     id: addResponse.formattedCard.id,
                     name: newCardName, 
                     color: newCardColor.hex, 
                     dimensions: {
-                        x: localCardState.cards[localCardState.cards.length-1].dimensions.x === 2 ? 0 : localCardState.cards[localCardState.cards.length-1].dimensions.x + 1, 
-                        y: localCardState.cards[localCardState.cards.length-1].dimensions.y === 2 ? 0 : localCardState.cards[localCardState.cards.length-1].dimensions.y + 1, 
+                        x: cards[cards.length-1].dimensions.x === 2 ? 0 : cards[cards.length-1].dimensions.x + 1, 
+                        y: cards[cards.length-1].dimensions.y === 2 ? 0 : cards[cards.length-1].dimensions.y + 1, 
                         w: 1, 
                         h: 1
                     }, 

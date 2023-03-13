@@ -34,8 +34,6 @@ export const EditCardModal = (props) => {
 
     const localCardState = useHookstate(cardState);
 
-    console.log(localCardState);
-
     const [newTabName, setNewTabName] = useState('');
     const [newTabColor, setNewTabColor] = useState('#FFFFFF');
     const [loading, setLoading] = useState(false);

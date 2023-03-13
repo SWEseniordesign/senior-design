@@ -134,7 +134,7 @@ export const MTTabs = (props) => {
         if(!(tabs?.err) && tabs?.tabs.length > 0){
             localTabState.tabs.set([]);
             localTabState.tabs.merge(tabs.tabs)
-            localTabState.activeTab.set(tabs.tabs[0].id);
+            if(typeof localTabState.activeTab.get() !== 'string') localTabState.activeTab.set(tabs.tabs[0].id);
             localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
         }
     }, [tabs]);
@@ -145,11 +145,10 @@ export const MTTabs = (props) => {
         if(typeof activeTab === 'string' && activeTab !== ''){
             fetchCards();
         }
-    }, [localTabState.activeTab.get()]);
+    }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);
 
     //* When the cards have been fetched, set the local cards state with the fetched cards
     useEffect(() => {
-        localCardState.cards.set(!!(cards?.cards) && !(cards.err) ? cards?.cards : [])
         setLocalCards(!!(cards?.cards) && !(cards.err) ? cards?.cards : []);
     }, [cards]);
 
@@ -210,12 +209,11 @@ export const MTTabs = (props) => {
 
     //* Filters out the item that wants to be removed.
     const removeItem = async (e, cardId, itemId) => {
-        let deleteResponse = await deleteItem({itemId: itemId});
-        if(deleteResponse.code === 200){
+        let deleteResponse = await deleteItem({itemId: itemId, cardId: cardId});
+
+        if(deleteResponse.deleted){
             let newCards = localCards?.map((card) => {
-                if(card.id === cardId){
-                    console.log(card.items)
-    
+                if(card.id === cardId){    
                     card.items = card.items.filter((item) => item.id !== itemId);
                 }
                 return card;
@@ -406,6 +404,7 @@ export const MTTabs = (props) => {
                                                                             bgcolor: 'rgba(255, 255, 255, 0.7)',
                                                                             borderRadius: '10px',
                                                                         }}>
+                                                                            {console.log(item)}
                                                                             <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
                                                                                 {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
                                                                                 {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}

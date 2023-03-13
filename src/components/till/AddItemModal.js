@@ -40,6 +40,7 @@ export const AddItemModal = (props) => {
 
     const handleAddItem = async (e) => {
         setLoading(true);
+        console.log(card)
         let addResponse = await createItem(
             {
                 cardId: card.id, 
@@ -53,9 +54,9 @@ export const AddItemModal = (props) => {
 
         if(addResponse.code === 201){
             items.push({id: items.length !== 0 ? items[items.length-1].id + 1 : 0, name: newItemName, price: newItemPrice})
-            setSaveMessage("Tab Created!");
+            setSaveMessage("Item Created!");
         } else {
-            setSaveMessage("Error create the tab");
+            setSaveMessage("Error creating the item");
         }
         setLoading(false);
 

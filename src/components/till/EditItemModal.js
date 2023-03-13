@@ -48,7 +48,7 @@ export const EditItemModal = (props) => {
         setLoading(true);
 
         let updatedItem = {
-            itemId: localItemState.item.get().id,
+            itemId: item.id,
             name: newItemName,
             price: newItemPrice,
             image: newItemImage,
@@ -73,7 +73,7 @@ export const EditItemModal = (props) => {
         setLoading(false);
 
         let timeout = setTimeout(() => {
-            localItemState.isEdit.set(false);
+            if(editResponse.updated) localItemState.isEdit.set(false);
         }, 2000)
 
         return () => clearTimeout(timeout);
