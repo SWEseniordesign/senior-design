@@ -56,7 +56,7 @@ const MTDropdown = (props) => {
 
     const classes = useStyles();
 
-    console.log(tooltip)
+    //console.log(tooltip)
 
     return (
         <div>

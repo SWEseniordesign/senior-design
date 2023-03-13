@@ -10,6 +10,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { ManageEmployeeModal } from "../../components/till/ManageEmployeeModal";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -58,6 +59,7 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
+    const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
     const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
 
     const classes = useStyles();
@@ -76,7 +78,7 @@ export const ViewEditTill = () => {
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={4} lg={3.5} xl={3}><MtButton label={'Manage Employees'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={4} lg={3.5} xl={3}><MtButton label={'Manage Employees'} variant={'outlined'} onClick = { () => setOpenEmployeeModal(true)}/></Grid2>
                                 <Grid2 xs={12} md={4.5} lg={4.7} xl={4}><MtButton label={'View Transactions History'} variant={'outlined'} /></Grid2>
                                 <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton label={'Edit Till'} variant={'outlined'} /></Grid2>
                                 <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton label={'SAVE'} variant={'contained'} /></Grid2>
@@ -100,6 +102,7 @@ export const ViewEditTill = () => {
                             }
                         </Grid2>
                     </Grid2>
+                    {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees}/>}
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
