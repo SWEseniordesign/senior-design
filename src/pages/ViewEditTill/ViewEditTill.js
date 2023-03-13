@@ -10,6 +10,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { useHookstate } from "@hookstate/core";
+import { tabState } from "../../states/tabState";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -58,7 +60,8 @@ export const ViewEditTill = () => {
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-    const [openEditModel, setOpenEditModal] = useState(false);
+
+    const localTabState = useHookstate(tabState);
 
     const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}), { refetchOnWindowFocus: false });
 
@@ -97,9 +100,9 @@ export const ViewEditTill = () => {
                         <Grid2 xs={12} lg={12}>
                             {!!(till) ?
                                 <div className={classes.tabbar}>
-                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                    <MTTabs till={till} isLoadingTill={isLoadingTill} isEdit={isEdit} />
                                     <Tooltip title={"List of Tabs"} arrow>
-                                        <IconButton size="large" sx={{borderRadius: 0, borderBottom: '1px solid black'}} onClick={() => setOpenEditModal((editModal) => !editModal)}>
+                                        <IconButton size="large" sx={{borderRadius: 0, borderBottom: '1px solid black'}} onClick={() => localTabState.isListOfTabs.set(true)}>
                                             <SettingsIcon fontSize="medium" />
                                         </IconButton>
                                     </Tooltip>
@@ -132,7 +135,7 @@ export const ViewEditTill = () => {
                         <Grid2 xs={12} lg={12}>
                             {!!(till) ?
                                 <div className={classes.tabbar}>
-                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                    <MTTabs till={till} isLoadingTill={isLoadingTill} isEdit={isEdit} />
                                 </div>
                                 :
                                 <div className={classes.noTillErrorMessage}>

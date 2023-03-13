@@ -20,6 +20,8 @@ import MTDropdown from "./MTDropdown";
 import { deleteItem } from "../../requests/items-req";
 import { EditItemModal } from "../till/EditItemModal";
 import { EditCardModal } from "../till/EditCardModal";
+import { cardState } from "../../states/cardState";
+import { itemState } from "../../states/itemState";
 
 
 const useStyle = makeStyles({
@@ -105,27 +107,21 @@ const useStyle = makeStyles({
 
 export const MTTabs = (props) => {
 
-    const {till, openEditModal, setOpenEditModal, isEdit} = props;
+    const {till, isEdit} = props;
 
     const [value, setValue] = useState(0);
-    const [openAddModal, setOpenAddModal] = useState(false);
-    const [openAddItem, setOpenAddItem] = useState(false);
-    const [openAddCard, setOpenAddCard] = useState(false);
-    const [openEditItem, setOpenEditItem] = useState(false);
-    const [openEditCard, setOpenEditCard] = useState(false);
-    const [handleLayoutRefresh, setHandleLayoutRefresh] = useState(false);
     const [localCards, setLocalCards] = useState([]);
     const [cardItems, setCardItems] = useState([]);
-    const [helperState, setHelperState] = useState([]);
-    const [selectedTabId, setSelectedTabId] = useState('');
     const localTabState = useHookstate(tabState);
+    const localCardState = useHookstate(cardState);
+    const localItemState = useHookstate(itemState);
 
-    const {isLoading: isLoadingTabs, data: tabs, refetch: fetchTabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), 
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), 
     {
-        enabled: false, 
+        enabled: true, 
         refetchOnWindowFocus: false,
     });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: selectedTabId}), 
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}), 
     {
         enabled: false, 
         refetchOnWindowFocus: false,
@@ -133,54 +129,35 @@ export const MTTabs = (props) => {
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
-    //* Once we add a new tab or delete a tab, clear the local tab state and re-fetch the tabs
-    useEffect(() => {
-        if(!openAddModal || !openEditModal){
-            if(localTabState.tabs.get().length-1 !== tabs?.tabs.length){
-                localTabState.tabs.set([]);
-                fetchTabs();
-            } else {
-                fetchTabs();
-            }
-        }
-    }, [openAddModal, openEditModal])
-
     //* Once we have the till information and the tab information, we can store the tabs in the local state
     useEffect(() => {
-        setHandleLayoutRefresh(false);
-        if(till?.formattedTill?.tabs.length > 0){
-            if(!(tabs?.err) && tabs?.tabs.length > 0){
-                localTabState.tabs[localTabState.tabs.get().length-1].set(none);
-                localTabState.tabs.merge(tabs.tabs)
-                setSelectedTabId(tabs.tabs[0].id);
-                localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
-            }
+        if(!(tabs?.err) && tabs?.tabs.length > 0){
+            localTabState.tabs.set([]);
+            localTabState.tabs.merge(tabs.tabs)
+            localTabState.activeTab.set(tabs.tabs[0].id);
+            localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
         }
-    }, [till, tabs]);
+    }, [tabs]);
 
     //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
-        setHandleLayoutRefresh(false);
-        if(selectedTabId !== ''){
-            if(!openAddCard || !openEditCard){
-                fetchCards();
-            } else if(selectedTabId !== ''){
-                fetchCards();
-            }
+        let activeTab = localTabState.activeTab.get();
+        if(typeof activeTab === 'string' && activeTab !== ''){
+            fetchCards();
         }
-    }, [selectedTabId, openAddCard, openEditCard]);
+    }, [localTabState.activeTab.get()]);
 
     //* When the cards have been fetched, set the local cards state with the fetched cards
     useEffect(() => {
+        localCardState.cards.set(!!(cards?.cards) && !(cards.err) ? cards?.cards : [])
         setLocalCards(!!(cards?.cards) && !(cards.err) ? cards?.cards : []);
-        setHandleLayoutRefresh(true);
     }, [cards]);
 
     //* Handles updating the selected tabId
     const handleTabId = (tabID) => {
-        if(tabID !== selectedTabId){
+        if(tabID !== localTabState.activeTab.get()){
             setLocalCards([]);
-            setSelectedTabId(tabID);
+            localTabState.activeTab.set(tabID);
         }
     }
 
@@ -189,39 +166,34 @@ export const MTTabs = (props) => {
         setValue(newValue)
     }
 
-    //* Sets the openAddModal to true
-    const handleOpenAddModal = () => {
-        setOpenAddModal(true);
-    }
-
-    //* Sets the openAddCard state to true to open the addCard modal.
-    const handleAddCard = () => {
-        setOpenAddCard(true);
-    }
-
     //* Sets the openEditCard state to true to open the editCard modal.
     const handleEditCard = (e, card) => {
-        setHelperState(card);
-        setOpenEditCard(true);
+        localCardState.editCard.set(card);
+        localCardState.isEdit.set(true);
     }
 
     //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
     const handleAddItem = (e, i) => {
         let card = localCards?.find((card) => card.id === i);
         setCardItems([card, [card.items]]);
-        setOpenAddItem(true);
+
+        localItemState.isAdd.set(true);
+        localItemState.card.set(card);
+        localItemState.editItem.set(card.items);
     }
 
     //* Sets the openEditItem state to true to open the editItem modal.
     const handleEditItem = (e, item, card) => {
         setCardItems([item, card]);
-        setOpenEditItem(true);
+        localItemState.isEdit.set(true);
+        localItemState.item.set(item);
+        localItemState.card.set(card);
     }
 
     //* Filters out the card that wants to be removed.
     const removeCard = async (e, i) => {
 
-        let deleteCardResponse = await deleteCard({tabId: selectedTabId, cardId: i});
+        let deleteCardResponse = await deleteCard({tabId: localTabState.activeTab.get(), cardId: i});
         if(deleteCardResponse.code === 200){
             let newCards = localCards?.filter((card) => card.id !== i);
             newCards = newCards.map((card) => {
@@ -315,8 +287,8 @@ export const MTTabs = (props) => {
     const createLayout = () => {
         let layout = [];
 
-        if(localCards.length !== 0){
-            layout = localCards.map((card, index) => {
+        if(localCardState.cards.get().length !== 0){
+            layout = localCardState.cards.get().map((card, index) => {
                 return {
                     i: index.toString(),
                     x: card.dimensions.x === null ? index : card.dimensions.x,
@@ -363,7 +335,7 @@ export const MTTabs = (props) => {
                                             sx={addTabStyle}
                                             key={tab.id} 
                                             value={tab.id}
-                                            onClick={handleOpenAddModal}
+                                            onClick={() => localTabState.isAdd.set(true)}
                                             label={tab.name} /></Tooltip>
                                 } else {
                                     return <Tab 
@@ -388,13 +360,13 @@ export const MTTabs = (props) => {
                         {isEdit ? !isLoadingTabs && !isLoadingCards ?
                             <ResponsiveLayout
                                 className={classes.layout}
-                                layouts={{lg: handleLayoutRefresh ? layout : []}}
+                                layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
                                 rowHeight={175}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
-                                {localCards?.map((card, index) => {
+                                {localCards.map((card, index) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
@@ -453,19 +425,19 @@ export const MTTabs = (props) => {
                                                         </div>
                                                     </div>
                                                 </Box>
-                                                {openEditItem && <EditItemModal open={openEditItem} setOpen={setOpenEditItem} item={cardItems[0]} card={cardItems[1]} />}
-                                                {openAddItem && <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems[1][0]} card={cardItems[0]} />}
+                                                {localItemState.isEdit.get() && <EditItemModal item={cardItems[0]} card={cardItems[1]} />}
+                                                {localItemState.isAdd.get() && <AddItemModal items={cardItems[1][0]} card={cardItems[0]} />}
                                             </div>
 
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
                                     <Tooltip title={"Add Card"} arrow>
-                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
+                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => localCardState.isAdd.set(true)}>
                                             <Typography variant="h6">+</Typography>
                                         </Box>
                                     </Tooltip>
-                                    {openAddCard && <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={localCards} tabId={selectedTabId} />}
-                                    {openEditCard && <EditCardModal open={openEditCard} setOpen={setOpenEditCard} card={helperState} tabId={selectedTabId} />}
+                                    {localCardState.isAdd.get() && <AddCardModal cards={localCards} />}
+                                    {localCardState.isEdit.get() && <EditCardModal />}
                                 </div>
                             </ResponsiveLayout>
                             : <Skeleton className={classes.loader} variant={'rectangle'} />
@@ -474,7 +446,7 @@ export const MTTabs = (props) => {
                             localCards.length > 0 ? 
                                 <ResponsiveLayout
                                     className={classes.layout}
-                                    layouts={{lg: handleLayoutRefresh ? layout : []}}
+                                    layouts={{lg: layout}}
                                     draggableHandle=".draggableHandle"
                                     cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
                                     rowHeight={175}
@@ -530,8 +502,8 @@ export const MTTabs = (props) => {
                         }
                     </TabPanel>
             </TabContext>
-            {openAddModal && <AddTabModal tillId={till.formattedTill.id} open={openAddModal} setOpen={setOpenAddModal} />}
-            {openEditModal && <ListTabsModel open={openEditModal} setOpen={setOpenEditModal} deleteTabFunc={removeTab} />}
+            {localTabState.isAdd.get() && <AddTabModal tillId={till.formattedTill.id} />}
+            {<ListTabsModel deleteTabFunc={removeTab} />}
         </div>
     )
 }

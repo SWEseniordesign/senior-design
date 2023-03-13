@@ -29,10 +29,10 @@ const useStyle = makeStyles({
 
 //* The modal that pops up when the user wants to edit a tab.
 export const EditTabModal = (props) => {
-    const {open, setOpen, tabEditId} = props;
+    const {tabEdit} = props;
 
-    const [newTabName, setNewTabName] = useState('');
-    const [newTabColor, setNewTabColor] = useState('#FFFFFF');
+    const [newTabName, setNewTabName] = useState(tabEdit.name);
+    const [newTabColor, setNewTabColor] = useState(tabEdit.color);
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
     const localTabState = useHookstate(tabState);
@@ -40,33 +40,39 @@ export const EditTabModal = (props) => {
     const handleAddTab = async (e) => {
         setLoading(true);
         localTabState.tabs.get().map((tab, i) => {
-            if(tab.id === tabEditId){
+            if(tab.id === tabEdit.id){
                 localTabState.tabs[i].merge({name: newTabName, color: newTabColor.hex});
             }
         })        
-        let editResponse = await updateTab({ tabId: tabEditId, name: newTabName, color: newTabColor.hex });
-        if(editResponse.success){
+        let editResponse = await updateTab({ tabId: tabEdit.id, name: newTabName, color: newTabColor.hex });
+        if(editResponse.updated){
             setSaveMessage("Tab Saved!");
         } else {
             setSaveMessage("Error saving the tab");
         }
         setLoading(false);
 
+        let timeout = setTimeout(() => {
+            localTabState.isEdit.set(false);
+        }, 2000)
+
+        return () => clearTimeout(timeout);
+
     }
 
     const handleCloseModal = () => {
-        setOpen(false);
+        localTabState.isEdit.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={open}
+            open={localTabState.isEdit.get()}
             handleOnClose={() => handleCloseModal()}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
-                    <Typography variant="h5">Editing Tab: {localTabState.tabs.get().filter((tab) => tab.id === tabEditId)[0]?.name}</Typography>
+                    <Typography variant="h5">Editing Tab: {localTabState.tabs.get().filter((tab) => tab.id === tabEdit.id)[0]?.name}</Typography>
                     <MTTextField label={'New Title'} value={newTabName} onChangeFunc={setNewTabName}/>
                     <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
                     <MtButton label={'SAVE'} variant={'contained'} onClick={() => handleAddTab()} width={'64%'} loading={loading} isLoadingButton />

@@ -30,8 +30,10 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to add a tab.
 export const AddTabModal = (props) => {
 
-    const {tillId, open, setOpen} = props;
+    const {tillId} = props;
     const localTabState = useHookstate(tabState);
+    
+    const [open, setOpen] = useState(false);
 
     const [newTabName, setNewTabName] = useState('');
     const [newTabColor, setNewTabColor] = useState('#FFFFFF');
@@ -54,17 +56,23 @@ export const AddTabModal = (props) => {
         setLoading(false);
 
         setNewTabColor('#FFFFFF');
+
+        let timeout = setTimeout(() => {
+            localTabState.isAdd.set(false);
+        }, 2000)
+
+        return () => clearTimeout(timeout);
     }
 
     const handleCloseModal = () => {
-        setOpen(false);
+        localTabState.isAdd.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={open}
+            open={localTabState.isAdd.get()}
             handleOnClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>

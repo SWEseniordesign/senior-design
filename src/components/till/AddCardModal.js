@@ -1,9 +1,12 @@
+import { useHookstate } from "@hookstate/core";
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
 import { createCard } from "../../requests/cards-req";
+import { cardState } from "../../states/cardState";
+import { tabState } from "../../states/tabState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
 import MTTextField from "../mui/MTTextField";
@@ -28,28 +31,29 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to add a card.
 export const AddCardModal = (props) => {
 
-    const {open, setOpen, cards, tabId} = props;
-
     const [newCardName, setNewCardName] = useState('');
     const [newCardColor, setNewCardColor] = useState('');
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
 
+    const localTabState = useHookstate(tabState);
+    const localCardState = useHookstate(cardState);
+
     const handleAddCard = async (e) => {
         setLoading(true);
 
         let newCard = {
-            tabId: tabId,
+            tabId: localTabState.activeTab.get(),
             name: newCardName,
             color: newCardColor.hex,
-            dimensions: cards.length === 0 ? {
+            dimensions: localCardState.cards.length === 0 ? {
                 x: 0, 
                 y: 0, 
                 width: 1, 
                 height: 1
             } : {
-                x: cards[cards.length-1].dimensions.x + 1, 
-                y: cards[cards.length-1].dimensions.y, 
+                x: localCardState.cards[localCardState.cards.length-1].dimensions.x + 1, 
+                y: localCardState.cards[localCardState.cards.length-1].dimensions.y, 
                 width: 1, 
                 height: 1
             },
@@ -60,8 +64,8 @@ export const AddCardModal = (props) => {
         let addResponse = await createCard(newCard);
 
         if(addResponse.code === 201){
-            if(cards.length === 0){ // If there is no cards (only the add card)
-                cards.push({
+            if(localCardState.cards.get().length === 0){ // If there is no cards (only the add card)
+                localCardState.cards.get().push({
                     id: addResponse.formattedCard.id,
                     name: newCardName, 
                     color: newCardColor.hex, 
@@ -75,13 +79,13 @@ export const AddCardModal = (props) => {
                     static: false
                 })            
             } else { // If there are more than 1 card
-                cards.push({
+                localCardState.cards.get().push({
                     id: addResponse.formattedCard.id,
                     name: newCardName, 
                     color: newCardColor.hex, 
                     dimensions: {
-                        x: cards[cards.length-1].dimensions.x === 2 ? 0 : cards[cards.length-1].dimensions.x + 1, 
-                        y: cards[cards.length-1].dimensions.y === 2 ? 0 : cards[cards.length-1].dimensions.y + 1, 
+                        x: localCardState.cards[localCardState.cards.length-1].dimensions.x === 2 ? 0 : localCardState.cards[localCardState.cards.length-1].dimensions.x + 1, 
+                        y: localCardState.cards[localCardState.cards.length-1].dimensions.y === 2 ? 0 : localCardState.cards[localCardState.cards.length-1].dimensions.y + 1, 
                         w: 1, 
                         h: 1
                     }, 
@@ -96,17 +100,23 @@ export const AddCardModal = (props) => {
 
         setLoading(false);
 
+        let timeout = setTimeout(() => {
+            localCardState.isAdd.set(false);
+        }, 2000)
+
+        return () => clearTimeout(timeout);
+
     }
 
     const handleCloseModal = () => {
-        setOpen(false);
+        localCardState.isAdd.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={open}
+            open={localCardState.isAdd.get()}
             handleOnClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
