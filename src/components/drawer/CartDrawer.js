@@ -36,9 +36,9 @@ const useStyles = makeStyles({
 const CartDrawer = ({openDrawer, setOpenDrawer}) => {
 
   const testCartItems = [
-    {id: 0, title: "Hamburger", price: 3.50, quantity: 1, image: HamburgerPic},
-    {id: 1, title: "Hotdog", price: 2.00, quantity: 1, image: HotdogPic},
-    {id: 2, title: "Coca Cola", price: 1.75, quantity: 1, image: CocaColaPic}
+    {id: 0, name: "Hamburger", price: 3.50, quantity: 1, image: HamburgerPic},
+    {id: 1, name: "Hotdog", price: 2.00, quantity: 1, image: HotdogPic},
+    {id: 2, name: "Coca Cola", price: 1.75, quantity: 1, image: CocaColaPic}
   ]
 
   //const [openDrawer, setOpenDrawer] = useState(false);
@@ -100,12 +100,6 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
                 <ChevronRight />
             </IconButton>
         </div>
-        <List>
-            <ListItem button>
-            <ListItemIcon><SettingsIcon /></ListItemIcon>
-            <ListItemText primary="Something?" />
-            </ListItem>
-        </List>
         <div className={classes.drawerTitle}>
             <Typography variant='h5' sx={{
                                                 fontFamily: FONT_FAMILY,
@@ -116,13 +110,13 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
                 Cart
             </Typography>
         </div>
-        <List>
+        <List style={{overflowY: 'scroll', height: 'calc(100vh - 200px)'}}>
             {cartItems.map((item) => (
                 <ListItem key={item.id}>
                 <ListItemIcon>
-                    <img src={item.image} alt={item.title} style={{ width: "50px", height: "50px" }} />
+                    <img src={item.image} alt={item.name} style={{ width: "50px", height: "50px" }} />
                 </ListItemIcon>
-                <ListItemText primary={item.title} secondary={`$${item.price.toFixed(2)}`} />
+                <ListItemText primary={item.name} secondary={`$${item.price.toFixed(2)}`} />
                 <IconButton onClick={() => removeItemFromCart(item)}>
                     <RemoveIcon />
                 </IconButton>
@@ -133,6 +127,8 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
                 <Typography>{`$${(item.price * item.quantity).toFixed(2)}`}</Typography>
                 </ListItem>
             ))}
+        </List>
+        <List>
             <ListItem>
                 <ListItemText primary="Subtotal" />
                 <Typography>{`$${getSubtotal().toFixed(2)}`}</Typography>
@@ -145,12 +141,9 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
                 <ListItemText primary="Total" />
                 <Typography>{`$${(getSubtotal() * 1.15).toFixed(2)}`}</Typography>
             </ListItem>
-
-            <ListItem>
-                <MtButton variant="contained" onClick={handleAddCartItemTest} label={'Add Item Test'} />
-            </ListItem>
             <ListItem>
                 <MtButton variant="contained" onClick={handleCheckout} label={'CHECKOUT'} />
+                <MtButton variant="contained" onClick={handleAddCartItemTest} label={'Add Item Test'} />
             </ListItem>
         </List>
 
