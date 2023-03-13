@@ -236,14 +236,12 @@ export const MTTabs = (props) => {
 
     //* Changes the static property of the card to unlock/lock it.
     const changeLockStatus = (e, cardId) => {
-        let newCards = localCards?.map((card) => {
+        setLocalCards(localCards?.map((card) => {
             if(card.id === cardId){
                 card.static = !card.static
             }
             return card;
-        })
-        handleLayoutChange(e, true);
-        setLocalCards(newCards);
+        }));
     }
 
     //* Sets new dimensions to the card that has been moved.
@@ -276,7 +274,6 @@ export const MTTabs = (props) => {
                 }
                 await modifyCardPosition(newDimensions);
             }
-            createLayout();
             return card;
         })
     }
@@ -285,8 +282,8 @@ export const MTTabs = (props) => {
     const createLayout = () => {
         let layout = [];
 
-        if(localCardState.cards.get().length !== 0){
-            layout = localCardState.cards.get().map((card, index) => {
+        if(localCards.length !== 0){
+            layout = localCards.map((card, index) => {
                 return {
                     i: index.toString(),
                     x: card.dimensions.x === null ? index : card.dimensions.x,
@@ -404,7 +401,6 @@ export const MTTabs = (props) => {
                                                                             bgcolor: 'rgba(255, 255, 255, 0.7)',
                                                                             borderRadius: '10px',
                                                                         }}>
-                                                                            {console.log(item)}
                                                                             <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
                                                                                 {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
                                                                                 {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
@@ -436,7 +432,7 @@ export const MTTabs = (props) => {
                                         </Box>
                                     </Tooltip>
                                     {localCardState.isAdd.get() && <AddCardModal cards={localCards} />}
-                                    {localCardState.isEdit.get() && <EditCardModal />}
+                                    {localCardState.isEdit.get() && <EditCardModal cards={localCards} />}
                                 </div>
                             </ResponsiveLayout>
                             : <Skeleton className={classes.loader} variant={'rectangle'} />

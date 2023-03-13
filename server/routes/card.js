@@ -175,6 +175,7 @@ router.post('/getall', verifyJWT, async function(req, res){
     let cards = [];
     for (let cardId of tab.cards) {
         cardId = cardId.toString();
+        console.log("CARDID " + cardId);
         let card = await Card.findById(cardId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
         if(card === null) return res.status(404).send({err: 'Card does not exist', code: 404});   //! Not sure if we should exit if a tab isn't found
 
@@ -182,6 +183,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         let items = [];
         for (let itemId of card.items){
             itemId = itemId.toString();
+            console.log("ITEMID " + itemId);
             let item = await Item.findById(itemId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
             if(item === null) return res.status(404).send({err: 'Item does not exist', code: 404});   //! Not sure if we should exit if a item isn't found
             let formattedItem = {

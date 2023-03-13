@@ -53,7 +53,7 @@ export const EditTabModal = (props) => {
         setLoading(false);
 
         let timeout = setTimeout(() => {
-            localTabState.isEdit.set(false);
+            if(editResponse.updated) localTabState.isEdit.set(false);
         }, 2000)
 
         return () => clearTimeout(timeout);

@@ -158,7 +158,7 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
-        return res.status(200).send({deleted: true, code: 200});
+        // return res.status(200).send({deleted: true, code: 200});
     });
 
     //Find Card

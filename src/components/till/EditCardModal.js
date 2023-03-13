@@ -32,6 +32,8 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to edit a card.
 export const EditCardModal = (props) => {
 
+    const {cards} = props;
+
     const localCardState = useHookstate(cardState);
 
     const [newTabName, setNewTabName] = useState('');
@@ -49,10 +51,19 @@ export const EditCardModal = (props) => {
         } else {
             setSaveMessage("Error saving the card");
         }
+
+        cards.map((card) => {
+            if(card.id === localCardState.editCard.get().id){
+                card.name = newTabName;
+                card.color = newTabColor.hex;
+            }
+            return card;
+        })
+
         setLoading(false);
 
         let timeout = setTimeout(() => {
-            localCardState.isEdit.set(false);
+            if(editResponse.updated) localCardState.isEdit.set(false);
         }, 2000)
 
         return () => clearTimeout(timeout);
