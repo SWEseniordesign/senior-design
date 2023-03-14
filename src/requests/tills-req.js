@@ -117,6 +117,9 @@ export async function addProps (obj) {
     return data;
 }
 
+/*
+Auths employee and creates JWT
+*/
 export async function authTill (obj) {
     let data;
     await fetch('http://localhost:8080/till/auth', {
@@ -132,9 +135,30 @@ export async function authTill (obj) {
    return data;
 }
 
+/*
+remove an employee from the till
+*/
 export async function removeEmployee (obj) {
     let data;
     await fetch('http://localhost:8080/till/removeemployee', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+   .then(res => data = res.json())
+   .catch(err => console.log(err));
+   return data;
+}
+
+/*
+gets all transactions for a till
+*/
+export async function getAllTransactions (obj) {
+    let data;
+    await fetch('http://localhost:8080/till/transactions', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
