@@ -83,7 +83,6 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
         stock: req.body.stock
     });
     let cardId = req.body.cardId;
-    console.log(cardId);
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(cardId))){
@@ -104,7 +103,7 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
             let formattedItem = {
-                id: item._id,
+                id: item._id.toString(),
                 name: item.name,
                 price: item.price,
                 image: item.image,

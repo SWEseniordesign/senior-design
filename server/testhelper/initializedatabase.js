@@ -2,7 +2,7 @@ const {testUser, testUser1, testUser2, testUser3, testUserBusId, testTill2,
     testBusiness, testTill, testTabPizza, testCardClassicPizza, testItem1CP, testItem2CP, 
     testCardSpecialityPizza, testItem1SP, testItem2SP,
     testTabSandwiches, testCardBurgers, testItem1B, testItem2B,
-    testCardClassicSand, testItem1C, testItem2C, testEmployee, testEmployee2
+    testCardClassicSand, testItem1C, testItem2C, testEmployee, testEmployee2, testTransaction
 } = require('./variables');
 const request = require('supertest');
 const app = require('../server');
@@ -295,6 +295,21 @@ async function initializeDatabaseNewScript(){
         return;
     }
         
+    testTransaction.tillId = till1User1._body.formattedTill.id;
+    testTransaction.employeeId = till1Employee1._body.formattedEmployee.id;
+    testTransaction.items.push(itemC2User1._body.formatteditem.id);
+    testTransaction.price = 15.00;
+    const transaction1Employee1 = await request(app)
+        .post('/transaction/create')
+        .set('authorization', loginUser1.body.token) 
+        //.expect(201)
+        .send(testTransaction);
+    if(transaction1Employee1._body.err != null){
+        console.log(`\tError creating Item: ${transaction1Employee1._body.err}.`);
+        console.log('\tStopping data creation...');
+        return;
+    }
+    
     console.log('\tData created successfully.');
 }
 

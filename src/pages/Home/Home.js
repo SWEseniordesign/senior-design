@@ -16,11 +16,12 @@ import { pageState } from "../../states/pageState";
 
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill, getAllTills } from "../../requests/tills-req";
+import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
 import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
 import { createItem, getItem, deleteItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
+import { createTransaction, getTransaction } from "../../requests/transactions-req";
 
 
 const useStyle = makeStyles({
@@ -222,7 +223,15 @@ export const Home = () => {
 //             tillId: '64079e7cfbc83db9e075f8d0',
 //             tabId: '6408ed7cd6ce8120f2794123'
 //         }
-//         let error = await deleteTab(tabId);
+//         let transaction = {
+//             employeeId: '640cd70c0cbf6b214a69bb33',
+//             tillId:     '640cd70a0cbf6b214a69baeb',
+//             items: [{id: '640cd70b0cbf6b214a69bb1d', quantity: 3}, {id: '640cd70b0cbf6b214a69bb21', quantity: 1}],
+//             price: 690
+//         }
+//         let transactionId = {transactionId: '6410d239726448181e23ecf2'}
+
+//         let error = await getAllTransactions({tillId: '640cd70a0cbf6b214a69baf0'});
 //        let id = {email: 'test@unb.ca'};
 //        console.log(error);
 //    }
