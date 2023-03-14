@@ -63,8 +63,9 @@ router.post('/create', verifyJWT, async function(req, res){
 
     
     //Verify all Items exist
-    for(let itemId of newTransaction.items){
-        Item.findById(itemId, function(err, item){
+    for(let item of newTransaction.items){
+        if(!item.id || item.quantity === 0) return res.status(400).send({err: `Invalid item ID or quantity for ${item}`, code: 400});
+        Item.findById(item.id, function(err, item){
             if(err){
                 console.log(err);
                 return res.status(500).send({err: 'Internal Server Error', code: 500});
