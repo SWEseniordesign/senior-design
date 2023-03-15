@@ -5,18 +5,9 @@ import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Responsive, WidthProvider } from "react-grid-layout";
-import { AddItemModal } from "../../components/till/AddItemModal";
-import { AddCardModal } from "../../components/till/AddCardModal";
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LockIcon from '@mui/icons-material/Lock';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import './ViewEditTill.css'
-import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import CartDrawer from "../../components/drawer/CartDrawer";
-
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
@@ -115,10 +106,6 @@ export const ViewEditTill = () => {
                                             <SettingsIcon fontSize="medium" />
                                         </IconButton>
                                     </Tooltip>
-                                    <IconButton onClick={() => setCartDrawerOpen(!cartDrawerOpen)}>
-                                        <ShoppingCartIcon fontSize="medium" />
-                                    </IconButton>
-                                    <CartDrawer openDrawer={cartDrawerOpen} setOpenDrawer={setCartDrawerOpen} />
                                 </div>
                                 :
                                 <div className={classes.noTillErrorMessage}>
@@ -143,6 +130,12 @@ export const ViewEditTill = () => {
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
                                 <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
                                 <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>
+                                <Grid2 xs={12} md={6} lg={2} xl={2}>
+                                    <IconButton onClick={() => setCartDrawerOpen(!cartDrawerOpen)}>
+                                        <ShoppingCartIcon fontSize="medium" />
+                                    </IconButton>
+                                    <CartDrawer openDrawer={cartDrawerOpen} setOpenDrawer={setCartDrawerOpen} />
+                                </Grid2>
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>
