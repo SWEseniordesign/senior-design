@@ -5,11 +5,15 @@ import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BusinessIcon from '@mui/icons-material/Business';
 import Grid2 from "@mui/material/Unstable_Grid2";
+import Dialog from '@material-ui/core/Dialog';
+import { DialogActions, DialogContent, DialogContentText, DialogTitle }  from '@material-ui/core';
+import MTButton from "../../components/mui/MTButton";
+import MTTextField from '../../components/mui/MTTextField'
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
-import { getAllTills } from "../../requests/tills-req";
+import { getAllTills, createTill } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({
@@ -42,6 +46,28 @@ const useStyle = makeStyles({
         height: '100%',
         width: '100%',
     },
+    dialogContainer: {
+        margin: '20px'
+    },
+    dialogElement: {
+        marginBottom: '20px'
+    },
+    overlay: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 200,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      dialog: {
+        position: "relative",
+        zIndex: 10000,
+      }
 });
 
 const Dashboard = () => {
@@ -99,6 +125,52 @@ const Dashboard = () => {
         }
         getBusAndTills();
     }, [])
+
+    const [newTillName, setNewTillName] = useState('');
+    const [newTillLoginId, setNewTillLoginId] = useState('');
+    const [addTillOpen, setAddTillOpen] = useState(false);
+    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
+    const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
+    const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
+
+    
+
+    const handleAddTillClick = () => {
+        setAddTillOpen(true);
+    };
+    const handleAddTillClose = () => {
+        setSubmitAddTillTriggered(true);
+        setAddTillOpen(false);
+    };
+    
+    const handleAddTillSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            let newTill = {
+                name: newTillName,
+                loginId: newTillLoginId
+                //employees: []
+                //etc
+            }
+            let response = await createTill(newTill);
+            if(!(response) || response.code !== 201){
+                setAlertMessage({message: !(response) ? 'Failed to create till.' : response.err, status: 'warning'});
+                setFailedAddTillDialogOpen(true);
+            } else {
+                setAlertMessage({message: 'Till Created!', status: 'success'});
+                //setBusinessName('');
+                //setBusinessType('');
+            }
+
+            setAddTillOpen(true);
+        } catch(e){
+            console.log(e);
+        }
+
+        setSubmitAddTillTriggered(true);
+        setAddTillOpen(false);
+    };
 
     return (
             <div className={classes.root}>
@@ -248,12 +320,57 @@ const Dashboard = () => {
                                                     })}
                                                 </List>
                                             </Box>
-                                            <Fab color="primary" aria-label="add" sx={{position: 'absolute', bottom: 20, right: 20}}>
+                                            <Fab color="primary" aria-label="add" onClick={handleAddTillClick} sx={{position: 'absolute', bottom: 20, right: 20}}>
                                                 <AddIcon />
                                             </Fab>
                                             <IconButton aria-label="more" sx={{position: 'absolute', top: 20, right: 20}}>
                                                 <MoreVertIcon />
                                             </IconButton>
+                                            {addTillOpen && (
+                                                <div className={classes.overlay}>
+                                                    <Dialog open={addTillOpen} onClose={handleAddTillClose} className={classes.dialog} PaperProps={{ style: { zIndex: 10002 } }} aria-labelledby="form-dialog-title">
+                                                        <div className={classes.dialogContainer}>
+                                                            <DialogTitle id="form-dialog-title">
+                                                                <Typography sx={{
+                                                                                fontFamily: FONT_FAMILY,
+                                                                                fontWeight: '600',
+                                                                                fontSize: '32px',
+                                                                                lineHeight: '40px',
+                                                                                display: 'flex',
+                                                                                justifyContent: 'center'}}>
+                                                                    Add New Till
+                                                                </Typography>
+                                                            </DialogTitle>
+                                                            <DialogContent>
+                                                                <div className={classes.dialogElement}>
+                                                                    <MTTextField label={'Name'} value={newTillName} onChangeFunc={setNewTillName} isFullWidth isRequired mb={4} />
+                                                                </div>
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleAddTillClose} isFullWidth></MTButton>
+                                                                <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleAddTillSubmit} isFullWidth></MTButton>
+                                                            </DialogActions>
+                                                        </div>
+                                                    </Dialog>
+                                                </div>
+                                            )}
+                                            <Dialog
+                                                open={failedAddTillDialogOpen}
+                                                onClose={closeFailedAddTillDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Failled to add till"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        Business with the same name already exists. 
+                                                        Please choose a different name.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeFailedAddTillDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
                                         </Box>
                                     </Card>
                                 </Grid2>
