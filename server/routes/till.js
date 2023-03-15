@@ -8,6 +8,8 @@ const Till = require('../models/Till');
 const Employee = require('../models/Employee');
 const {verifyJWT, verifyJWTAdmin, verifyJWTOwner} = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
+const Transaction = require('../models/Transaction');
+const Item = require('../models/Item');
 
 
 /**
@@ -42,13 +44,14 @@ router.post('/get', verifyJWT, function(req, res){
                     //If till not found
                     if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
                     let formattedTill = {
-                        id: till._id,
+                        id: till._id.toString(),
                         loginId: till.loginId,
                         name: till.name,
                         managerPassword: till.managerPassword,
                         employees: till.employees,
                         tabs: till.tabs,
-                        props: till.props
+                        props: till.props,
+                        transactions: till.transactions
                     };
                     return res.status(200).send({formattedTill, code: 200});
                 }
@@ -85,7 +88,8 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
         managerPassword: req.body.managerPassword,
         employees: req.body.employees,
         tabs: req.body.tabs,
-        props: req.body.props
+        props: req.body.props,
+        transactions: []
     });
     let businessId = req.body.businessId;
 
@@ -383,6 +387,67 @@ router.post('/removeemployee', verifyJWTAdmin, async function(req, res){
         }
         return res.status(200).send({formattedTill, code: 200}); 
     });
+});
+
+
+/**
+ * Get all transactions for a Till
+ *
+ * @route POST /till/transactions
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/transactions', verifyJWTAdmin, async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Verify input
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald employeeId input', code: 400});
+
+    //Verify ObjectIds are valid
+    if(!(mongoose.isValidObjectId(req.body.tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(req.body.tillId)) === req.body.tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Verify Till exists
+    let till = await Till.findById(req.body.tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+    if(!till) return res.status(404).send({err: 'Till not found', code: 404});
+    if(till.transactions.length === 0) return res.status(404).send({err: 'Till does not have any transactions', code: 404});
+
+    //Assemble transactions
+    let transactions = [];
+    for(let transactionId of till.transactions){
+        let formattedTransaction = {};
+
+        let transaction = await Transaction.findById(transactionId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+        if(!transaction) return res.status(404).send({err: `Transaction not found`, code: 404});
+        formattedTransaction.id = transaction._id.toString();
+
+        let employee = await Employee.findById(transaction.employeeId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+        if(!employee) return res.status(404).send({err: `Employee not found`, code: 404});
+        formattedTransaction.employee = {
+            id: employee._id.toString(),
+            email: employee.email,
+            isManager: employee.isManager
+        }
+
+        let items = [];
+        for(let item of transaction.items){
+            if(!item.id || item.quantity === 0) return res.status(400).send({err: `Invalid item ID or quantity for ${item}`, code: 400});
+            let foundItem = await Item.findById(item.id).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+            if(!foundItem) return res.status(404).send({err: `Item not found`, code: 404});
+            items.push({
+                id: foundItem._id.toString(),
+                price: foundItem.price,
+                name: foundItem.name,
+                quantity: item.quantity
+            });
+        }
+        formattedTransaction.items = items;
+        formattedTransaction.date = transaction.date.toString();
+        transactions.push(formattedTransaction);
+    }
+
+    return res.status(200).send({transactions, code: 200});
 });
 
 

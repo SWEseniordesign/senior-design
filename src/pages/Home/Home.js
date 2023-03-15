@@ -16,11 +16,12 @@ import { pageState } from "../../states/pageState";
 
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill, getAllTills } from "../../requests/tills-req";
+import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
 import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard, updateCard } from "../../requests/cards-req";
 import { createItem, getItem, deleteItem, updateItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
+import { createTransaction, getTransaction } from "../../requests/transactions-req";
 
 
 const useStyle = makeStyles({
@@ -145,87 +146,95 @@ export const Home = () => {
 
    //This is temporary to allow me to test creating data
 
-    const handleCreateData = async () => {
-       let employee = {
-           email: 'bob@unb.ca',
-           isManager: false
-       };
-       let business = {
-           name: 'Larrys Fryss',
-           ownerId: '63c866337fd04bd174567bc1',
-           type: 'Wholesale',
-           admins: [],
-           tills: []
-       };
-       let businessAdmins = {
-           name: 'McDonalds',
-           admins: ['6377f3e996d92774ba4dcce8']
-       }
+//     const handleCreateData = async () => {
+//        let employee = {
+//            email: 'bob@unb.ca',
+//            isManager: false
+//        };
+//        let business = {
+//            name: 'Larrys Fryss',
+//            ownerId: '63c866337fd04bd174567bc1',
+//            type: 'Wholesale',
+//            admins: [],
+//            tills: []
+//        };
+//        let businessAdmins = {
+//            name: 'McDonalds',
+//            admins: ['6377f3e996d92774ba4dcce8']
+//        }
 
-       let tab = {
-           tillId: '63be021d79729847f8035ba9',
-           name: 'Drinks',
-           color: 'blue',
-           cards: []
-       }
-       let card = {
-           cardId: '640cd70a0cbf6b214a69bafa',
-           name: 'Classic Pizza',
-           color: '#C4A484',
-           dimensions: {x: 1, y: 2, width: 3, height: 4},
-           items: [],
-           static: true
-       }
-       //let cardId = {id: '63c4454e4ffdaf5afa747913'};
-       let item = {
-           itemId: '640cd70b0cbf6b214a69bb21',
-           name: 'BACONATORR',
-           price: 10000.99,
-           image: '',
-           props: [],
-           stock: 5500
-       }
-       let user = {
-           fname: 'Colby',
-           lname: 'Bruh',
-           email: 'cBruh@bruh.bruh',
-           password: 'balls',
-           businessId: '63c03e39d4e646c1151dd54c'
-       };
-       let till = {
-           businessId: '63d2b33a2a75670dbd74fb3b',
-           name: 'Mega Balls',
-           managerPassword: '99999',
-           employees: [],
-           tabs: [],
-           props: []
-       };
-       let userId = {id: '63c450b6f3dcafbb59f7ece5'};
+//        let tab = {
+//            tillId: '63be021d79729847f8035ba9',
+//            name: 'Drinks',
+//            color: 'blue',
+//            cards: []
+//        }
+//        let card = {
+//            tabId: '64076d826deedfc9db3032cb',
+//            name: 'Balls',
+//            color: 'pink',
+//            dimensions: {x: 1, y: 2, width: 3, height: 4},
+//            items: [],
+//            static: true
+//        }
+//        //let cardId = {id: '63c4454e4ffdaf5afa747913'};
+//        let item = {
+//            cardId: '63c44500cc60f58fb8b2b1f3',
+//            name: 'test dog',
+//            price: 20,
+//            image: null,
+//            props: [],
+//            stock: 55
+//        }
+//        let user = {
+//            fname: 'Colby',
+//            lname: 'Bruh',
+//            email: 'cBruh@bruh.bruh',
+//            password: 'balls',
+//            businessId: '63c03e39d4e646c1151dd54c'
+//        };
+//        let till = {
+//            businessId: '63d2b33a2a75670dbd74fb3b',
+//            name: 'Mega Balls',
+//            managerPassword: '99999',
+//            employees: [],
+//            tabs: [],
+//            props: []
+//        };
+//        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
 
 
-        let tillId = {tillId: 'yoyoyoyoyoyo'};
-        //let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
-        let updatedTabInfo = {
-            name: 'Salad',
-            color: '#8AFF8A',
-            tabId: '64079e7cfbc83db9e075f8db'
-        }
-        let cardPosition = {
-            x: 0,
-            y: 0,
-            height: 1,
-            width: 2,
-            static: true,
-            cardId: '64079e7dfbc83db9e075f8df'
-        }
-        let tabId = {
-            tillId: '64079e7cfbc83db9e075f8d0',
-            tabId: '6408ed7cd6ce8120f2794123'
-        }
-        let error = await updateCard(card);
-       let id = {email: 'test@unb.ca'};
-       console.log(error);
-   }
+//         let tillId = {tillId: 'yoyoyoyoyoyo'};
+//         //let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
+//         let updatedTabInfo = {
+//             name: 'Salad',
+//             color: '#8AFF8A',
+//             tabId: '64079e7cfbc83db9e075f8db'
+//         }
+//         let cardPosition = {
+//             x: 0,
+//             y: 0,
+//             height: 1,
+//             width: 2,
+//             static: true,
+//             cardId: '64079e7dfbc83db9e075f8df'
+//         }
+//         let tabId = {
+//             tillId: '64079e7cfbc83db9e075f8d0',
+//             tabId: '6408ed7cd6ce8120f2794123'
+//         }
+//         let transaction = {
+//             employeeId: '640cd70c0cbf6b214a69bb33',
+//             tillId:     '640cd70a0cbf6b214a69baeb',
+//             items: [{id: '640cd70b0cbf6b214a69bb1d', quantity: 3}, {id: '640cd70b0cbf6b214a69bb21', quantity: 1}],
+//             price: 690
+//         }
+//         let transactionId = {transactionId: '6410d239726448181e23ecf2'}
+
+//         let error = await getAllTransactions({tillId: '640cd70a0cbf6b214a69baf0'});
+//        let id = {email: 'test@unb.ca'};
+//        console.log(error);
+//    }
 
     return (
         <div className={classes.root}>

@@ -42,6 +42,7 @@ app.use('/business', require('./routes/business'));
 app.use('/till', require('./routes/till'));
 app.use('/tab', require('./routes/tab'));
 app.use('/card', require('./routes/card'));
+app.use('/transaction', require('./routes/transaction'));
 
 const PORT = process.env.PORT || 5000;
 if(process.env.NODE_ENV !== 'test'){

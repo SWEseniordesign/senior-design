@@ -6,7 +6,7 @@ const TransactionSchema = new mongoose.Schema({
         required: true
     },
     items: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: Array,
         required: true
     },
     date: {
