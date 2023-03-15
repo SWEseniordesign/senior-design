@@ -1,9 +1,12 @@
+import { useHookstate } from "@hookstate/core";
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
 import { createCard } from "../../requests/cards-req";
+import { cardState } from "../../states/cardState";
+import { tabState } from "../../states/tabState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
 import MTTextField from "../mui/MTTextField";
@@ -28,18 +31,21 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to add a card.
 export const AddCardModal = (props) => {
 
-    const {open, setOpen, cards, tabId} = props;
+    const {cards} = props;
 
     const [newCardName, setNewCardName] = useState('');
     const [newCardColor, setNewCardColor] = useState('');
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
 
+    const localTabState = useHookstate(tabState);
+    const localCardState = useHookstate(cardState);
+
     const handleAddCard = async (e) => {
         setLoading(true);
 
         let newCard = {
-            tabId: tabId,
+            tabId: localTabState.activeTab.get(),
             name: newCardName,
             color: newCardColor.hex,
             dimensions: cards.length === 0 ? {
@@ -96,17 +102,23 @@ export const AddCardModal = (props) => {
 
         setLoading(false);
 
+        let timeout = setTimeout(() => {
+            localCardState.isAdd.set(false);
+        }, 2000)
+
+        return () => clearTimeout(timeout);
+
     }
 
     const handleCloseModal = () => {
-        setOpen(false);
+        localCardState.isAdd.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={open}
+            open={localCardState.isAdd.get()}
             handleOnClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>

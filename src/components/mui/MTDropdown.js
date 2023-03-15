@@ -34,7 +34,7 @@ const MTDropdown = (props) => {
         tooltip,
         hasDropdownIcon,
         textColor } = props; // Parameters that can be passed into the custom dropdown
-    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
+    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false, refetchOnWindowFocus: false });
 
     //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {

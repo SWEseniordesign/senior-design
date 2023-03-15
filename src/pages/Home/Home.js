@@ -18,8 +18,8 @@ import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
 import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
 import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
-import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
-import { createItem, getItem, deleteItem} from "../../requests/items-req";
+import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard, updateCard } from "../../requests/cards-req";
+import { createItem, getItem, deleteItem, updateItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
 import { createTransaction, getTransaction } from "../../requests/transactions-req";
 

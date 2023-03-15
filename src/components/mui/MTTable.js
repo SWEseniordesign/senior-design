@@ -15,6 +15,8 @@ import MtButton from './MTButton';
 import { EditTabModal } from '../till/EditTabModal';
 import MTDropdown from './MTDropdown';
 import { COLOR_PALETTE } from '../../Constants';
+import { useHookstate } from '@hookstate/core';
+import { tabState } from '../../states/tabState';
 
 const useStyles = makeStyles({
     root: {
@@ -28,16 +30,17 @@ export const MTTable = (props) => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
-    const [openEditModal, setOpenEditModal] = useState();
-    const [editRowId, setEditRowId] = useState();
+    const [editRow, setEditRow] = useState();
+
+    const localTabState = useHookstate(tabState);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
     
     const handleEditButton = (e, row) => {
-        setEditRowId(row);
-        setOpenEditModal(true);
+        setEditRow(row);
+        localTabState.isEdit.set(true);
     }
 
     const handleChangeRowsPerPage = (event) => {
@@ -78,23 +81,23 @@ export const MTTable = (props) => {
                                                 width: '100%', 
                                                 height: '25px'}}/></TableCell>
                                             {actionIsEdit ? <TableCell align='right'>
-                                                    <MtButton label={"EDIT"} onClick={(e) => handleEditButton(e, row.id)} />
+                                                    <MtButton label={"EDIT"} onClick={(e) => handleEditButton(e, row)} />
                                                 </TableCell>
                                             :
-                                                !(action) && 
-                                                    !isActionDropdown ? 
+                                                !(action) &&
+                                                    !isActionDropdown ?
                                                     <TableCell align='right'>
                                                         <MtButton label={"ACTION"} onClick={action} />
                                                     </TableCell>
                                                     :
                                                     <TableCell align='right'>
-                                                        <MTDropdown 
-                                                            textColor={'info'} 
-                                                            hasDropdownIcon 
-                                                            tooltip={'Tab Options'} 
+                                                        <MTDropdown
+                                                            textColor={'info'}
+                                                            hasDropdownIcon
+                                                            tooltip={'Tab Options'}
                                                             label={"Options"}
                                                             menuItems={[
-                                                                {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row.id)},
+                                                                {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row)},
                                                                 {id: 2, title: 'Delete', action: (e) => action(e, row.id)}
                                                         ]} />
                                                     </TableCell>
@@ -121,7 +124,7 @@ export const MTTable = (props) => {
                     }}
                 />
             }
-            {openEditModal && <EditTabModal open={openEditModal} setOpen={setOpenEditModal} tabEditId={editRowId} />}
+            {!!(editRow) && <EditTabModal tabEdit={editRow} />}
         </div>
     )
 }

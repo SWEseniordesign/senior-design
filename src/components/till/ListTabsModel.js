@@ -1,3 +1,4 @@
+import { useHookstate } from "@hookstate/core";
 import { Modal, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
@@ -31,10 +32,12 @@ const useStyles = makeStyles({
 //* The modal that pops up when the user wants to view the list of tabs.
 export const ListTabsModel = (props) => {
 
-    const {open, setOpen, deleteTabFunc} = props;
+    const {deleteTabFunc} = props;
+
+    const localTabState = useHookstate(tabState);
 
     const handleCloseModal = () => {
-        setOpen(false);
+        localTabState.isListOfTabs.set(false);
     }
 
     const tableColumns = [
@@ -44,11 +47,9 @@ export const ListTabsModel = (props) => {
 
     const classes = useStyles();
 
-    console.log(tabState.tabs.get())
-
     return (
         <Modal
-            open={open}
+            open={localTabState.isListOfTabs.get()}
             onClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
