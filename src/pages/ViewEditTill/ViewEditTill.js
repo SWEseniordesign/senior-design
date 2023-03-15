@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import CartDrawer from "../../components/drawer/CartDrawer";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
@@ -45,8 +47,7 @@ const useStyles = makeStyles((theme) => ({
     loader: {
         width: '100%',
         height: '100%'
-    }
-    
+    },
 }))
 
 export const ViewEditTill = () => {
@@ -59,7 +60,10 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
+    const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
     const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
+
+    
 
     const handleEditTill = () => {
         setIsEdit(true);
@@ -126,6 +130,12 @@ export const ViewEditTill = () => {
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
                                 <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
                                 <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>
+                                <Grid2 xs={12} md={6} lg={2} xl={2}>
+                                    <IconButton onClick={() => setCartDrawerOpen(!cartDrawerOpen)}>
+                                        <ShoppingCartIcon fontSize="medium" />
+                                    </IconButton>
+                                    <CartDrawer openDrawer={cartDrawerOpen} setOpenDrawer={setCartDrawerOpen} />
+                                </Grid2>
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>
