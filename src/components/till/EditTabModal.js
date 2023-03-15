@@ -45,6 +45,7 @@ export const EditTabModal = (props) => {
             }
         })        
         let editResponse = await updateTab({ tabId: tabEdit.id, name: newTabName, color: newTabColor.hex });
+        console.log(editResponse);
         if(editResponse.updated){
             setSaveMessage("Tab Saved!");
         } else {

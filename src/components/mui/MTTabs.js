@@ -116,16 +116,18 @@ export const MTTabs = (props) => {
     const localCardState = useHookstate(cardState);
     const localItemState = useHookstate(itemState);
 
-    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}),
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery(["tabs", till.formattedTill.id], () => getAllTabs({tillId: till.formattedTill.id}),
     {
         enabled: true,
         refetchOnWindowFocus: false,
     });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}),
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery(["cards", localTabState.activeTab.get()], () => getAllCards({tabId: localTabState.activeTab.get()}),
     {
         enabled: false,
         refetchOnWindowFocus: false,
     });
+
+    console.log(cards);
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
@@ -134,8 +136,10 @@ export const MTTabs = (props) => {
         if(!(tabs?.err) && tabs?.tabs.length > 0){
             localTabState.tabs.set([]);
             localTabState.tabs.merge(tabs.tabs)
-            if(typeof localTabState.activeTab.get() !== 'string') localTabState.activeTab.set(tabs.tabs[0].id);
+            if(localTabState.activeTab.get() === '') localTabState.activeTab.set(tabs.tabs[0].id);
             localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
+        } else {
+            localTabState.tabs.set([{id: localTabState.tabs.get().length, name: '+', canAdd: true}]);
         }
     }, [tabs]);
 
@@ -143,6 +147,7 @@ export const MTTabs = (props) => {
     useEffect(() => {
         let activeTab = localTabState.activeTab.get();
         if(typeof activeTab === 'string' && activeTab !== ''){
+            console.log(activeTab);
             fetchCards();
         }
     }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);

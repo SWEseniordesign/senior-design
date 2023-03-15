@@ -1,4 +1,4 @@
-import { hookstate, none } from '@hookstate/core'; 
+import { hookstate } from '@hookstate/core'; 
 
 export const tabState = hookstate({
     tabs: [],

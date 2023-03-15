@@ -1,4 +1,4 @@
-import { AppBar, Typography, Toolbar } from "@mui/material";
+import { AppBar, Typography, Toolbar, CssBaseline } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useLocation, useNavigate } from "react-router";
 import { COLOR_PALETTE } from "../../Constants";
@@ -9,8 +9,7 @@ import { userState } from "../../states/userState";
 import { pageState } from "../../states/pageState";
 import { useHookstate } from "@hookstate/core";
 import { getUserBusiness } from "../../requests/users-req";
-import { token } from "morgan";
-// import { login } from "../../requests/users-req";
+import { ElevationHeader } from "./ElevationHeader";
 
 const useStyles = makeStyles({
     toolBar: {
@@ -50,7 +49,7 @@ const useStyles = makeStyles({
     }
 });
 
-const Header = () => {
+const Header = (props) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -79,10 +78,7 @@ const Header = () => {
         navigate('/login');
     }
 
-    /*   
-        * Checks if the user has a business. 
-        * Activated when the user opens the avatar dropdown. 
-    */
+    //* Activated when the user opens the avatar dropdown. Checks if the user has a business.
     const userHasBusiness = async() => {
         let response;
         if(userState.token.get() !== ''){
@@ -112,8 +108,6 @@ const Header = () => {
         {id: 3, title: 'Logout', action: () => {
             uState.token.set("");
             navigate('/');
-            // uState.isLoggedIn.set(false);
-            // navigate('/');
         }}
     ];
 
@@ -121,37 +115,43 @@ const Header = () => {
 
     return (
         <div>
-            <AppBar position="static">
-                <Toolbar className={classes.toolBar}>
-                    <div className={classes.logoTitleContainer} onClick={handleHome}>
-                        <Typography sx={{
-                            fontSize: '35px',
-                            fontFamily: 'Arial',
-                            color: COLOR_PALETTE.BABY_BLUE
-                        }}>my</Typography>
-                        <Typography sx={{
-                            fontSize: '35px',
-                            fontFamily: 'Arial',
-                            color: COLOR_PALETTE.BLUE_GROTTO
-                        }}>Till</Typography>
-                    </div>
-                    <div className={classes.separator}></div>
-                    <div className={classes.dropdownContainer}>
-                        <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
-                        <MTDropdown hasDropdownIcon label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
-                    </div>
-                    {uState.token.get() === "" ?
-                        <div className={classes.signUpLoginContainer}>
-                            <MTButton variant="contained" onClick={handleLogin} label={'SIGN IN'}/>
-                            <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} />
+            <CssBaseline />
+            <ElevationHeader {...props}>
+                <AppBar position={!props.simplifiedHeader ? "sticky" : undefined}>
+                    <Toolbar className={classes.toolBar}>
+                        <div className={classes.logoTitleContainer} onClick={handleHome}>
+                            <Typography sx={{
+                                fontSize: '35px',
+                                fontFamily: 'Arial',
+                                color: COLOR_PALETTE.BABY_BLUE
+                            }}>my</Typography>
+                            <Typography sx={{
+                                fontSize: '35px',
+                                fontFamily: 'Arial',
+                                color: COLOR_PALETTE.BLUE_GROTTO
+                            }}>Till</Typography>
                         </div>
-                        :
-                        <div className={classes.signUpLoginContainer}>
-                            <MTDropdown isAccount menuOpenAction={userHasBusiness} menuItems={dropdownMenuItems_Account} />
-                        </div>
-                    }
-                </Toolbar>
-            </AppBar>
+                        {!props.simplifiedHeader && 
+                            <>
+                                <div className={classes.separator}></div>
+                                <div className={classes.dropdownContainer}>
+                                    <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
+                                    <MTDropdown hasDropdownIcon label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
+                                </div>
+                            </>}
+                        {uState.token.get() === "" ?
+                            <div className={classes.signUpLoginContainer}>
+                                <MTButton variant="contained" onClick={handleLogin} label={'SIGN IN'}/>
+                                <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} />
+                            </div>
+                            :
+                            <div className={classes.signUpLoginContainer}>
+                                <MTDropdown isAccount menuOpenAction={userHasBusiness} menuItems={dropdownMenuItems_Account} />
+                            </div>
+                        }
+                    </Toolbar>
+                </AppBar>
+            </ElevationHeader>
         </div>
     );
 }

@@ -17,6 +17,7 @@ import { tabState } from "../../states/tabState";
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        marginTop: '65px',
         width: '100%',
         height: 'calc(100vh - 75px)',
         display: 'flex',
@@ -65,7 +66,7 @@ export const ViewEditTill = () => {
 
     const localTabState = useHookstate(tabState);
 
-    const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}), { refetchOnWindowFocus: false });
+    const {isLoading: isLoadingTill, data: till} = useQuery(["tills", params.id], () => getTill({id: params.id}), { refetchOnWindowFocus: false });
 
     const handleEditTill = () => {
         setIsEdit(true);
@@ -88,8 +89,11 @@ export const ViewEditTill = () => {
                         <Grid2 container className={classes.actions}>
                             <Grid2 xs={12} lg={4}>
                                 {!isLoadingTill ? <Typography sx={{
-                                fontSize: '24px'
-                                }}>{till?.formattedTill?.name}</Typography> :
+                                    fontSize: '24px',
+                                    overflowX: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}>{till.formattedTill.name}</Typography> :
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
