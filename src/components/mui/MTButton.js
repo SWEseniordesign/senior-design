@@ -27,6 +27,7 @@ export default function MtButton(props) {
     loading,
     isLoadingButton,
     endIcon,
+    startIcon,
     makeResponsive
   } = props;
 
@@ -50,6 +51,7 @@ export default function MtButton(props) {
           variant={variant}
           onClick={onClick}
           endIcon={endIcon}
+          startIcon={startIcon}
           sx={{
             width: !(makeResponsive) ? getWidth() : {
               lg: '100%',

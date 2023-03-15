@@ -1,13 +1,16 @@
 import { useHookstate } from "@hookstate/core";
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { COLOR_PALETTE } from "../../Constants";
 import { createItem } from "../../requests/items-req";
 import { itemState } from "../../states/itemState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
 import MTTextField from "../mui/MTTextField";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import ReactCrop, {centerCrop, makeAspectCrop} from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 const useStyle = makeStyles({
     paper: {
@@ -15,7 +18,8 @@ const useStyle = makeStyles({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '20%',
+        width: 'fit-content',
+        minWidth: '20%',
         height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
@@ -37,6 +41,57 @@ export const AddItemModal = (props) => {
     const [newItemPrice, setNewItemPrice] = useState('');
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
+
+    const [imgSrc, setImgSrc] = useState('');
+    const [imgName, setImgName] = useState('');
+    const [crop, setCrop] = useState({});
+    const [completedCrop, setCompletedCrop] = useState('');
+
+    const inputFileRef = useRef(null);
+    const imgRef = useRef(null);
+    const previewCanvasRef = useRef(null);
+
+    const aspect = 16/9;
+
+    const onSelectFile = (e) => {
+        console.log('onSelectFile');
+        if (e.target.files && e.target.files.length > 0) {
+            setCrop(undefined)
+            const reader = new FileReader()
+            reader.addEventListener('load', () => {
+                let result = reader.result?.toString();
+                console.log('result', result);
+                setImgSrc(result);
+            })
+            reader.readAsDataURL(e.target.files[0])
+            setImgName(e.target.files[0].name);
+        }
+    }
+
+    const onImageLoad = (e) => {
+        console.log('onImageLoad')
+        const { width, height } = e.currentTarget
+        setCrop(
+            centerCrop(
+                makeAspectCrop(
+                  {
+                    unit: '%',
+                    width: 90,
+                  },
+                  aspect,
+                  width,
+                  height,
+                ),
+                width,
+                height,
+              )
+        )
+    }
+
+    const onUploadClick = (e) => {
+        console.log('onUploadClick');
+        inputFileRef.current.click();
+    }
 
     const handleAddItem = async (e) => {
         setLoading(true);
@@ -83,6 +138,39 @@ export const AddItemModal = (props) => {
                     <Typography variant="h5">Add Item to {localItemState.card.get().name}</Typography>
                     <MTTextField label={'Name'} value={newItemName} onChangeFunc={setNewItemName}/>
                     <MTTextField label={'Price'} value={newItemPrice} onChangeFunc={setNewItemPrice} icon={'$'}/>
+                    <MtButton label={'UPLOAD IMAGE'} startIcon={<FileUploadIcon/>} variant={'outlined'} onClick={() => onUploadClick()} width={'64%'} />
+                    <input hidden type="file" id="upload" ref={inputFileRef} accept="image/*" onChange={onSelectFile} />
+                    <Typography variant="subtitle2">{imgName}</Typography>
+                    {!!imgSrc && (
+                        <ReactCrop
+                            crop={crop}
+                            onChange={(_, percentCrop) => setCrop(percentCrop)}
+                            onComplete={(c) => setCompletedCrop(c)}
+                            aspect={aspect}
+                        >
+                            <img
+                            ref={imgRef}
+                            alt="Crop me"
+                            src={imgSrc}
+                            onLoad={onImageLoad}
+                            />
+                        </ReactCrop>
+                    )}
+                    {/* {!!completedCrop && (
+                        <>
+                        <div>
+                            <canvas
+                            ref={previewCanvasRef}
+                            style={{
+                                border: '1px solid black',
+                                objectFit: 'contain',
+                                width: completedCrop.width,
+                                height: completedCrop.height,
+                            }}
+                            />
+                        </div>
+                        </>
+                    )} */}
                     <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddItem()} width={'64%'} loading={loading} isLoadingButton />
                     {saveMessage !== '' && <Typography variant="subtitle2">{saveMessage}</Typography>}
             </Paper>
