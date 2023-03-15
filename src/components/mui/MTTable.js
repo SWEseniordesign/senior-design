@@ -13,6 +13,8 @@ import {
     TablePagination} from '@mui/material';
 import MtButton from './MTButton';
 import { EditTabModal } from '../till/EditTabModal';
+import MTDropdown from './MTDropdown';
+import { COLOR_PALETTE } from '../../Constants';
 
 const useStyles = makeStyles({
     root: {
@@ -22,11 +24,11 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionIsEdit} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionIsEdit, isActionDropdown} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
-    const [openEditModal, setOpenEditModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState();
     const [editRowId, setEditRowId] = useState();
 
     const handleChangePage = (event, newPage) => {
@@ -58,7 +60,7 @@ export const MTTable = (props) => {
                                     }}>{col.label}</Typography>
                                 </TableCell>
                             })}
-                            {actionIsEdit && <TableCell align='right'><Typography sx={{
+                            {(actionIsEdit || !!(action)) && <TableCell align='right'><Typography sx={{
                                         fontSize: '18px',
                                     }}>Action</Typography>
                             </TableCell>}
@@ -66,9 +68,9 @@ export const MTTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row) => {
-                            if(row.id !== -1){
+                            if(row.id !== rows.length-1){
                                 return <TableRow>
-                                            <TableCell>{row.label}</TableCell>
+                                            <TableCell>{row.name}</TableCell>
                                             <TableCell><Box sx={{ 
                                                 bgcolor: row.color, 
                                                 border: '1px solid grey', 
@@ -79,9 +81,23 @@ export const MTTable = (props) => {
                                                     <MtButton label={"EDIT"} onClick={(e) => handleEditButton(e, row.id)} />
                                                 </TableCell>
                                             :
-                                                !!(action) && <TableCell align='right'>
-                                                    <MtButton label={"ACTION"} onClick={action} />
-                                                </TableCell>
+                                                !(action) && 
+                                                    !isActionDropdown ? 
+                                                    <TableCell align='right'>
+                                                        <MtButton label={"ACTION"} onClick={action} />
+                                                    </TableCell>
+                                                    :
+                                                    <TableCell align='right'>
+                                                        <MTDropdown 
+                                                            textColor={'info'} 
+                                                            hasDropdownIcon 
+                                                            tooltip={'Tab Options'} 
+                                                            label={"Options"}
+                                                            menuItems={[
+                                                                {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row.id)},
+                                                                {id: 2, title: 'Delete', action: (e) => action(e, row.id)}
+                                                        ]} />
+                                                    </TableCell>
                                             }
                                         </TableRow>
                             }

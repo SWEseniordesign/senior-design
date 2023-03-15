@@ -1,22 +1,27 @@
-import { Typography, Button, Grid, Box, Link } from "@mui/material";
+import { Typography, Button, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { COLOR_PALETTE } from "../../Constants";
-import { useNavigate } from "react-router";
+import { userState } from "../../states/userState";
+import { useHookstate } from "@hookstate/core";
+import MTButton from '../../components/mui/MTButton'
+import { useLocation, useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
 import tillPic from "../../resources/HomePictures/till-sc.png";
+import { pageState } from "../../states/pageState";
 
 
 import { createEmployee, getEmployee } from "../../requests/employees-req";
 import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill, getAllTills } from "../../requests/tills-req";
-import { createTab, getTab } from "../../requests/tabs-req";
-import { createCard, getCard } from "../../requests/cards-req";
-import { createItem, getItem } from "../../requests/items-req";
+import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
+import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
+import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
+import { createItem, getItem, deleteItem} from "../../requests/items-req";
 import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
+import { createTransaction, getTransaction } from "../../requests/transactions-req";
 
 
 const useStyle = makeStyles({
@@ -79,8 +84,14 @@ const useStyle = makeStyles({
 export const Home = () => {
 
     const classes = useStyle();
+    const uState = useHookstate(userState);
+    const [hasBusiness, setHasBusiness] = useState(false);
 
     const navigate = useNavigate();
+
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
     const handleSignUp = () => {
         navigate('/create-account');
     }
@@ -89,72 +100,141 @@ export const Home = () => {
         navigate('/login');
     }
 
-    //This is temporary to allow me to test creating data
-    
-    const handleCreateData = async () => {
-        let employee = {
-            email: 'bob@unb.ca',
-            isManager: false
-        };
-        let business = {
-            name: 'Larrys Fryss',
-            ownerId: '63c866337fd04bd174567bc1',
-            type: 'Wholesale',
-            admins: [],
-            tills: []
-        };
-        let businessAdmins = {
-            name: 'McDonalds',
-            admins: ['6377f3e996d92774ba4dcce8']
-        }
-        
-        let tab = {
-            tillId: '63be021d79729847f8035ba9',
-            name: 'Drinks',
-            color: 'blue',
-            cards: []
-        }
-        let card = {
-            tabId: '63c44024140e3d9f771083c8',
-            name: 'Dog',
-            color: 'yellow',
-            dimensions: {x: 1, y: 2, width: 3, height: 4},
-            items: []
-        }
-        let cardId = {id: '63c4454e4ffdaf5afa747913'};
-        let item = {
-            cardId: '63c44500cc60f58fb8b2b1f3',
-            name: 'test dog',
-            price: 20,
-            image: null,
-            props: [],
-            stock: 55
-        }
-        let user = {
-            fname: 'Colby',
-            lname: 'Bruh',
-            email: 'cBruh@bruh.bruh',
-            password: 'balls',
-            businessId: '63c03e39d4e646c1151dd54c'
-        };
-        let till = {
-            businessId: '63c00db199361ea1767b451e',
-            name: null,
-            managerPassword: '99999',
-            employees: [],
-            tabs: [],
-            props: []
-        };
-        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
-
-
-        let id = {email: 'test@unb.ca'};
-        
-        let error = await getAllTills();
-
-        
-        console.log(error);
+    const handleDashboard = () => {
+        navigate('/dashboard');
     }
+
+    useEffect(() => {
+        if(pageState.hasBeenRedirected.get()){
+            setAlertMessage(pageState.reasonForRedirect.get());
+            setOpenAlert(true);
+            pageState.hasBeenRedirected.set(false);
+        } else {
+            pageState.reasonForRedirect.set('');
+        }
+    }, []);
+
+    //* Closes the alert that pops up when the user gets redirected to the home page.
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
+
+    const handleCreateBusiness = () => {
+        navigate('/create-business');
+    }
+
+    /*
+        * Checks if the user has a business.
+        * Activated when page renders (in useEffect).
+    */
+    const userHasBusiness = async() => {
+        let response;
+        if(userState.token.get() !== ''){
+            response = await getUserBusiness();
+        }
+
+        if(!!(response)) setHasBusiness(response.business);
+    }
+
+   useEffect(() => {
+    userHasBusiness();
+   }, []);
+
+   //This is temporary to allow me to test creating data
+
+//     const handleCreateData = async () => {
+//        let employee = {
+//            email: 'bob@unb.ca',
+//            isManager: false
+//        };
+//        let business = {
+//            name: 'Larrys Fryss',
+//            ownerId: '63c866337fd04bd174567bc1',
+//            type: 'Wholesale',
+//            admins: [],
+//            tills: []
+//        };
+//        let businessAdmins = {
+//            name: 'McDonalds',
+//            admins: ['6377f3e996d92774ba4dcce8']
+//        }
+
+//        let tab = {
+//            tillId: '63be021d79729847f8035ba9',
+//            name: 'Drinks',
+//            color: 'blue',
+//            cards: []
+//        }
+//        let card = {
+//            tabId: '64076d826deedfc9db3032cb',
+//            name: 'Balls',
+//            color: 'pink',
+//            dimensions: {x: 1, y: 2, width: 3, height: 4},
+//            items: [],
+//            static: true
+//        }
+//        //let cardId = {id: '63c4454e4ffdaf5afa747913'};
+//        let item = {
+//            cardId: '63c44500cc60f58fb8b2b1f3',
+//            name: 'test dog',
+//            price: 20,
+//            image: null,
+//            props: [],
+//            stock: 55
+//        }
+//        let user = {
+//            fname: 'Colby',
+//            lname: 'Bruh',
+//            email: 'cBruh@bruh.bruh',
+//            password: 'balls',
+//            businessId: '63c03e39d4e646c1151dd54c'
+//        };
+//        let till = {
+//            businessId: '63d2b33a2a75670dbd74fb3b',
+//            name: 'Mega Balls',
+//            managerPassword: '99999',
+//            employees: [],
+//            tabs: [],
+//            props: []
+//        };
+//        let userId = {id: '63c450b6f3dcafbb59f7ece5'};
+
+
+//         let tillId = {tillId: 'yoyoyoyoyoyo'};
+//         //let tabId = {tabId: '63ebd3c1d88e120a27bc4e20'};
+//         let updatedTabInfo = {
+//             name: 'Salad',
+//             color: '#8AFF8A',
+//             tabId: '64079e7cfbc83db9e075f8db'
+//         }
+//         let cardPosition = {
+//             x: 0,
+//             y: 0,
+//             height: 1,
+//             width: 2,
+//             static: true,
+//             cardId: '64079e7dfbc83db9e075f8df'
+//         }
+//         let tabId = {
+//             tillId: '64079e7cfbc83db9e075f8d0',
+//             tabId: '6408ed7cd6ce8120f2794123'
+//         }
+//         let transaction = {
+//             employeeId: '640cd70c0cbf6b214a69bb33',
+//             tillId:     '640cd70a0cbf6b214a69baeb',
+//             items: [{id: '640cd70b0cbf6b214a69bb1d', quantity: 3}, {id: '640cd70b0cbf6b214a69bb21', quantity: 1}],
+//             price: 690
+//         }
+//         let transactionId = {transactionId: '6410d239726448181e23ecf2'}
+
+//         let error = await getAllTransactions({tillId: '640cd70a0cbf6b214a69baf0'});
+//        let id = {email: 'test@unb.ca'};
+//        console.log(error);
+//    }
 
     return (
         <div className={classes.root}>
@@ -162,11 +242,23 @@ export const Home = () => {
                 <div className={classes.heroTitle}>
                     <Typography sx={{fontSize: '64px', fontWeight: 'bold', lineHeight: '66px', alignContent: 'center', justifyContent: 'center'}}>A customized sales experience.</Typography>
                 </div>
-                <div className={classes.buttonBox}>
-                    <Button variant="contained" onClick={handleSignUp} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>SIGN UP</Button>
-                    <Button variant="outlined" onClick={handleLogin} sx={{color: COLOR_PALETTE.NAVY_BLUE, borderColor: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>LOG IN</Button>
-                    { <Button variant="contained" onClick={handleCreateData} sx={{background: COLOR_PALETTE.NAVY_BLUE, width: '136px', height: '48px', fontSize: '16px'}}>CREATE DATA</Button> }
-                </div>
+                {uState.token.get() === "" ?
+                    <div className={classes.buttonBox}>
+                        <MTButton variant="contained" onClick={handleSignUp} label={'SIGN UP'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
+                        <MTButton variant="outlined" onClick={handleLogin} label={'LOGIN'} textColor={COLOR_PALETTE.NAVY_BLUE} borderColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
+                    </div>
+                :
+                    <div className={classes.buttonBox}>
+                        {hasBusiness ?
+                            <div className={classes.buttonBox}>
+                            <MTButton variant="contained" onClick={handleDashboard} label={'VIEW BUSINESS DASHBOARD'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
+                            {/* <MTButton variant="contained" onClick={handleCreateData} label={'create data'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  /> */}
+                            </div>
+                        :
+                            <MTButton variant="contained" onClick={handleCreateBusiness} label={'CREATE BUSINESS'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='400px'  />
+                        }
+                    </div>
+                }
             </div>
             <div className={classes.singleSectionBox}>
                 <Grid container spacing={6}>
@@ -306,6 +398,11 @@ export const Home = () => {
             </div>
             <div className={classes.endPage}>
             </div>
+            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity={'warning'} variant="filled" sx={{ width: '100%' }}>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

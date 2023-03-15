@@ -1,12 +1,13 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { makeStyles } from "@mui/styles";
+import { LoadingButton } from '@mui/lab';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   MTButton: {
     height: '2.5rem',
   }
-})
+}))
 
 export default function MtButton(props) {    
   const classes = useStyles(props);
@@ -19,19 +20,60 @@ export default function MtButton(props) {
     isFullWidth, 
     type, 
     label,
-    width 
+    width,
+    backgroundColor,
+    textColor,
+    borderColor,
+    loading,
+    isLoadingButton,
+    endIcon,
+    makeResponsive
   } = props;
-  
+
+  const getWidth = () => {
+    if(!isFullWidth){
+      if(!!(width)){
+        return width;
+      } else {
+        return 'auto';
+      }
+    } else {
+      return '100%';
+    }
+  }
+
   return (
-    <Button 
-      className={classes.MTButton} 
-      variant={variant} 
-      onClick={onClick} 
-      sx={{
-        width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
-      }}
-      type={!!(type) ? type : 'button'}>
-        {label}
+  <>
+    {!isLoadingButton ?
+        <Button
+          className={classes.MTButton}
+          variant={variant}
+          onClick={onClick}
+          endIcon={endIcon}
+          sx={{
+            width: !(makeResponsive) ? getWidth() : {
+              lg: '100%',
+              xs: '100%'
+            },
+            background: backgroundColor,
+            color: textColor,
+            borderColor: borderColor
+          }}
+          type={!!(type) ? type : 'button'}>
+            {label}
       </Button>
+    :
+      <LoadingButton
+        className={classes.MTButton}
+        variant={variant}
+        onClick={onClick}
+        sx={{
+          width: !isFullWidth ? !!(width) ? width : 'auto' : '100%'
+        }}
+        loading={loading}>
+        {label}
+      </LoadingButton>
+    }
+    </>
   );
 }

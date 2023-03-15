@@ -37,6 +37,24 @@ export async function getItem (obj) {
 }
 
 /*
+    Gets a specific item
+*/
+export async function deleteItem (obj) {
+    let data;
+    await fetch('http://localhost:8080/items/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => {return err;});
+    return data;
+}
+
+/*
     TODO
     Changes a items name
 */

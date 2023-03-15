@@ -1,6 +1,6 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { IconButton, Skeleton, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -17,8 +17,12 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import CartDrawer from "../../components/drawer/CartDrawer";
 
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getTill } from "../../requests/tills-req";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
         height: 'calc(100vh - 75px)',
@@ -27,190 +31,57 @@ const useStyles = makeStyles({
         alignItems: 'center',
     },
     actions: {
-        width: '95%',
-        height: '60px',
+        width: '100%',
         borderBottom: '2px solid black',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '24px',
-        justifyContent: 'space-between'
     },
     action_buttons: {
         display: 'flex',
-        gap: '24px'
+        justifyContent: 'flex-end',
+        textAlign: 'center',
     },
     tabbar: {
         width: '95%',
         display: 'flex',
         alignItems: 'flex-start',
+        marginTop: '12px',
     },
-    layout: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '12px',
-        border: '1px solid lightgrey',
+    noTillErrorMessage: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        marginLeft: '10%'
+    },
+    loader: {
+        width: '100%',
         height: '100%'
     },
-    cardTitleBar: {
-        display: 'flex',
-        justifyContent: 'space-between',
-    },
-    card: {
-        display: 'flex',
-        flexDirection: 'column',
-        border: '1px solid grey',
-        gap: '12px',
-        height: '100%',
-    },
-    grid: {
-        display: 'grid',
-        gap: '12px',
-        gridTemplateColumns: 'auto auto auto',
-        padding: '12px',
-
-        height: '100%', 
-        msOverflowStyle: 'none',
-        scrollbarWidth: 'none',
-        '&::-webkit-scrollbar':{
-            width:0,
-        }
-    },
-    item: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '7vh',
-        height: '100%',
-        border: '1px solid lightgrey',
-        borderRadius: '5px'
-    },
-    dragDots: {
-        height: '2px',
-        width: '2px',
-        backgroundColor: COLOR_PALETTE.NAVY_BLUE,
-        opacity: 0.4,
-    },
-    addCard: {
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer'
-    },
-})
-
-
-// Can be removed once the backend call is created/called
-const c = [
-    {id: 0, label: 'Test1', dimensions: {x: 0, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
-    {id: 1, label: "Test2", dimensions: {x: 1, y: 0, w: 1, h: 2} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false},
-    {id: 2, label: "Test3", dimensions: {x: 2, y: 0, w: 1, h: 1} , color: 'beige', items: [{id: 0, label: 'ITEM'}, {id: 1, label: 'ITEM'}, {id: 2, label: 'ITEM'}, {id: 3, label: 'ITEM'}], static: false}
-]
+}))
 
 export const ViewEditTill = () => {
 
-    const [isEdit, setIsEdit] = useState(true);
+    const params = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [openEditModel, setOpenEditModal] = useState(false);
-    const [openAddItem, setOpenAddItem] = useState(false);
-    const [openAddCard, setOpenAddCard] = useState(false);
-    const [testCards, setTestCards] = useState(c);
-    const [cardItems, setCardItems] = useState([]);
-
     const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+    const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
 
-    const ResponsiveLayout = WidthProvider(Responsive);
+    
 
-    //* Sets the openAddCard state to true to open the addCard modal.
-    const handleAddCard = () => {
-        setOpenAddCard(true);
+    const handleEditTill = () => {
+        setIsEdit(true);
+        navigate(location.pathname.replace('view', 'edit'));
     }
 
-    //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
-    const handleAddItem = (e, i) => {
-        let card = testCards.find((card) => card.id === i);
-        setCardItems(card[0].items);
-        setOpenAddItem(true);
-    }
-
-    //* Filters out the card that wants to be removed.
-    const removeCard = (e, i) => {
-        let newCards = testCards.filter((card) => card.id !== i);
-        newCards = newCards.map((card) => {
-            if(card.id > i){
-                card.id = card.id - 1;
-            }
-            return card;
-        })
-        setTestCards(newCards);
-    }
-
-    //* Changes the static property of the card to unlock/lock it.
-    const changeLockStatus = (e, cardId) => {
-        let newCards = testCards.map((card) => {
-            if(card.id === cardId){
-                card.static = !card.static
-            }
-            return card;
-        })
-        setTestCards(newCards);
-    }
-
-    //* Sets new dimensions to the card that has been moved.
-    const handleLayoutChange = (e) => {
-        testCards.map((card, i) => {
-            if(card.id.toString() === e[i].i){
-                card.dimensions.x = e[i].x;
-                card.dimensions.y = e[i].y;
-                card.dimensions.w = e[i].w;
-                card.dimensions.h = e[i].h;
-            }
-            return card;
-        })
-    }
-
-    //* Initializes the layout of the cards.
-    const createLayout = () => {
-        let layout = [];
-        if(testCards.length !== 0){
-            layout = testCards.map((card, index) => {
-                return {
-                    i: index.toString(), 
-                    x: card.dimensions.x, 
-                    y: card.dimensions.y, 
-                    w: card.dimensions.w, 
-                    h: card.dimensions.h,
-                    static: isEdit ? card.static : true,
-                    resizeHandles: ["se"]
-                }
-            })
-        }
-
-        // Initialize the AddCard option if there is only that option. (No cards in till)
-        if(layout.length === 0){
-            layout.push({
-                i: '0',
-                x: 0,
-                y: 0,
-                w: 1,
-                h: 1,
-                static: false,
-                resizeHandles: []
-            });
-        } else { // Initialize the AddCard option but if there is cards in the till. 
-            layout.push({
-                i: layout.length.toString(),
-                x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
-                y: layout[layout.length-1].x < 2 ? layout[layout.length-1].y : layout[layout.length-1].y + 1,
-                w: 1,
-                h: 1,
-                static: false,
-                resizeHandles: []
-            });
-        }
-        return layout
+    const handleViewTill = () => {
+        setIsEdit(false);
+        navigate(`${location.pathname.replace('edit', 'view')}`);
     }
 
     const classes = useStyles();
@@ -220,131 +91,73 @@ export const ViewEditTill = () => {
             {isEdit ? 
                 //? The following JSX is for when the till is being edited. (In edit mode)
                 <div className={classes.root}>
-                    <div className={classes.actions}>
-                        <Typography sx={{
-                            fontSize: '24px'
-                        }}>Actions</Typography>
-                        <div className={classes.action_buttons}>
-                            <MtButton label={'Manage Employees'} variant={'outlined'} />
-                            <MtButton label={'View Transactions History'} variant={'outlined'} />
-                            <MtButton label={'Edit Till'} variant={'outlined'} />
-                            <MtButton label={'SAVE'} variant={'contained'} />
-                        </div>
-                    </div>
-                    <div className={classes.tabbar}>
-                        <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                            <ResponsiveLayout 
-                                className={classes.layout} 
-                                layouts={{lg: createLayout()}} 
-                                draggableHandle=".draggableHandle"
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                                onLayoutChange={(e) => handleLayoutChange(e)}
-                                >
-                                {testCards?.map((card, index) => {
-                                    return  <div key={index.toString()}>
-                                                <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                    <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
-                                                        <div className='draggableHandle'>
-                                                            {Array.from(Array(6), (e, i) => {
-                                                                return <div key={i} className={classes.dragDots} />
-                                                            })}
-                                                        </div>
-                                                        <div>
-                                                            {card.static ? 
-                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                    <LockIcon fontSize="small" />
-                                                                </IconButton> 
-                                                                :
-                                                                <IconButton size="small" onClick={(e) => changeLockStatus(e, index)}>
-                                                                    <LockOpenIcon fontSize="small" />
-                                                                </IconButton>
-                                                            }
-                                                            <IconButton size="small" onClick={(e) => removeCard(e, index)}>
-                                                                    <HighlightOffIcon fontSize="small" />
-                                                            </IconButton>
-                                                        </div>
-                                                    </div>
-                                                    <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
-                                                        {card.items.map((item, index) => {
-                                                            return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                        <Box className={classes.item}>
-                                                                            <Typography>{item.label}</Typography>
-                                                                            {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
-                                                                        </Box>
-                                                                    </div>)
-                                                        })}
-                                                        <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, index)}>
-                                                            <Box className={classes.item}>
-                                                                <Typography>+</Typography>
-                                                            </Box>
-                                                        </div>
-                                                    </div>
-                                                </Box>
-                                                <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems} />
-                                            </div>
-                                            
-                                })}
-                                <div key={(testCards.length).toString()}>
-                                    <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
-                                        <Typography variant="h6">+</Typography>
-                                    </Box>
-                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={testCards} />
+                    <Grid2 container spacing={2} sx={{width: '95%', padding: '24px 8px 12px 24px'}}>
+                        <Grid2 container className={classes.actions}>
+                            <Grid2 xs={12} lg={4}>
+                                {!isLoadingTill ? <Typography sx={{
+                                fontSize: '24px'
+                                }}>{till?.formattedTill?.name}</Typography> :
+                                <Skeleton className={classes.loader} variant={'rectangle'} />}
+                            </Grid2>
+                            <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
+                                <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton makeResponsive label={'View Till'} variant={'outlined'} onClick={handleViewTill} /></Grid2>
+                                {/* <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton makeResponsive label={'SAVE'} variant={'contained'} /></Grid2> */}
+                            </Grid2>
+                        </Grid2>
+                        <Grid2 xs={12} lg={12}>
+                            {!!(till) ?
+                                <div className={classes.tabbar}>
+                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                    <Tooltip title={"List of Tabs"} arrow>
+                                        <IconButton size="large" sx={{borderRadius: 0, borderBottom: '1px solid black'}} onClick={() => setOpenEditModal((editModal) => !editModal)}>
+                                            <SettingsIcon fontSize="medium" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <IconButton onClick={() => setCartDrawerOpen(!cartDrawerOpen)}>
+                                        <ShoppingCartIcon fontSize="medium" />
+                                    </IconButton>
+                                    <CartDrawer openDrawer={cartDrawerOpen} setOpenDrawer={setCartDrawerOpen} />
                                 </div>
-                            </ResponsiveLayout>
-                        </MTTabs>
-                        <IconButton size="small" onClick={() => setOpenEditModal((editModal) => !editModal)}>
-                            <SettingsIcon fontSize="medium" />
-                        </IconButton>
-                        <IconButton onClick={() => setCartDrawerOpen(!cartDrawerOpen)}>
-                            <ShoppingCartIcon fontSize="medium" />
-                        </IconButton>
-                        <CartDrawer openDrawer={cartDrawerOpen} setOpenDrawer={setCartDrawerOpen} />
-                    </div>
+                                :
+                                <div className={classes.noTillErrorMessage}>
+                                    <Typography variant="h4">Problem loading till</Typography>
+                                    <Typography variant="subtitle">Either the user is not logged in or perhaps the till does not exist.</Typography>
+                                </div>
+                            }
+                        </Grid2>
+                    </Grid2>
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
             <div className={classes.root}>
-                <div className={classes.actions}>
-                    <Typography sx={{
-                        fontSize: '24px'
-                    }}>Actions</Typography>
-                    <div className={classes.action_buttons}>
-                        <MtButton label={'Manage Employees'} variant={'outlined'} />
-                        <MtButton label={'View Transactions History'} variant={'outlined'} />
-                        <MtButton label={'Edit Till'} variant={'outlined'} />
-                    </div>
-                </div>
-                <div className={classes.tabbar}>
-                    <MTTabs openEditModal={openEditModel} setOpenEditModal={setOpenEditModal}>
-                        <ResponsiveLayout 
-                            className={classes.layout} 
-                            layouts={{lg: createLayout()}} 
-                            cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                            >
-                            {testCards.map((card, index) => {
-                                return  <div key={index.toString()}>
-                                            <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                <div className={classes.cardTitleBar}>
-                                                    <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.label}</Typography>
-                                                </div>
-                                                <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
-                                                    {card.items.map((item, index) => {
-                                                        return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                    <Box className={classes.item}>
-                                                                        <Typography>{item.label}</Typography>
-                                                                        {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
-                                                                    </Box>
-                                                                </div>)
-                                                    })}
-                                                </div>
-                                            </Box>
-                                            <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} />
-                                        </div>
-                            })}
-                        </ResponsiveLayout>
-                    </MTTabs>
-                </div>
+                    <Grid2 container spacing={2} sx={{width: '95%', padding: '24px 8px 12px 24px'}}>
+                        <Grid2 container className={classes.actions}>
+                            <Grid2 xs={12} lg={4}>
+                                {!isLoadingTill ? <Typography sx={{
+                                fontSize: '24px'
+                                }}>{till?.formattedTill?.name}</Typography> :
+                                <Skeleton className={classes.loader} variant={'rectangle'} />}
+                            </Grid2>
+                            <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
+                                <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>
+                            </Grid2>
+                        </Grid2>
+                        <Grid2 xs={12} lg={12}>
+                            {!!(till) ?
+                                <div className={classes.tabbar}>
+                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                </div>
+                                :
+                                <div className={classes.noTillErrorMessage}>
+                                    <Typography variant="h4">Problem loading till</Typography>
+                                    <Typography variant="subtitle">Either the user is not logged in or perhaps the till does not exist.</Typography>
+                                </div>
+                            }
+                        </Grid2>
+                    </Grid2>
             </div>
         }
         </div>

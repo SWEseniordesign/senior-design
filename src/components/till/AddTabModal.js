@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
+import { createTab } from "../../requests/tabs-req";
 import { tabState } from "../../states/tabState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
@@ -29,20 +30,28 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to add a tab.
 export const AddTabModal = (props) => {
 
-    const {open, setOpen} = props;
+    const {tillId, open, setOpen} = props;
     const localTabState = useHookstate(tabState);
 
     const [newTabName, setNewTabName] = useState('');
     const [newTabColor, setNewTabColor] = useState('#FFFFFF');
+    const [loading, setLoading] = useState(false);
+    const [saveMessage, setSaveMessage] = useState('');
 
-    const handleAddTab = (e) => {
-        setOpen(false);
+    const handleAddTab = async (e) => {
+        setLoading(true);
         localTabState.tabs[localTabState.tabs.get().length-1].set(none);
 
-        let tabs = localTabState.tabs.get();
+        let addResponse = await createTab({tillId: tillId, name: newTabName, color: newTabColor.hex, cards: []});
+        if(addResponse.code === 201){
+            localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: newTabName, color: newTabColor.hex, cards: []}]);
+            setSaveMessage("Tab Created!");
+        } else {
+            setSaveMessage("Error create the tab");
+        }
+        localTabState.tabs.merge([{id: localTabState.tabs.get().length+1, name: '+', canAdd: true}]);
 
-        localTabState.tabs.merge([{id: tabs[tabs.length - 1].id + 1, label: newTabName, color: newTabColor.hex}]);
-        localTabState.tabs.merge([{id: -1, label: '+', canAdd: true}]);
+        setLoading(false);
 
         setNewTabColor('#FFFFFF');
     }
@@ -62,7 +71,8 @@ export const AddTabModal = (props) => {
                     <Typography variant="h5">Add Tab</Typography>
                     <MTTextField label={'Title'} value={newTabName} onChangeFunc={setNewTabName}/>
                     <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
-                    <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddTab()} width={'64%'} />
+                    <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddTab()} width={'64%'} loading={loading} isLoadingButton />
+                    {saveMessage !== '' && <Typography variant="subtitle2">{saveMessage}</Typography>}
             </Paper>
         </MTModal>
     )
