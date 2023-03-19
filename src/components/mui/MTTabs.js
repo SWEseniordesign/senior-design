@@ -70,7 +70,7 @@ const useStyle = makeStyles({
         gridTemplateColumns: '31% 31% 31%',
         margin: '0px 12px 12px 12px',
 
-        height: '100%',
+        height: 'fit-content',
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
         '&::-webkit-scrollbar':{
@@ -127,8 +127,6 @@ export const MTTabs = (props) => {
         refetchOnWindowFocus: false,
     });
 
-    console.log(cards);
-
     const ResponsiveLayout = WidthProvider(Responsive);
 
     //* Once we have the till information and the tab information, we can store the tabs in the local state
@@ -146,8 +144,7 @@ export const MTTabs = (props) => {
     //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
         let activeTab = localTabState.activeTab.get();
-        if(typeof activeTab === 'string' && activeTab !== ''){
-            console.log(activeTab);
+        if(typeof activeTab === 'string'){
             fetchCards();
         }
     }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);
@@ -247,6 +244,7 @@ export const MTTabs = (props) => {
             }
             return card;
         }));
+        handleLayoutChange(e, true);
     }
 
     //* Sets new dimensions to the card that has been moved.
@@ -299,6 +297,19 @@ export const MTTabs = (props) => {
                     resizeHandles: ["se"]
                 }
             })
+        }
+
+        if(layout.length === 0){
+            layout.push({
+                i: '0',
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1,
+                static: false,
+                resizeHandles: []
+            });
+        } else {
             layout.push({
                 i: layout.length.toString(),
                 x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
@@ -363,7 +374,7 @@ export const MTTabs = (props) => {
                                 layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                rowHeight={175}
+                                rowHeight={170}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards.map((card, index) => {
@@ -431,11 +442,11 @@ export const MTTabs = (props) => {
 
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
-                                    <Tooltip title={"Add Card"} arrow>
+                                    {!!(tabs.tabs) && <Tooltip title={"Add Card"} arrow>
                                         <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => localCardState.isAdd.set(true)}>
                                             <Typography variant="h6">+</Typography>
                                         </Box>
-                                    </Tooltip>
+                                    </Tooltip>}
                                     {localCardState.isAdd.get() && <AddCardModal cards={localCards} />}
                                     {localCardState.isEdit.get() && <EditCardModal cards={localCards} />}
                                 </div>
