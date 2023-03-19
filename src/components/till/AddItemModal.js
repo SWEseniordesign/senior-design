@@ -132,25 +132,43 @@ export const AddItemModal = (props) => {
         setCompletedCrop('');
     }
 
+    const getBase64FromCanvas = async (canvas) => {
+        if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
+            console.log('Canvas is empty')
+            return null;
+        }
+        let base64 = canvas.toDataURL('image/jpeg');
+        if(!base64){
+            console.log('Failed to convert to base64')
+            return null;
+        }
+        console.log('base64', base64)
+        return base64;
+    }
+
     const handleAddItem = async (e) => {
         setLoading(true);
-        
+
+        let newItemImage = await getBase64FromCanvas(previewCanvasRef.current);
+        console.log('newItemImage', newItemImage)
         let addResponse = await createItem(
             {
                 cardId: card.id, 
                 name: newItemName, 
                 price: newItemPrice,
-                image: '',
+                image: newItemImage ? newItemImage : '',
                 props: [],
                 stock: 1
-            }
+            },
         );
 
         if(addResponse.code === 201){
             items.push({id: items.length !== 0 ? items[items.length-1].id + 1 : 0, name: newItemName, price: newItemPrice})
             setSaveMessage("Item Created!");
+            console.log('item created')
         } else {
             setSaveMessage("Error creating the item");
+            console.log('error creating item')
         }
         setLoading(false);
 
