@@ -12,7 +12,7 @@ const useStyles = makeStyles({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '50%',
+        width: '75%',
         height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
@@ -30,33 +30,41 @@ const useStyles = makeStyles({
 })
 
 //* The modal that pops up when the user wants to view the list of tabs.
-export const ListTabsModel = (props) => {
+export const ViewTransactionModal = (props) => {
 
-    const {deleteTabFunc} = props;
+    const {open, setOpen, tillId} = props;
 
-    const localTabState = useHookstate(tabState);
+    // const {isLoading: isLoadingTransactions, data: transactions} = useQuery('transactions', () => getTillTransactions({tillId: tillId}))
+    //! Need backend request for all trnasactions
 
     const handleCloseModal = () => {
-        localTabState.isListOfTabs.set(false);
+        setOpen(false);
     }
 
     const tableColumns = [
-        {id: 0, label: 'Name', width: '100%'},
-        {id: 1, label: 'Color', width: '100%'}
+        {id: 0, label: 'EmployeeId', width: '100%'},
+        {id: 1, label: 'Date', width: '100%'},
+        {id: 2, label: 'Price', width: '100%'}
+    ]
+
+    const rows = [
+        {employeeid: 0, date: 'EmployeeId', price: '$100'},
+        {employeeid: 1, date: 'Date', price: '$50'},
+        {employeeid: 2, date: 'Price', price: '$75'}
     ]
 
     const classes = useStyles();
 
     return (
         <Modal
-            open={localTabState.isListOfTabs.get()}
+            open={open}
             onClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
                 <div className={classes.title}>
-                    <Typography variant={'h4'}>List of Tabs</Typography>
+                    <Typography variant={'h4'} color={'info'}>Transaction History</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={tabState.tabs.get()} hasPagination actionStyle={'dropdown'} action={deleteTabFunc} />
+                <MTTable columns={tableColumns} rows={rows} hasPagination />
             </Paper>
         </Modal>
     )

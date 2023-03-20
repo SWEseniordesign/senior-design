@@ -14,6 +14,7 @@ import { getTill } from "../../requests/tills-req";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { useHookstate } from "@hookstate/core";
 import { tabState } from "../../states/tabState";
+import { ViewTransactionModal } from "../../components/till/ViewTransactionModal";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -62,6 +63,7 @@ export const ViewEditTill = () => {
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+    const [transactionModalOpen, setTransactionModalOpen] = useState(false);
 
     const localTabState = useHookstate(tabState);
 
@@ -94,7 +96,7 @@ export const ViewEditTill = () => {
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
                                 <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={5} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /></Grid2>
                                 <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton makeResponsive label={'View Till'} variant={'outlined'} onClick={handleViewTill} /></Grid2>
                                 {/* <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton makeResponsive label={'SAVE'} variant={'contained'} /></Grid2> */}
                             </Grid2>
@@ -117,6 +119,7 @@ export const ViewEditTill = () => {
                             }
                         </Grid2>
                     </Grid2>
+                    {transactionModalOpen && <ViewTransactionModal open={transactionModalOpen} setOpen={setTransactionModalOpen} />}
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)

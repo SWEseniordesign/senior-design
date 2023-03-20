@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionIsEdit, isActionDropdown} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
@@ -58,52 +58,45 @@ export const MTTable = (props) => {
                         <TableRow>
                             {columns.map((col) => {
                                 return <TableCell align='left'><Typography sx={{
-                                        fontSize: '18px',
-                                        
+                                        fontSize: '20px'
                                     }}>{col.label}</Typography>
                                 </TableCell>
                             })}
-                            {(actionIsEdit || !!(action)) && <TableCell align='right'><Typography sx={{
+                            {!!(action) && <TableCell align='right'><Typography sx={{
                                         fontSize: '18px',
                                     }}>Action</Typography>
                             </TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row) => {
-                            if(row.id !== rows.length-1){
-                                return <TableRow>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell><Box sx={{ 
-                                                bgcolor: row.color, 
-                                                border: '1px solid grey', 
-                                                borderRadius: '12px',
-                                                width: '100%', 
-                                                height: '25px'}}/></TableCell>
-                                            {actionIsEdit ? <TableCell align='right'>
-                                                    <MtButton label={"EDIT"} onClick={(e) => handleEditButton(e, row)} />
+                        {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row, i) => {
+                            if(row.name !== '+'){
+                                return <TableRow key={i}>
+                                        {columns.map(({label}) => {
+                                            console.log(row[label.toLowerCase()])
+                                            return label !== 'Color' ? 
+                                                <TableCell key={label}><Typography sx={{fontSize: '16px'}}>{row[label.toLowerCase()]}</Typography></TableCell> : 
+                                                <TableCell><Box sx={{bgcolor: row[label.toLowerCase()], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                        })}
+                                        {!!(action) && (actionStyle === 'normal' ?
+                                                <TableCell align='right'>
+                                                    <MtButton label={"ACTION"} onClick={action} />
                                                 </TableCell>
                                             :
-                                                !(action) &&
-                                                    !isActionDropdown ?
-                                                    <TableCell align='right'>
-                                                        <MtButton label={"ACTION"} onClick={action} />
-                                                    </TableCell>
-                                                    :
-                                                    <TableCell align='right'>
-                                                        <MTDropdown
-                                                            textColor={'info'}
-                                                            hasDropdownIcon
-                                                            tooltip={'Tab Options'}
-                                                            label={"Options"}
-                                                            menuItems={[
-                                                                {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row)},
-                                                                {id: 2, title: 'Delete', action: (e) => action(e, row.id)}
-                                                        ]} />
-                                                    </TableCell>
-                                            }
-                                        </TableRow>
+                                                <TableCell align='right'>
+                                                    <MTDropdown
+                                                        textColor={'info'}
+                                                        hasDropdownIcon
+                                                        tooltip={'Tab Options'}
+                                                        label={"Options"}
+                                                        menuItems={[
+                                                            {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row)},
+                                                            {id: 2, title: 'Delete', action: (e) => action(e, row.id)}
+                                                    ]} />
+                                                </TableCell>)}
+                                        </TableRow>                                
                             }
+
                         })}
                     </TableBody>
                 </Table>
