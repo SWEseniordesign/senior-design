@@ -17,6 +17,7 @@ import MTDropdown from './MTDropdown';
 import { COLOR_PALETTE } from '../../Constants';
 import { useHookstate } from '@hookstate/core';
 import { tabState } from '../../states/tabState';
+import moment from 'moment/moment';
 
 const useStyles = makeStyles({
     root: {
@@ -57,10 +58,19 @@ export const MTTable = (props) => {
                     <TableHead>
                         <TableRow>
                             {columns.map((col) => {
-                                return <TableCell align='left'><Typography sx={{
+                                if(!!(col.subprops)){
+                                    return col.subprops.map((prop) => {
+                                        return <TableCell align='left'><Typography sx={{
+                                            fontSize: '20px'
+                                        }}>{prop.label}</Typography>
+                                        </TableCell>
+                                    })
+                                } else {
+                                    return <TableCell align='left'><Typography sx={{
                                         fontSize: '20px'
                                     }}>{col.label}</Typography>
-                                </TableCell>
+                                    </TableCell>
+                                }
                             })}
                             {!!(action) && <TableCell align='right'><Typography sx={{
                                         fontSize: '18px',
@@ -72,11 +82,21 @@ export const MTTable = (props) => {
                         {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row, i) => {
                             if(row.name !== '+'){
                                 return <TableRow key={i}>
-                                        {columns.map(({label}) => {
-                                            console.log(row[label.toLowerCase()])
-                                            return label !== 'Color' ? 
-                                                <TableCell key={label}><Typography sx={{fontSize: '16px'}}>{row[label.toLowerCase()]}</Typography></TableCell> : 
-                                                <TableCell><Box sx={{bgcolor: row[label.toLowerCase()], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                        {columns.map(({dataPropId}, i) => {
+                                            if(typeof row[dataPropId] === 'object' && !!(columns[i].subprops)){
+                                                return Object.keys(row[dataPropId]).map((key, index) => {
+                                                    if(!!(row[dataPropId][columns[i].subprops[index]?.dataPropId])){
+                                                        return dataPropId !== 'color' ? 
+                                                            <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> : 
+                                                            <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                                    }
+                                                   
+                                                })
+                                            } else {
+                                                return dataPropId !== 'color' ? 
+                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{dataPropId === 'date' ? moment(row[dataPropId]).format('MMMM Do YYYY, h:mm:ss a') : row[dataPropId]}</Typography></TableCell> : 
+                                                    <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                            }
                                         })}
                                         {!!(action) && (actionStyle === 'normal' ?
                                                 <TableCell align='right'>

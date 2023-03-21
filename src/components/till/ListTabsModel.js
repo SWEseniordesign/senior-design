@@ -41,8 +41,8 @@ export const ListTabsModel = (props) => {
     }
 
     const tableColumns = [
-        {id: 0, label: 'Name', width: '100%'},
-        {id: 1, label: 'Color', width: '100%'}
+        {id: 0, dataPropId: 'name', label: 'Name', width: '100%'},
+        {id: 1, dataPropId: 'color', label: 'Color', width: '100%'}
     ]
 
     const classes = useStyles();

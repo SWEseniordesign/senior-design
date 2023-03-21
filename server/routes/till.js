@@ -430,6 +430,7 @@ router.post('/transactions', verifyJWTAdmin, async function(req, res){
             isManager: employee.isManager
         }
 
+        let totalPrice = 0;
         let items = [];
         for(let item of transaction.items){
             if(!item.id || item.quantity === 0) return res.status(400).send({err: `Invalid item ID or quantity for ${item}`, code: 400});
@@ -441,9 +442,11 @@ router.post('/transactions', verifyJWTAdmin, async function(req, res){
                 name: foundItem.name,
                 quantity: item.quantity
             });
+            totalPrice += foundItem.price * item.quantity;
         }
         formattedTransaction.items = items;
         formattedTransaction.date = transaction.date.toString();
+        formattedTransaction.totalPrice = totalPrice;
         transactions.push(formattedTransaction);
     }
 

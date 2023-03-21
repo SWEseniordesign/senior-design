@@ -2,7 +2,9 @@ import { useHookstate } from "@hookstate/core";
 import { Modal, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
+import { useQuery } from "react-query";
 import { COLOR_PALETTE } from "../../Constants";
+import { getAllTransactions } from "../../requests/tills-req";
 import { tabState } from "../../states/tabState";
 import { MTTable } from "../mui/MTTable";
 
@@ -34,23 +36,19 @@ export const ViewTransactionModal = (props) => {
 
     const {open, setOpen, tillId} = props;
 
-    // const {isLoading: isLoadingTransactions, data: transactions} = useQuery('transactions', () => getTillTransactions({tillId: tillId}))
-    //! Need backend request for all trnasactions
+    const {isLoading: isLoadingTransactions, data: transactions} = useQuery('transactions', () => getAllTransactions({tillId: tillId}))
 
     const handleCloseModal = () => {
         setOpen(false);
     }
 
     const tableColumns = [
-        {id: 0, label: 'EmployeeId', width: '100%'},
-        {id: 1, label: 'Date', width: '100%'},
-        {id: 2, label: 'Price', width: '100%'}
-    ]
-
-    const rows = [
-        {employeeid: 0, date: 'EmployeeId', price: '$100'},
-        {employeeid: 1, date: 'Date', price: '$50'},
-        {employeeid: 2, date: 'Price', price: '$75'}
+        {id: 0, dataPropId: 'employee', label: 'Employee', subprops: [
+            {id: 0, dataPropId: 'id', label: 'Employee Id', width: '100%'},
+            {id: 1, dataPropId: 'email', label: 'Employee Email', width: '100%'},
+        ], width: '100%'},
+        {id: 1, dataPropId: 'date', label: 'Date', width: '100%'},
+        {id: 2, dataPropId: 'totalPrice', label: 'Total Price', width: '100%'}
     ]
 
     const classes = useStyles();
@@ -64,7 +62,7 @@ export const ViewTransactionModal = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'} color={'info'}>Transaction History</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={rows} hasPagination />
+                {!isLoadingTransactions && <MTTable columns={tableColumns} rows={transactions.transactions} hasPagination />}
             </Paper>
         </Modal>
     )
