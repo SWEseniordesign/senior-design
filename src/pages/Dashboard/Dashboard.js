@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider, CircularProgress, Skeleton } from "@mui/material";
+import { Grid, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider, CircularProgress, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -128,6 +128,9 @@ const Dashboard = () => {
 
     const [newTillName, setNewTillName] = useState('');
     const [newTillLoginId, setNewTillLoginId] = useState('');
+    //LOGIN ID GETS GENERATED, TELL THEM WHAT IT IS AFTER MAKE TILL
+    //onCHangeFunc textfield
+    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
     const [addTillOpen, setAddTillOpen] = useState(false);
     const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
@@ -148,9 +151,16 @@ const Dashboard = () => {
         e.preventDefault();
         try{
             let newTill = {
+                //businessId: '63d2b33a2a75670dbd74fb3b',
+                //NEED TO GET BUSID
                 name: newTillName,
-                loginId: newTillLoginId
-                //employees: []
+                managerPassword: newTillManagerPassword,
+                employees: [],
+                tabs: [],
+                props: []
+                //loginId: newTillLoginId
+                //hide managerPassword
+                //employees: [] NEED EMAIL AND IS MANAGER!!!
                 //etc
             }
             let response = await createTill(newTill);
@@ -343,12 +353,19 @@ const Dashboard = () => {
                                                             </DialogTitle>
                                                             <DialogContent>
                                                                 <div className={classes.dialogElement}>
-                                                                    <MTTextField label={'Name'} value={newTillName} onChangeFunc={setNewTillName} isFullWidth isRequired mb={4} />
+                                                                    <Grid container rowSpacing={3}>
+                                                                        <Grid item xs={12} md={12}>
+                                                                            <MTTextField label={'Name'} value={newTillName} onChangeFunc={setNewTillName} isFullWidth isRequired mb={4} />
+                                                                        </Grid>
+                                                                        <Grid item xs={12} md={12}>
+                                                                            <MTTextField label={'Manager Password'} type='password' value={newTillManagerPassword} onChangeFunc={setNewTillManagerPassword} isFullWidth isRequired hasPasswordHideShow mb={4} />
+                                                                        </Grid>
+                                                                    </Grid>
                                                                 </div>
                                                             </DialogContent>
                                                             <DialogActions>
                                                                 <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleAddTillClose} isFullWidth></MTButton>
-                                                                <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleAddTillSubmit} isFullWidth></MTButton>
+                                                                <MTButton label={'CREATE'} variant={'contained'} type={'submit'} onClick={handleAddTillSubmit} isFullWidth></MTButton>
                                                             </DialogActions>
                                                         </div>
                                                     </Dialog>
@@ -363,8 +380,7 @@ const Dashboard = () => {
                                                 <DialogTitle id="alert-dialog-title">{"Failled to add till"}</DialogTitle>
                                                 <DialogContent>
                                                     <DialogContentText id="alert-dialog-description">
-                                                        Business with the same name already exists. 
-                                                        Please choose a different name.
+                                                        Could not add till.
                                                     </DialogContentText>
                                                 </DialogContent>
                                                 <DialogActions>
