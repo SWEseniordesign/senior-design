@@ -12,6 +12,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import HamburgerPic from './testItemPics/hamburger.jpg';
 import HotdogPic from './testItemPics/hotdog.jpg';
 import CocaColaPic from './testItemPics/coca-cola.jpg';
+import { none, useHookstate } from "@hookstate/core";
+import { orderState } from "../../states/orderState";
 
 const useStyles = makeStyles({
   drawer: {
@@ -33,7 +35,7 @@ const useStyles = makeStyles({
   },
 })
 
-const CartDrawer = ({openDrawer, setOpenDrawer}) => {
+const CartDrawer = () => {
 
   const testCartItems = [
     {id: 0, name: "Hamburger", price: 3.50, quantity: 1, image: HamburgerPic},
@@ -41,48 +43,45 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
     {id: 2, name: "Coca Cola", price: 1.75, quantity: 1, image: CocaColaPic}
   ]
 
+  const localOrderState = useHookstate(orderState);
+
   //const [openDrawer, setOpenDrawer] = useState(false);
   //const [cartItems, setCartItems] = useState([]);
   const [cartItems, setCartItems] = useState(testCartItems);
 
   const addItemToCart = (item) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
-    if (existingItem) {
-        const updatedCartItems = cartItems.map((cartItem) =>
-        cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem
-        );
-        setCartItems(updatedCartItems);
-    } else {
-        setCartItems([...cartItems, { ...item, quantity: 1 }]);
+    let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
+    if(itemIndex > -1){
+        localOrderState.order[itemIndex]['quantity'].set(i => i + 1);
     }
   };
 
   const removeItemFromCart = (item) => {
-      const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
-      if (existingItem.quantity > 1) {
-        const updatedCartItems = cartItems.map((cartItem) =>
-          cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity - 1 } : cartItem
-        );
-        setCartItems(updatedCartItems);
-      } else {
-        const updatedCartItems = cartItems.filter((cartItem) => cartItem.id !== item.id);
-        setCartItems(updatedCartItems);
+
+      let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
+      if(itemIndex > -1){
+        if(localOrderState.order[itemIndex].get().quantity === 1){
+          localOrderState.order[itemIndex].set(none);
+        } else {
+          localOrderState.order[itemIndex]['quantity'].set(i => i - 1);
+        }
       }
   };
 
   const getSubtotal = () => {
-      return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      return localOrderState.order.get().reduce((total, item) => total + (item.price * item.quantity), 0);
   }
     
-
+console.log(localOrderState)
   const handleCheckout = () => {
+    let newTransaction = {
+      employeeId: '',
+      tillId: '',
+      items: localOrderState.order.get(),
+      price: ''
+    }
       console.log("need to add checkout fucntionality");
   };
-
-  const handleAddCartItemTest = () => {
-      addItemToCart(testCartItems[1]);
-  };
-
 
   const classes = useStyles();
   return (
@@ -93,25 +92,25 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
         }}
         variant="persistent"
         anchor="right"
-        open={openDrawer}
+        open={localOrderState.isOpen.get()}
         >
         <div className={classes.drawerHeader}>
-            <IconButton onClick={() => setOpenDrawer(false)}>
+            <IconButton onClick={() => localOrderState.isOpen.set(false)}>
                 <ChevronRight />
             </IconButton>
         </div>
         <div className={classes.drawerTitle}>
             <Typography variant='h5' sx={{
-                                                fontFamily: FONT_FAMILY,
-                                                fontWeight: '200',
-                                                fontSize: '28px',
-                                                lineHeight: '36px',
-                                                display: 'flex'}}>
+              fontFamily: FONT_FAMILY,
+              fontWeight: '200',
+              fontSize: '28px',
+              lineHeight: '36px',
+              display: 'flex'}}>
                 Cart
             </Typography>
         </div>
         <List style={{overflowY: 'scroll', height: 'calc(100vh - 200px)'}}>
-            {cartItems.map((item) => (
+            {localOrderState.order.get().map((item) => (
                 <ListItem key={item.id}>
                 <ListItemIcon>
                     <img src={item.image} alt={item.name} style={{ width: "50px", height: "50px" }} />
@@ -128,7 +127,7 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
                 </ListItem>
             ))}
         </List>
-        <List>
+        <List sx={{borderTop: '1px solid lightgrey'}}>
             <ListItem>
                 <ListItemText primary="Subtotal" />
                 <Typography>{`$${getSubtotal().toFixed(2)}`}</Typography>
@@ -143,7 +142,6 @@ const CartDrawer = ({openDrawer, setOpenDrawer}) => {
             </ListItem>
             <ListItem>
                 <MtButton variant="contained" onClick={handleCheckout} label={'CHECKOUT'} />
-                <MtButton variant="contained" onClick={handleAddCartItemTest} label={'Add Item Test'} />
             </ListItem>
         </List>
 

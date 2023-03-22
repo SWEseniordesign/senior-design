@@ -73,6 +73,8 @@ export const AccessTill = () => {
             }
             let error = await authTill(empCreds);
 
+            console.log(error);
+
             if(!!(error.err)){
                 setAlertMessage({message: error.err, status: 'warning'});
             } else if(!!(error.token)) {

@@ -49,6 +49,17 @@ export const MTTable = (props) => {
         setPage(0);
     };
 
+    const determineFormattedOutput = (propId, row) => {
+        switch(propId){
+            case 'date':
+                return moment(row[propId]).format('MMMM Do YYYY, h:mm:ss a');
+            case 'totalPrice':
+                return '$' + row[propId];
+            default:
+                return row[propId];
+        }
+    }
+
     const classes = useStyles();
 
     return (
@@ -94,7 +105,7 @@ export const MTTable = (props) => {
                                                 })
                                             } else {
                                                 return dataPropId !== 'color' ? 
-                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{dataPropId === 'date' ? moment(row[dataPropId]).format('MMMM Do YYYY, h:mm:ss a') : row[dataPropId]}</Typography></TableCell> : 
+                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{determineFormattedOutput(dataPropId, row)}</Typography></TableCell> : 
                                                     <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
                                             }
                                         })}

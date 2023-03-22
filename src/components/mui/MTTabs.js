@@ -23,6 +23,7 @@ import { EditCardModal } from "../till/EditCardModal";
 import { cardState } from "../../states/cardState";
 import { itemState } from "../../states/itemState";
 import missingImage from '../../resources/missing-img.png'
+import { orderState } from "../../states/orderState";
 
 
 const useStyle = makeStyles({
@@ -115,6 +116,7 @@ export const MTTabs = (props) => {
     const localTabState = useHookstate(tabState);
     const localCardState = useHookstate(cardState);
     const localItemState = useHookstate(itemState);
+    const localOrderState = useHookstate(orderState);
 
     const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}),
     {
@@ -187,6 +189,17 @@ export const MTTabs = (props) => {
         localItemState.isEdit.set(true);
         localItemState.item.set(item);
         localItemState.card.set(card);
+    }
+
+    //* Adds item to order + increases quantity by 1
+    const handleAddItemToOrder = (item) => {
+        let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
+        if(itemIndex > -1){
+            localOrderState.order[itemIndex]['quantity'].set(i => i + 1);
+        } else {
+            item.quantity = 1;
+            localOrderState.order.merge([item]);   
+        }
     }
 
     //* Filters out the card that wants to be removed.
@@ -396,9 +409,9 @@ export const MTTabs = (props) => {
                                                     </div>
                                                     <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
-                                                            return (<div key={index} style={{gridColumn: 1 / 2} }>
+                                                            return (<div key={index} style={{gridColumn: 1 / 2}}>
                                                                         <Card>
-                                                                            <CardActionArea onClick={''}>
+                                                                            <CardActionArea>
                                                                                 {item.image ?
                                                                                     <CardMedia
                                                                                     component="img"
@@ -499,9 +512,9 @@ export const MTTabs = (props) => {
                                                         {card.items.length > 0 ?
                                                             <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                                 {card.items.map((item, index) => {
-                                                                    return (<div key={index} style={{gridColumn: 1 / 2} }>
+                                                                    return (<div key={index} style={{gridColumn: 1 / 2}}>
                                                                     <Card>
-                                                                        <CardActionArea onClick={''}>
+                                                                        <CardActionArea onClick={() => handleAddItemToOrder(item)}>
                                                                             {item.image ?
                                                                                 <CardMedia
                                                                                 component="img"
