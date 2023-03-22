@@ -45,7 +45,7 @@ const useStyles = makeStyles({
 export const ManageEmployeeModal = (props) => {
 
     const params = useParams();
-    const {open, setOpen, employees} = props;
+    const {open, setOpen, employees, tillId} = props;
     const handleCloseModal = () => {
         setOpen(false);
     }
@@ -67,13 +67,12 @@ export const ManageEmployeeModal = (props) => {
         setEmployeeObjects(empObjects);
     }
 
-    async function addEmployee() {
-        let employee = {email: email, isManager: isManager} ;
-        console.log(employee);
-        let ret = await createEmployee(employee);
+    async function addEmp() {
+        let employee = {email: email, isManager: isManager, tillId: tillId};
+        let ret = await addEmployee(employee);
         console.log(ret);
         if(ret.code === 201){
-            
+
         }
     }
 
@@ -113,7 +112,7 @@ export const ManageEmployeeModal = (props) => {
                     label = "Add" 
                     variant = "contained" 
                     type = "submit"
-                    onClick = {() => addEmployee()}>
+                    onClick = {() => addEmp()}>
                     </MtButton>
                 </div>
             </Paper>

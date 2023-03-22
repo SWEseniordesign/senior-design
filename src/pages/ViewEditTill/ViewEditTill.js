@@ -126,7 +126,7 @@ export const ViewEditTill = () => {
                         </Grid2>
                     </Grid2>
                     {transactionModalOpen && <ViewTransactionModal open={transactionModalOpen} setOpen={setTransactionModalOpen} tillId={till.formattedTill.id} />}
-                    {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees}/>}
+                    {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees} tillId={till.formattedTill.id}/>}
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
