@@ -11,12 +11,17 @@ import LockIcon from '@mui/icons-material/Lock';
 import { AddItemModal } from "../../components/till/AddItemModal";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { COLOR_PALETTE } from "../../Constants";
-import { getAllTabs } from "../../requests/tabs-req";
-import { getAllCards, modifyCardPosition } from "../../requests/cards-req";
+import { deleteTab, getAllTabs } from "../../requests/tabs-req";
+import { deleteCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { useQuery } from "react-query";
 import { none, useHookstate } from "@hookstate/core";
 import './MTTabs.css'
 import MTDropdown from "./MTDropdown";
+import { deleteItem } from "../../requests/items-req";
+import { EditItemModal } from "../till/EditItemModal";
+import { EditCardModal } from "../till/EditCardModal";
+import { cardState } from "../../states/cardState";
+import { itemState } from "../../states/itemState";
 
 
 const useStyle = makeStyles({
@@ -77,8 +82,8 @@ const useStyle = makeStyles({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        minHeight: '100%',
-        maxHeight: 'max-content',
+        minHeight: '100px',
+        maxHeight: '100px',
         border: `1px solid ${COLOR_PALETTE.NAVY_BLUE}`
     },
     dragDots: {
@@ -102,55 +107,56 @@ const useStyle = makeStyles({
 
 export const MTTabs = (props) => {
 
-    const {till, openEditModal, setOpenEditModal, isEdit, isLoadingTill} = props;
+    const {till, isEdit} = props;
 
     const [value, setValue] = useState(0);
-    const [openAddModal, setOpenAddModal] = useState(false);
-    const [openAddItem, setOpenAddItem] = useState(false);
-    const [openAddCard, setOpenAddCard] = useState(false);
     const [localCards, setLocalCards] = useState([]);
     const [cardItems, setCardItems] = useState([]);
-    const [selectedTabId, setSelectedTabId] = useState('');
     const localTabState = useHookstate(tabState);
+    const localCardState = useHookstate(cardState);
+    const localItemState = useHookstate(itemState);
 
-    const {isLoading: isLoadingTabs, data: tabs, refetch: fetchTabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}), { enabled: false });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: selectedTabId}), { enabled: false });
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}),
+    {
+        enabled: true,
+        refetchOnWindowFocus: false,
+    });
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}),
+    {
+        enabled: false,
+        refetchOnWindowFocus: false,
+    });
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
+    //* Once we have the till information and the tab information, we can store the tabs in the local state
     useEffect(() => {
-        if(!openAddModal){
+        if(!(tabs?.err) && tabs?.tabs.length > 0){
             localTabState.tabs.set([]);
-            fetchTabs();
+            localTabState.tabs.merge(tabs.tabs)
+            if(typeof localTabState.activeTab.get() !== 'string') localTabState.activeTab.set(tabs.tabs[0].id);
+            localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
         }
-    }, [openAddModal])
+    }, [tabs]);
 
+    //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
-        if(till?.formattedTill?.tabs.length > 0){
-            if(!(tabs?.err) && tabs?.tabs.length > 0){
-                localTabState.tabs[localTabState.tabs.get().length-1].set(none);
-                localTabState.tabs.merge(tabs.tabs)
-                setSelectedTabId(tabs.tabs[0].id);
-                localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}])
-            }
-        }
-    }, [till, tabs]);
-
-    useEffect(() => {
-        if(selectedTabId !== ''){
+        let activeTab = localTabState.activeTab.get();
+        if(typeof activeTab === 'string' && activeTab !== ''){
             fetchCards();
         }
-    }, [selectedTabId]);
+    }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);
 
+    //* When the cards have been fetched, set the local cards state with the fetched cards
     useEffect(() => {
-        setLocalCards(!!(cards?.cards) ? cards?.cards : []);
+        setLocalCards(!!(cards?.cards) && !(cards.err) ? cards?.cards : []);
     }, [cards]);
 
     //* Handles updating the selected tabId
     const handleTabId = (tabID) => {
-        if(tabID !== selectedTabId){
-            setLocalCards([]); 
-            setSelectedTabId(tabID);
+        if(tabID !== localTabState.activeTab.get()){
+            setLocalCards([]);
+            localTabState.activeTab.set(tabID);
         }
     }
 
@@ -159,60 +165,83 @@ export const MTTabs = (props) => {
         setValue(newValue)
     }
 
-    //* Sets the openAddModal to true
-    const handleOpenAddModal = () => {
-        setOpenAddModal(true);
-    }
-
-    //* Sets the openAddCard state to true to open the addCard modal.
-    const handleAddCard = () => {
-        setOpenAddCard(true);
+    //* Sets the openEditCard state to true to open the editCard modal.
+    const handleEditCard = (e, card) => {
+        localCardState.editCard.set(card);
+        localCardState.isEdit.set(true);
     }
 
     //* Finds the specific card that you want to add an item to, then set the cardItems state to the items of the specific card + sets the openAddItem state to true to open the addItem modal.
     const handleAddItem = (e, i) => {
         let card = localCards?.find((card) => card.id === i);
         setCardItems([card, [card.items]]);
-        setOpenAddItem(true);
+
+        localItemState.isAdd.set(true);
+        localItemState.card.set(card);
+        localItemState.editItem.set(card.items);
+    }
+
+    //* Sets the openEditItem state to true to open the editItem modal.
+    const handleEditItem = (e, item, card) => {
+        setCardItems([item, card]);
+        localItemState.isEdit.set(true);
+        localItemState.item.set(item);
+        localItemState.card.set(card);
     }
 
     //* Filters out the card that wants to be removed.
-    const removeCard = (e, i) => {
-        let newCards = localCards?.filter((card) => card.id !== i);
-        newCards = newCards.map((card) => {
-            if(card.id > i){
-                card.id = card.id - 1;
-            }
-            return card;
-        })
-        setLocalCards(newCards);
+    const removeCard = async (e, i) => {
+
+        let deleteCardResponse = await deleteCard({tabId: localTabState.activeTab.get(), cardId: i});
+        if(deleteCardResponse.code === 200){
+            let newCards = localCards?.filter((card) => card.id !== i);
+            newCards = newCards.map((card) => {
+                if(card.id > i){
+                    card.id = card.id - 1;
+                }
+                return card;
+            })
+            setLocalCards(newCards);
+        } else {
+            console.log(deleteCardResponse.err);
+        }
     }
 
     //* Filters out the item that wants to be removed.
-    const removeItem = (e, cardId, itemId) => {
-        let newCards = localCards?.map((card) => {
-            if(card.id === cardId){
-                console.log(card.items)
+    const removeItem = async (e, cardId, itemId) => {
+        let deleteResponse = await deleteItem({itemId: itemId, cardId: cardId});
 
-                card.items = card.items.filter((item) => item.id !== itemId);
-            }
-            return card;
-        });
-        console.log(newCards);
-        setLocalCards(newCards);
+        if(deleteResponse.deleted){
+            let newCards = localCards?.map((card) => {
+                if(card.id === cardId){
+                    card.items = card.items.filter((item) => item.id !== itemId);
+                }
+                return card;
+            });
+            setLocalCards(newCards);
+        } else {
+            console.log(deleteResponse.err);
+        }
+    }
 
+    //* Remove a tab.
+    const removeTab = async (e, rowIdToDelete) => {
+        let deleteResponse = await deleteTab({tabId: rowIdToDelete, tillId: till.formattedTill.id});
+        if(deleteResponse.code === 200){
+            localTabState.tabs.get().filter((tab) => tab.id !== rowIdToDelete);
+        } else {
+            console.log(deleteResponse.err);
+        }
     }
 
     //* Changes the static property of the card to unlock/lock it.
     const changeLockStatus = (e, cardId) => {
-        let newCards = localCards?.map((card) => {
+        setLocalCards(localCards?.map((card) => {
             if(card.id === cardId){
                 card.static = !card.static
             }
             return card;
-        })
-        handleLayoutChange(e, true);
-        setLocalCards(newCards);
+        }));
     }
 
     //* Sets new dimensions to the card that has been moved.
@@ -256,29 +285,15 @@ export const MTTabs = (props) => {
         if(localCards.length !== 0){
             layout = localCards.map((card, index) => {
                 return {
-                    i: index.toString(), 
-                    x: card.dimensions.x === null ? index : card.dimensions.x, 
-                    y: card.dimensions.y === null ? 0 : card.dimensions.y, 
-                    w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width, 
+                    i: index.toString(),
+                    x: card.dimensions.x === null ? index : card.dimensions.x,
+                    y: card.dimensions.y === null ? 0 : card.dimensions.y,
+                    w: card.dimensions.width === null || !(card.dimensions.width) ? 1 : card.dimensions.width,
                     h: card.dimensions.height === null || !(card.dimensions.height) ? 1 : card.dimensions.height,
                     static: isEdit ? card.static : true,
                     resizeHandles: ["se"]
                 }
             })
-        }
-
-        // Initialize the AddCard option if there is only that option. (No cards in till)
-        if(layout.length === 0){
-            layout.push({
-                i: '0',
-                x: 0,
-                y: 0,
-                w: 1,
-                h: 1,
-                static: false,
-                resizeHandles: []
-            });
-        } else { // Initialize the AddCard option but if there is cards in the till. 
             layout.push({
                 i: layout.length.toString(),
                 x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
@@ -306,63 +321,75 @@ export const MTTabs = (props) => {
         <div className={classes.root}>
             <TabContext value={value}>
                 <div className={classes.tabBar}>
-                    <TabList onChange={tabChange} variant={'fullWidth'}>
+                    <TabList onChange={tabChange} variant={localTabState.tabs.get().length > 8 ? 'scrollable' : 'standard'}>
                         {localTabState.tabs.get().map((tab, i) => {
-                            if(tab.name === '+'){
-                                return <Tooltip title={"Add Tab"} arrow>
-                                    <Tab 
-                                        sx={addTabStyle}
-                                        key={tab.id} 
-                                        value={tab.id}
-                                        onClick={handleOpenAddModal}
-                                        label={tab.name} /></Tooltip>
-                            } else {
+                            if(isEdit){
+                                if(tab.name === '+'){
+                                    return <Tooltip key={i} title={"Add Tab"} arrow>
+                                        <Tab
+                                            sx={addTabStyle}
+                                            key={tab.id}
+                                            value={tab.id}
+                                            onClick={() => localTabState.isAdd.set(true)}
+                                            label={tab.name} /></Tooltip>
+                                } else {
+                                    return <Tab
+                                            sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
+                                            key={i}
+                                            value={i}
+                                            label={tab.name}
+                                            onClick={() => handleTabId(tab.id)} />
+                                }
+                            } else if(!isEdit && tab.name !== '+'){
                                 return <Tab 
                                         sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
-                                        key={tab.id} 
+                                        key={i}
                                         value={i}
                                         label={tab.name}
                                         onClick={() => handleTabId(tab.id)} />
-                            }   
+                            }
                         })}
                     </TabList>
                 </div>
                     <TabPanel value={value} index={value}>
-                        {isEdit ? !isLoadingTabs && !isLoadingCards ? 
-                            <ResponsiveLayout 
-                                className={classes.layout} 
-                                layouts={{lg: layout}} 
+                        {isEdit ? !isLoadingTabs && !isLoadingCards ?
+                            <ResponsiveLayout
+                                className={classes.layout}
+                                layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
+                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
+                                rowHeight={175}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
-                                {localCards?.map((card, index) => {
+                                {localCards.map((card, index) => {
                                     return  <div key={index.toString()}>
                                                 <Box className={classes.card} sx={{backgroundColor: card.color}}>
                                                     <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'} sx={{ 
-                                                            marginLeft: '12px', 
-                                                            overflow: 'hidden', 
-                                                            width: '40%', 
-                                                            textOverflow: 'ellipsis',
-                                                            whiteSpace: 'nowrap'}}>{card.name}</Typography>
+                                                            <Typography variant={'h5'} sx={{
+                                                                paddingLeft: '12px',
+                                                                overflow: 'hidden',
+                                                                width: '40%',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap',
+                                                                bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                                                borderRadius: '0 0 10px 0'}}>{card.name}</Typography>
                                                         <div className='draggableHandle'>
                                                             {Array.from(Array(6), (e, i) => {
                                                                 return <div key={i} className={classes.dragDots} />
                                                             })}
                                                         </div>
                                                         <div style={{display: 'flex'}}>
-                                                            {card.static ? 
+                                                            {card.static ?
                                                                 <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockIcon fontSize="small" />
-                                                                </IconButton> 
+                                                                </IconButton>
                                                                 :
                                                                 <IconButton size="small" onClick={(e) => changeLockStatus(e, card.id)}>
                                                                     <LockOpenIcon fontSize="small" />
                                                                 </IconButton>
                                                             }
                                                             <MTDropdown isIconButton tooltip={'Card Options'} menuItems={[
-                                                                {id: 1, title: 'Edit', action: () => {}},
+                                                                {id: 1, title: 'Edit', action: (e) => handleEditCard(e, card)},
                                                                 {id: 2, title: 'Delete', action: (e) => removeCard(e, card.id)}
                                                             ]} />
                                                         </div>
@@ -371,18 +398,18 @@ export const MTTabs = (props) => {
                                                         {card.items.map((item, index) => {
                                                             return (<div key={index} style={{gridColumn: 1 / 2}}>
                                                                         <Box className={classes.item} sx={{
-                                                                            bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                                                            bgcolor: 'rgba(255, 255, 255, 0.7)',
                                                                             borderRadius: '10px',
                                                                         }}>
                                                                             <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
-                                                                                {id: 1, title: 'Edit', action: () => {}},
+                                                                                {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
                                                                                 {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
                                                                             ]} />
                                                                         </Box>
                                                                     </div>)
                                                         })}
                                                         <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, card.id)}>
-                                                            <Tooltip title={"Add Item"} arrow>
+                                                            <Tooltip key={index} title={"Add Item"} arrow>
                                                                 <Box className={classes.item} sx={{
                                                                     bgcolor: 'rgba(255, 255, 255, 0.9)',
                                                                     borderRadius: '10px',
@@ -393,52 +420,85 @@ export const MTTabs = (props) => {
                                                         </div>
                                                     </div>
                                                 </Box>
-                                                {openAddItem && <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={cardItems[1][0]} card={cardItems[0]} />}
+                                                {localItemState.isEdit.get() && <EditItemModal item={cardItems[0]} card={cardItems[1]} />}
+                                                {localItemState.isAdd.get() && <AddItemModal items={cardItems[1][0]} card={cardItems[0]} />}
                                             </div>
-                                            
+
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
                                     <Tooltip title={"Add Card"} arrow>
-                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => handleAddCard()}>
+                                        <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => localCardState.isAdd.set(true)}>
                                             <Typography variant="h6">+</Typography>
                                         </Box>
                                     </Tooltip>
-                                    <AddCardModal open={openAddCard} setOpen={setOpenAddCard} cards={localCards} tabId={selectedTabId} />
+                                    {localCardState.isAdd.get() && <AddCardModal cards={localCards} />}
+                                    {localCardState.isEdit.get() && <EditCardModal cards={localCards} />}
                                 </div>
                             </ResponsiveLayout>
                             : <Skeleton className={classes.loader} variant={'rectangle'} />
-                        : 
-                            <ResponsiveLayout 
-                                className={classes.layout} 
-                                layouts={{lg: createLayout()}} 
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }} 
-                                >
-                                {localCards.map((card, index) => {
-                                    return  <div key={index.toString()}>
-                                                <Box className={classes.card} sx={{backgroundColor: card.color}}>
-                                                    <div className={classes.cardTitleBar}>
-                                                        <Typography variant={'h5'} sx={{marginLeft: '12px'}}>{card.name}</Typography>
-                                                    </div>
-                                                    <div className={classes.grid} style={{overflowY: card.items.length > 3 ? 'scroll' : ''}}>
-                                                        {card.items.map((item, index) => {
-                                                            return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                        <Box className={classes.item}>
-                                                                            <Typography>{item.name}</Typography>
-                                                                            {!!(item.price) ? <Typography>${item.price}</Typography> : ''}
-                                                                        </Box>
-                                                                    </div>)
-                                                        })}
-                                                    </div>
-                                                </Box>
-                                                {/* <AddItemModal open={openAddItem} setOpen={setOpenAddItem} items={card.items} /> */}
-                                            </div>
-                                })}
-                            </ResponsiveLayout>
+                        :
+                        !isLoadingTabs && !isLoadingCards ?
+                            localCards.length > 0 ?
+                                <ResponsiveLayout
+                                    className={classes.layout}
+                                    layouts={{lg: layout}}
+                                    draggableHandle=".draggableHandle"
+                                    cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
+                                    rowHeight={175}
+                                    onLayoutChange={(e) => handleLayoutChange(e, false)}
+                                    >
+                                    {localCards?.map((card, index) => {
+                                        return  <div key={index.toString()}>
+                                                    <Box className={classes.card} sx={{backgroundColor: card.color}}>
+                                                        <div className={classes.cardTitleBar}>
+                                                            <Typography variant={'h5'} sx={{
+                                                                paddingLeft: '12px',
+                                                                overflow: 'hidden',
+                                                                width: '40%',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap',
+                                                                bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                                                borderRadius: '0 0 10px 0'}}>{card.name}</Typography>
+                                                        </div>
+                                                        {card.items.length > 0 ?
+                                                            <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
+                                                                {card.items.map((item, index) => {
+                                                                    return (<div key={index} style={{gridColumn: 1 / 2}}>
+                                                                                <Box className={classes.item} sx={{
+                                                                                    bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                                                                    borderRadius: '10px',
+                                                                                }}>
+                                                                                    <Typography sx={{
+                                                                                        textAlign: 'center',
+                                                                                    }}>{item.name}</Typography>
+                                                                                </Box>
+                                                                            </div>)
+                                                                })}
+                                                            </div>
+                                                        :
+                                                            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
+                                                                <Typography variant={'subtitle'} sx={{
+                                                                    textAlign: 'center',
+                                                                    width: 'fit-content',
+                                                                    marginLeft: '10px',
+                                                                    padding: '8px 12px 8px 12px',
+                                                                    bgcolor: 'rgba(255, 255, 255, 0.5)',
+                                                                    borderRadius: '10px 10px 10px 10px'
+                                                                }}>Card does not contain any items.</Typography>
+                                                            </div>
+                                                        }
+                                                    </Box>
+                                                </div>
+
+                                    })}
+                                </ResponsiveLayout>
+                             : <Typography variant="h6">Tab does not contain any cards.</Typography>
+                         : <Skeleton className={classes.loader} variant={'rectangle'} />
                         }
                     </TabPanel>
             </TabContext>
-            {openAddModal && <AddTabModal tillId={till.formattedTill.id} open={openAddModal} setOpen={setOpenAddModal} />}
-            {openEditModal && <ListTabsModel open={openEditModal} setOpen={setOpenEditModal} />}
+            {localTabState.isAdd.get() && <AddTabModal tillId={till.formattedTill.id} />}
+            {<ListTabsModel deleteTabFunc={removeTab} />}
         </div>
     )
 }

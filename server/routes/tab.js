@@ -4,7 +4,9 @@ const Tab = require('../models/Tab');
 const ObjectId = require('mongoose').Types.ObjectId;
 const mongoose = require('mongoose');
 const Till = require('../models/Till');
-const verifyJWT = require('../middleware/auth');
+const Card = require('../models/Card');
+const Item = require('../models/Card');
+const {verifyJWT, verifyJWTAdmin} = require('../middleware/auth');
 
 
 /**
@@ -69,7 +71,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        404 Not Found, Tab not found
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTAdmin, async (req, res) => {
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -144,7 +146,7 @@ router.post('/getall', verifyJWT, async function(req, res){
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
     if(!((String)(new ObjectId(tillId)) === tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
- 
+
     //Find the till
     let findTill = await Till.findById(tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(findTill === null) return res.status(404).send({err: 'Till does not exist', code: 404});
@@ -158,7 +160,7 @@ router.post('/getall', verifyJWT, async function(req, res){
 
     //Check if till has tabs
     if(till.tabs.length === 0) return res.status(404).send({err: 'Till does not have tabs', code: 404});
-    
+
     //Find the tabs stored in till
     let tabs = [];
     for (let tabId of till.tabs) {
@@ -190,7 +192,7 @@ router.post('/getall', verifyJWT, async function(req, res){
  *        401 Unauthorized, Invalid Token
  *        500 Internal Server Error
  */
-router.post('/edit', verifyJWT, async function(req, res){
+router.post('/update', verifyJWTAdmin, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -217,6 +219,115 @@ router.post('/edit', verifyJWT, async function(req, res){
 
 
 /**
+ * Delete a Tab and its cards & items from tab ObjectId
+ *
+ * @route POST /tab/delete
+ * @expects JWT in header of request, ObjectId in JSON in body of request
+ * @success 200 GET, returns {tabs, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Tab not found
+ *        404 Not Found, Till not found
+ *        404 Not Found, Till has no Tabs
+ *        500 Internal Server Error
+ */
+router.post('/delete', verifyJWT, async function(req, res){
+    //Check if req body exists
+    if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //Store Ids
+    let tabId = req.body.tabId.toString();
+    let tillId = req.body.tillId.toString();
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(tabId)) && !(mongoose.isValidObjectId(tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(tabId)) === tabId) && !((String)(new ObjectId(tillId)) === tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    
+    Tab.findById(tabId, async function(err, tab){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        } else {
+            //If tab not found
+            if(tab === null) return res.status(404).send({err: `Tab not found`, code: 404});
+
+            //Delete Cards & Items in them
+            for(let cardId of tab.cards){
+                cardId = cardId.toString();
+                Card.findById(cardId, function(err, card){
+                    if(err){
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                    //Deletes items
+                    for(let itemId of card.items){
+                        itemId = itemId.toString();
+                        Item.findByIdAndDelete(itemId, function(err, item){
+                            if(err){
+                                console.log(err);
+                                return res.status(500).send({err: 'Internal Server Error', code: 500});
+                            }
+                        });
+                    }
+                    let cardId = card._id.toString();
+                    //Delete Card
+                    Card.deleteOne({_id: card._id}, function(err, cardDeleted){
+                        if(err){
+                            console.log(err);
+                            return res.status(500).send({err: 'Internal Server Error', code: 500});
+                        }
+                    });
+
+                    //Remove Card from Tab (not necessary but if error occurs this will be nice)
+                    let indexofCard = tab.cards.indexOf(cardId);
+                    if(indexofCard === -1) return res.status(404).send({err: 'Card Not Found in Tab', code: 404});
+                    tab.cards.splice(indexofCard, 1);
+                    tab.save(function(err, tillSaved){
+                        if(err) {
+                            console.log(err);
+                            return res.status(500).send({err: 'Internal Server Error', code: 500});
+                        }
+                    });
+                });
+            }
+
+            //Delete Tab
+            Tab.deleteOne({_id: tab._id}, function(err, tabDelete){
+                if(err) {
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+            });
+
+            //Remove Tab from Till
+            Till.findById(tillId, function(err, till){
+                if(err) {
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal Server Error', code: 500});
+                }
+
+                let indexofTab = till.tabs.indexOf(tabId);
+                if(indexofTab === -1) return res.status(404).send({err: 'Tab Not Found in Till', code: 404});
+                till.tabs.splice(indexofTab, 1);
+                till.save(function(err, tillSaved){
+                    if(err) {
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                });
+            });
+        
+            return res.status(200).send({deleted: true, code: 200});
+        }
+    });
+    
+});
+
+
+/**
  * TODO: implement
  * Modify a tab's cards
  *
@@ -225,7 +336,7 @@ router.post('/edit', verifyJWT, async function(req, res){
  * @success 
  * @error 
  */
-router.post('/cards', verifyJWT, async function(req, res){
+router.post('/cards', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_tab = await Tab.findOne({name: req.body.name}).exec();

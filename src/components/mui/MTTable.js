@@ -13,6 +13,11 @@ import {
     TablePagination} from '@mui/material';
 import MtButton from './MTButton';
 import { EditTabModal } from '../till/EditTabModal';
+import MTDropdown from './MTDropdown';
+import { COLOR_PALETTE } from '../../Constants';
+import { useHookstate } from '@hookstate/core';
+import { tabState } from '../../states/tabState';
+import moment from 'moment/moment';
 
 const useStyles = makeStyles({
     root: {
@@ -22,20 +27,21 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionIsEdit} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
-    const [openEditModal, setOpenEditModal] = useState();
-    const [editRowId, setEditRowId] = useState();
+    const [editRow, setEditRow] = useState();
+
+    const localTabState = useHookstate(tabState);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
     
     const handleEditButton = (e, row) => {
-        setEditRowId(row);
-        setOpenEditModal(true);
+        setEditRow(row);
+        localTabState.isEdit.set(true);
     }
 
     const handleChangeRowsPerPage = (event) => {
@@ -52,39 +58,65 @@ export const MTTable = (props) => {
                     <TableHead>
                         <TableRow>
                             {columns.map((col) => {
-                                return <TableCell align='left'><Typography sx={{
-                                        fontSize: '18px',
-                                        
+                                if(!!(col.subprops)){
+                                    return col.subprops.map((prop) => {
+                                        return <TableCell align='left'><Typography sx={{
+                                            fontSize: '20px'
+                                        }}>{prop.label}</Typography>
+                                        </TableCell>
+                                    })
+                                } else {
+                                    return <TableCell align='left'><Typography sx={{
+                                        fontSize: '20px'
                                     }}>{col.label}</Typography>
-                                </TableCell>
+                                    </TableCell>
+                                }
                             })}
-                            {actionIsEdit && <TableCell align='right'><Typography sx={{
+                            {!!(action) && <TableCell align='right'><Typography sx={{
                                         fontSize: '18px',
                                     }}>Action</Typography>
                             </TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row) => {
-                            if(row.id !== -1){
-                                return <TableRow>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell><Box sx={{ 
-                                                bgcolor: row.color, 
-                                                border: '1px solid grey', 
-                                                borderRadius: '12px',
-                                                width: '100%', 
-                                                height: '25px'}}/></TableCell>
-                                            {actionIsEdit ? <TableCell align='right'>
-                                                    <MtButton label={"EDIT"} onClick={(e) => handleEditButton(e, row.id)} />
-                                                </TableCell>
-                                            :
-                                                !!(action) && <TableCell align='right'>
+                        {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row, i) => {
+                            if(row.name !== '+'){
+                                return <TableRow key={i}>
+                                        {columns.map(({dataPropId}, i) => {
+                                            if(typeof row[dataPropId] === 'object' && !!(columns[i].subprops)){
+                                                return Object.keys(row[dataPropId]).map((key, index) => {
+                                                    if(!!(row[dataPropId][columns[i].subprops[index]?.dataPropId])){
+                                                        return dataPropId !== 'color' ? 
+                                                            <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> : 
+                                                            <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                                    }
+                                                   
+                                                })
+                                            } else {
+                                                return dataPropId !== 'color' ? 
+                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{dataPropId === 'date' ? moment(row[dataPropId]).format('MMMM Do YYYY, h:mm:ss a') : row[dataPropId]}</Typography></TableCell> : 
+                                                    <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                            }
+                                        })}
+                                        {!!(action) && (actionStyle === 'normal' ?
+                                                <TableCell align='right'>
                                                     <MtButton label={"ACTION"} onClick={action} />
                                                 </TableCell>
-                                            }
-                                        </TableRow>
+                                            :
+                                                <TableCell align='right'>
+                                                    <MTDropdown
+                                                        textColor={'info'}
+                                                        hasDropdownIcon
+                                                        tooltip={'Tab Options'}
+                                                        label={"Options"}
+                                                        menuItems={[
+                                                            {id: 1, title: 'Edit', action: (e) => handleEditButton(e, row)},
+                                                            {id: 2, title: 'Delete', action: (e) => action(e, row.id)}
+                                                    ]} />
+                                                </TableCell>)}
+                                        </TableRow>                                
                             }
+
                         })}
                     </TableBody>
                 </Table>
@@ -105,7 +137,7 @@ export const MTTable = (props) => {
                     }}
                 />
             }
-            {openEditModal && <EditTabModal open={openEditModal} setOpen={setOpenEditModal} tabEditId={editRowId} />}
+            {!!(editRow) && <EditTabModal tabEdit={editRow} />}
         </div>
     )
 }
