@@ -6,8 +6,11 @@ import { tabState } from "../../states/tabState";
 import { MTTable } from "../mui/MTTable";
 import { useLocation, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getTill } from "../../requests/tills-req";
-import { getEmployee } from "../../requests/employees-req";
+import { addEmployee, getTill } from "../../requests/tills-req";
+import { createEmployee, getEmployee } from "../../requests/employees-req";
+import MTTextField from "../mui/MTTextField";
+import MTSwitch from "../mui/MTSwitch";
+import MtButton from "../mui/MTButton";
 
 const useStyles = makeStyles({
     paper: {
@@ -29,6 +32,12 @@ const useStyles = makeStyles({
         width: '90%',
         marginBottom: '12px',
         borderBottom: '1px solid lightgrey'
+    },
+    addEmployee: {
+        display: 'flex',
+        width: '90%',
+        marginBottom: '12px',
+        gap: '12px'
     }
 })
 
@@ -41,47 +50,31 @@ export const ManageEmployeeModal = (props) => {
         setOpen(false);
     }
     const tableColumns = [
-        {id: 0, label: 'Email', width: '100%'},
-        {id: 1, label: 'Manager', width: '100%'}
+        {id: 0, dataPropId: 'email', label: 'Email', width: '100%'},
+        {id: 1, dataPropId: 'isManager', label: 'Manager', width: '100%'},
     ]
     const [employeeObjects, setEmployeeObjects] = useState([]);
+    const [email, setEmail] = useState('');
+    const [isManager, setIsManager] = useState(false);
     
     async function getEmployees() {
         let empObjects = [];
         for (let i = 0; i < employees.length; i++) { 
             let employee = await getEmployee({email: employees[i]});
             console.log(employee);
-            // let dupe = false;
-            // for(let j = 0; j < employeeObjects.length; j++) {
-            //     if(employeeObjects[j]?.id === employee.formattedEmployee.email) {
-            //         dupe = true;
-            //     }
-            // }
-            // if(!dupe){
-                
-            //     // setEmployeeObjects(oldObjects => [...oldObjects, employee.formattedEmployee]);
-            // }
             empObjects.push(employee.formattedEmployee);
         }
         setEmployeeObjects(empObjects);
-        // console.log(empObjects);
-        // return empObjects;
     }
-    async function removeDuplicates(list){
-        let retList = [];
-        for(var i = 0; i < list.length; i++){
-            let dupe = false;
-            for(var j = 0; j < list.length; j){
-                if(list[i]?.id === list[j].id){
-                   dupe = true; 
-                }
-            }
-            if(dupe === false){
-                retList.push(list[i]);
-            }
+
+    async function addEmployee() {
+        let employee = {email: email, isManager: isManager} ;
+        console.log(employee);
+        let ret = await createEmployee(employee);
+        console.log(ret);
+        if(ret.code === 201){
+            
         }
-        console.log(retList);
-        return retList;
     }
 
     useEffect(() => {
@@ -99,7 +92,30 @@ export const ManageEmployeeModal = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'}>Manage Employees</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination actionIsEdit />
+                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination action = {() => {}} />
+                <div className={classes.title}>
+                    <Typography variant={'h4'}>Add Employee</Typography>
+                </div>
+                <div className={classes.addEmployee}>
+                    <MTTextField 
+                    label = "Email" 
+                    value = {email}
+                    type = "email" 
+                    isRequired
+                    onChangeFunc = {setEmail}>
+                    </MTTextField> 
+                    <MTSwitch 
+                    label = "Manager"
+                    value = {isManager}
+                    onChangeFunc = {setIsManager}>
+                    </MTSwitch>
+                    <MtButton 
+                    label = "Add" 
+                    variant = "contained" 
+                    type = "submit"
+                    onClick = {() => addEmployee()}>
+                    </MtButton>
+                </div>
             </Paper>
         </Modal>
     )
