@@ -50,23 +50,42 @@ export const ManageEmployeeModal = (props) => {
         let empObjects = [];
         for (let i = 0; i < employees.length; i++) { 
             let employee = await getEmployee({email: employees[i]});
+            console.log(employee);
+            // let dupe = false;
+            // for(let j = 0; j < employeeObjects.length; j++) {
+            //     if(employeeObjects[j]?.id === employee.formattedEmployee.email) {
+            //         dupe = true;
+            //     }
+            // }
+            // if(!dupe){
+                
+            //     // setEmployeeObjects(oldObjects => [...oldObjects, employee.formattedEmployee]);
+            // }
+            empObjects.push(employee.formattedEmployee);
+        }
+        setEmployeeObjects(empObjects);
+        // console.log(empObjects);
+        // return empObjects;
+    }
+    async function removeDuplicates(list){
+        let retList = [];
+        for(var i = 0; i < list.length; i++){
             let dupe = false;
-            for(let j = 0; j < employeeObjects.length; j++) {
-                if(employeeObjects[j]?.id === employee.formattedEmployee.email) {
-                    dupe = true;
+            for(var j = 0; j < list.length; j){
+                if(list[i]?.id === list[j].id){
+                   dupe = true; 
                 }
             }
-            if(!dupe){
-                empObjects.push(employee.formattedEmployee);
-                // setEmployeeObjects(oldObjects => [...oldObjects, employee.formattedEmployee]);
+            if(dupe === false){
+                retList.push(list[i]);
             }
         }
-        console.log(empObjects);
-        return empObjects;
+        console.log(retList);
+        return retList;
     }
 
     useEffect(() => {
-        //getEmployees();
+        getEmployees();
     }, [employees]);
 
     const classes = useStyles();
@@ -80,7 +99,7 @@ export const ManageEmployeeModal = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'}>Manage Employees</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={getEmployees()} hasPagination actionIsEdit />
+                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination actionIsEdit />
             </Paper>
         </Modal>
     )
