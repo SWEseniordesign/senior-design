@@ -50,7 +50,7 @@ export const ViewTransactionModal = (props) => {
         {id: 1, dataPropId: 'date', label: 'Date', width: '100%'},
         {id: 2, dataPropId: 'totalPrice', label: 'Total Price', width: '100%'}
     ]
-
+    
     const classes = useStyles();
 
     return (
