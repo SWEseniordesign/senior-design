@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Card, CardMedia, CardContent, CardActionArea } from "@mui/material";
+import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Grid, Card, CardMedia, CardContent, CardActionArea, CardActions } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -397,8 +397,8 @@ export const MTTabs = (props) => {
                                                     <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
                                                             return (<div key={index} style={{gridColumn: 1 / 2} }>
-                                                                        <Card sx={{minHeight: 200}}>
-                                                                            <CardActionArea>
+                                                                        <Card>
+                                                                            <CardActionArea onClick={''}>
                                                                                 {item.image ?
                                                                                     <CardMedia
                                                                                     component="img"
@@ -412,13 +412,7 @@ export const MTTabs = (props) => {
                                                                                     alt={item.name}
                                                                                     />
                                                                                 }
-                                                                                <CardContent
-                                                                                action={
-                                                                                    <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
-                                                                                        {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
-                                                                                        {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
-                                                                                    ]} />
-                                                                                }>
+                                                                                <CardContent>
                                                                                     <Typography variant="h6" component="div" 
                                                                                     sx={{
                                                                                         display: '-webkit-box',
@@ -432,8 +426,17 @@ export const MTTabs = (props) => {
                                                                                     {item.name} 
                                                                                     </Typography>
                                                                                     <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
+                                                                                    { item.name.length < 11 &&
+                                                                                        <Typography component="br" variant="h6"></Typography>
+                                                                                    }
                                                                                 </CardContent>
                                                                             </CardActionArea>
+                                                                            <CardActions sx={{display: 'flex', justifyContent: 'right'}}>
+                                                                                <MTDropdown isIconButton tooltip={'Card Options'} menuItems={[
+                                                                                    {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
+                                                                                    {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
+                                                                                    ]} />
+                                                                            </CardActions>
                                                                         </Card>
                                                                     </div>)
                                                         })}
@@ -497,8 +500,8 @@ export const MTTabs = (props) => {
                                                             <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                                 {card.items.map((item, index) => {
                                                                     return (<div key={index} style={{gridColumn: 1 / 2} }>
-                                                                    <Card sx={{minHeight: 200}}>
-                                                                        <CardActionArea>
+                                                                    <Card>
+                                                                        <CardActionArea onClick={''}>
                                                                             {item.image ?
                                                                                 <CardMedia
                                                                                 component="img"
@@ -526,6 +529,9 @@ export const MTTabs = (props) => {
                                                                                 {item.name} 
                                                                                 </Typography>
                                                                                 <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
+                                                                                { item.name.length < 11 &&
+                                                                                    <Typography component="br" variant="h6"></Typography>
+                                                                                }
                                                                             </CardContent>
                                                                         </CardActionArea>
                                                                     </Card>
