@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/ON-140-View-Transactions-History-Screen/static/css/main.674dd776.css",
-    "main.js": "/ON-140-View-Transactions-History-Screen/static/js/main.b68f96b5.js",
-    "static/media/coca-cola.jpg": "/ON-140-View-Transactions-History-Screen/static/media/coca-cola.ddc404a8e593b3a602e3.jpg",
-    "static/media/till-sc.png": "/ON-140-View-Transactions-History-Screen/static/media/till-sc.751a18cb5b2524ce8925.png",
-    "static/media/hotdog.jpg": "/ON-140-View-Transactions-History-Screen/static/media/hotdog.e937a28dcf065fe322fe.jpg",
-    "static/media/hamburger.jpg": "/ON-140-View-Transactions-History-Screen/static/media/hamburger.3d74337c5161697b3443.jpg",
-    "static/media/cashier.jpeg": "/ON-140-View-Transactions-History-Screen/static/media/cashier.577d0d3fd539435e2e67.jpeg",
-    "static/media/fast-food-workers.jpeg": "/ON-140-View-Transactions-History-Screen/static/media/fast-food-workers.2a2a2ddc95477a97737e.jpeg",
-    "index.html": "/ON-140-View-Transactions-History-Screen/index.html",
-    "main.674dd776.css.map": "/ON-140-View-Transactions-History-Screen/static/css/main.674dd776.css.map",
-    "main.b68f96b5.js.map": "/ON-140-View-Transactions-History-Screen/static/js/main.b68f96b5.js.map"
+    "main.css": "/senior-design/static/css/main.674dd776.css",
+    "main.js": "/senior-design/static/js/main.9829c2e4.js",
+    "static/media/coca-cola.jpg": "/senior-design/static/media/coca-cola.ddc404a8e593b3a602e3.jpg",
+    "static/media/till-sc.png": "/senior-design/static/media/till-sc.751a18cb5b2524ce8925.png",
+    "static/media/hotdog.jpg": "/senior-design/static/media/hotdog.e937a28dcf065fe322fe.jpg",
+    "static/media/hamburger.jpg": "/senior-design/static/media/hamburger.3d74337c5161697b3443.jpg",
+    "static/media/cashier.jpeg": "/senior-design/static/media/cashier.577d0d3fd539435e2e67.jpeg",
+    "static/media/fast-food-workers.jpeg": "/senior-design/static/media/fast-food-workers.2a2a2ddc95477a97737e.jpeg",
+    "index.html": "/senior-design/index.html",
+    "main.674dd776.css.map": "/senior-design/static/css/main.674dd776.css.map",
+    "main.9829c2e4.js.map": "/senior-design/static/js/main.9829c2e4.js.map"
   },
   "entrypoints": [
     "static/css/main.674dd776.css",
-    "static/js/main.b68f96b5.js"
+    "static/js/main.9829c2e4.js"
   ]
 }
