@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.674dd776.css",
-    "main.js": "/static/js/main.42c4e376.js",
-    "static/media/coca-cola.jpg": "/static/media/coca-cola.ddc404a8e593b3a602e3.jpg",
-    "static/media/till-sc.png": "/static/media/till-sc.751a18cb5b2524ce8925.png",
-    "static/media/hotdog.jpg": "/static/media/hotdog.e937a28dcf065fe322fe.jpg",
-    "static/media/hamburger.jpg": "/static/media/hamburger.3d74337c5161697b3443.jpg",
-    "static/media/cashier.jpeg": "/static/media/cashier.577d0d3fd539435e2e67.jpeg",
-    "static/media/fast-food-workers.jpeg": "/static/media/fast-food-workers.2a2a2ddc95477a97737e.jpeg",
-    "index.html": "/index.html",
-    "main.674dd776.css.map": "/static/css/main.674dd776.css.map",
-    "main.42c4e376.js.map": "/static/js/main.42c4e376.js.map"
+    "main.css": "/master/static/css/main.674dd776.css",
+    "main.js": "/master/static/js/main.d75ec089.js",
+    "static/media/coca-cola.jpg": "/master/static/media/coca-cola.ddc404a8e593b3a602e3.jpg",
+    "static/media/till-sc.png": "/master/static/media/till-sc.751a18cb5b2524ce8925.png",
+    "static/media/hotdog.jpg": "/master/static/media/hotdog.e937a28dcf065fe322fe.jpg",
+    "static/media/hamburger.jpg": "/master/static/media/hamburger.3d74337c5161697b3443.jpg",
+    "static/media/cashier.jpeg": "/master/static/media/cashier.577d0d3fd539435e2e67.jpeg",
+    "static/media/fast-food-workers.jpeg": "/master/static/media/fast-food-workers.2a2a2ddc95477a97737e.jpeg",
+    "index.html": "/master/index.html",
+    "main.674dd776.css.map": "/master/static/css/main.674dd776.css.map",
+    "main.d75ec089.js.map": "/master/static/js/main.d75ec089.js.map"
   },
   "entrypoints": [
     "static/css/main.674dd776.css",
-    "static/js/main.42c4e376.js"
+    "static/js/main.d75ec089.js"
   ]
 }
