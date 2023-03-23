@@ -372,7 +372,7 @@ export const MTTabs = (props) => {
                                 }
                             } else if(!isEdit && tab.name !== '+'){
                                 return <Tab 
-                                        sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
+                                        sx={{fontSize: '24px', bgcolor: !!(tab.color) ? tab.color : ''}}
                                         key={i}
                                         value={i}
                                         label={tab.name}
@@ -475,12 +475,12 @@ export const MTTabs = (props) => {
                                                                 <Card sx={{
                                                                     bgcolor: 'rgba(255, 255, 255, 0.2)',
                                                                     border: '1px solid rgba(0, 0, 0, 0.5)',
-                                                                    minHeight: 200,
+                                                                    minHeight: 250,
                                                                     display: 'flex',
                                                                     justifyContent: 'center',
                                                                     alignItems: 'center',
                                                                 }}>
-                                                                    <Typography>+</Typography>
+                                                                    <Typography variant='h4'>+</Typography>
                                                                 </Card>
                                                             </Tooltip>
                                                         </div>
