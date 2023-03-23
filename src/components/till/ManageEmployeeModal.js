@@ -11,6 +11,7 @@ import { createEmployee, getEmployee } from "../../requests/employees-req";
 import MTTextField from "../mui/MTTextField";
 import MTSwitch from "../mui/MTSwitch";
 import MtButton from "../mui/MTButton";
+import { removeEmployee } from '../../requests/tills-req';
 
 const useStyles = makeStyles({
     paper: {
@@ -91,6 +92,18 @@ export const ManageEmployeeModal = (props) => {
         setSnackbarOpen(true);
     }
 
+    async function deleteEmployee(e, row) {
+        let response  = await removeEmployee({email: row.email, tillId: tillId});
+        console.log(response);
+        if(!(response) || response.code !== 200){
+            setAlertMessage({message: 'Failed delete employee', status: 'warning'});
+        } else {
+            setEmployeeObjects(employeeObjects.filter((emp) => emp.email !== row.email)); 
+            setAlertMessage({message: "Employee deleted", status: 'success'}); 
+        }
+        setSnackbarOpen(true);
+    }
+
     useEffect(() => {
         getEmployees();
     }, [open]);
@@ -106,7 +119,7 @@ export const ManageEmployeeModal = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'}>Manage Employees</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination hasDelete = {() => {}} />
+                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination hasDelete = {deleteEmployee} tillId = {tillId} />
                 <div className={classes.title}>
                     <Typography variant={'h4'}>Add Employee</Typography>
                 </div>
