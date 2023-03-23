@@ -13,7 +13,7 @@ const Item = require('../models/Item');
  * Create a transaction from passed in info
  *
  * @route POST /transaction/create
- * @expects JWT in header of request, employeeId, [itemIds], & price in JSON in body of request
+ * @expects JWT in header of request, employeeId, [itemObjects], & price in JSON in body of request
  * @success 201 Created, returns {formattedTransaction, code}
  * @error 400 Bad Request, No Request Body passed
  *        400 Bad Request, Type1: ObjectId is not 12 bytes

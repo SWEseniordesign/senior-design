@@ -4,5 +4,6 @@ import { localstored } from '@hookstate/localstored';
 
 export const userState = hookstate({
     token: '',
-    tillId: '',
+    employee: {},
+    tillId: ''
 }, localstored({ key: 'state-key' }));

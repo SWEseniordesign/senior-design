@@ -23,6 +23,7 @@ import { EditCardModal } from "../till/EditCardModal";
 import { cardState } from "../../states/cardState";
 import { itemState } from "../../states/itemState";
 import missingImage from '../../resources/missing-img.png'
+import { orderState } from "../../states/orderState";
 
 
 const useStyle = makeStyles({
@@ -115,13 +116,14 @@ export const MTTabs = (props) => {
     const localTabState = useHookstate(tabState);
     const localCardState = useHookstate(cardState);
     const localItemState = useHookstate(itemState);
+    const localOrderState = useHookstate(orderState);
 
-    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}),
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery(["tabs", till.formattedTill.id], () => getAllTabs({tillId: till.formattedTill.id}),
     {
         enabled: true,
         refetchOnWindowFocus: false,
     });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}),
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery(["cards", localTabState.activeTab.get()], () => getAllCards({tabId: localTabState.activeTab.get()}),
     {
         enabled: false,
         refetchOnWindowFocus: false,
@@ -134,15 +136,17 @@ export const MTTabs = (props) => {
         if(!(tabs?.err) && tabs?.tabs.length > 0){
             localTabState.tabs.set([]);
             localTabState.tabs.merge(tabs.tabs)
-            if(typeof localTabState.activeTab.get() !== 'string') localTabState.activeTab.set(tabs.tabs[0].id);
+            if(localTabState.activeTab.get() === '') localTabState.activeTab.set(tabs.tabs[0].id);
             localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
+        } else {
+            localTabState.tabs.set([{id: localTabState.tabs.get().length, name: '+', canAdd: true}]);
         }
     }, [tabs]);
 
     //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
         let activeTab = localTabState.activeTab.get();
-        if(typeof activeTab === 'string' && activeTab !== ''){
+        if(typeof activeTab === 'string'){
             fetchCards();
         }
     }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);
@@ -187,6 +191,17 @@ export const MTTabs = (props) => {
         localItemState.isEdit.set(true);
         localItemState.item.set(item);
         localItemState.card.set(card);
+    }
+
+    //* Adds item to order + increases quantity by 1
+    const handleAddItemToOrder = (item) => {
+        let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
+        if(itemIndex > -1){
+            localOrderState.order[itemIndex]['quantity'].set(i => i + 1);
+        } else {
+            item.quantity = 1;
+            localOrderState.order.merge([item]);
+        }
     }
 
     //* Filters out the card that wants to be removed.
@@ -242,6 +257,7 @@ export const MTTabs = (props) => {
             }
             return card;
         }));
+        handleLayoutChange(e, true);
     }
 
     //* Sets new dimensions to the card that has been moved.
@@ -294,6 +310,19 @@ export const MTTabs = (props) => {
                     resizeHandles: ["se"]
                 }
             })
+        }
+
+        if(layout.length === 0){
+            layout.push({
+                i: '0',
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1,
+                static: false,
+                resizeHandles: []
+            });
+        } else {
             layout.push({
                 i: layout.length.toString(),
                 x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
@@ -396,9 +425,9 @@ export const MTTabs = (props) => {
                                                     </div>
                                                     <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
-                                                            return (<div key={index} style={{gridColumn: 1 / 2} }>
+                                                            return (<div key={index} style={{gridColumn: 1 / 2}}>
                                                                         <Card>
-                                                                            <CardActionArea onClick={''}>
+                                                                            <CardActionArea>
                                                                                 {item.image ?
                                                                                     <CardMedia
                                                                                     component="img"
@@ -413,7 +442,7 @@ export const MTTabs = (props) => {
                                                                                     />
                                                                                 }
                                                                                 <CardContent>
-                                                                                    <Typography variant="h6" component="div" 
+                                                                                    <Typography variant="h6" component="div"
                                                                                     sx={{
                                                                                         display: '-webkit-box',
                                                                                         overflow: 'hidden',
@@ -422,8 +451,8 @@ export const MTTabs = (props) => {
                                                                                         WebkitLineClamp: 2,
                                                                                         WebkitBoxOrient: 'vertical',
                                                                                     }}
-                                                                                    > 
-                                                                                    {item.name} 
+                                                                                    >
+                                                                                    {item.name}
                                                                                     </Typography>
                                                                                     <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
                                                                                     { item.name.length < 11 &&
@@ -462,11 +491,11 @@ export const MTTabs = (props) => {
 
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
-                                    <Tooltip title={"Add Card"} arrow>
+                                    {!!(tabs.tabs) && <Tooltip title={"Add Card"} arrow>
                                         <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => localCardState.isAdd.set(true)}>
                                             <Typography variant="h6">+</Typography>
                                         </Box>
-                                    </Tooltip>
+                                    </Tooltip>}
                                     {localCardState.isAdd.get() && <AddCardModal cards={localCards} />}
                                     {localCardState.isEdit.get() && <EditCardModal cards={localCards} />}
                                 </div>
@@ -499,9 +528,9 @@ export const MTTabs = (props) => {
                                                         {card.items.length > 0 ?
                                                             <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                                 {card.items.map((item, index) => {
-                                                                    return (<div key={index} style={{gridColumn: 1 / 2} }>
+                                                                    return (<div key={index} style={{gridColumn: 1 / 2}}>
                                                                     <Card>
-                                                                        <CardActionArea onClick={''}>
+                                                                        <CardActionArea onClick={() => handleAddItemToOrder(item)}>
                                                                             {item.image ?
                                                                                 <CardMedia
                                                                                 component="img"
@@ -516,7 +545,7 @@ export const MTTabs = (props) => {
                                                                                 />
                                                                             }
                                                                             <CardContent>
-                                                                                <Typography variant="h6" component="div" 
+                                                                                <Typography variant="h6" component="div"
                                                                                 sx={{
                                                                                     display: '-webkit-box',
                                                                                     overflow: 'hidden',
@@ -525,8 +554,8 @@ export const MTTabs = (props) => {
                                                                                     WebkitLineClamp: 2,
                                                                                     WebkitBoxOrient: 'vertical',
                                                                                 }}
-                                                                                > 
-                                                                                {item.name} 
+                                                                                >
+                                                                                {item.name}
                                                                                 </Typography>
                                                                                 <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
                                                                                 { item.name.length < 11 &&

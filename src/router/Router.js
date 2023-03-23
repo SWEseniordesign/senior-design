@@ -8,7 +8,7 @@ const Router = () => {
     return (
         <Routes>
             {SiteRoutes.map((route, index) => {
-                return <Route key={index} path={route.path} element={<CustomRoute content={route.component} />} />
+                return <Route key={index} path={route.path} element={<CustomRoute content={route.component} simplifiedHeader={route.simplifiedHeader} />} />
             })}
         </Routes>
     );
