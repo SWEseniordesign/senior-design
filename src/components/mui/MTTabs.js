@@ -224,7 +224,8 @@ export const MTTabs = (props) => {
 
     //* Filters out the item that wants to be removed.
     const removeItem = async (e, cardId, itemId) => {
-        let deleteResponse = await deleteItem({itemId: itemId, cardId: cardId});
+        console.log(itemId)
+        let deleteResponse = await deleteItem({id: itemId, cardId: cardId});
 
         if(deleteResponse.deleted){
             let newCards = localCards?.map((card) => {
