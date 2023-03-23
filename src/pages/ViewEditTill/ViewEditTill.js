@@ -17,6 +17,7 @@ import { tabState } from "../../states/tabState";
 import { ViewTransactionModal } from "../../components/till/ViewTransactionModal";
 import { orderState } from "../../states/orderState";
 import { userState } from "../../states/userState";
+import { ManageEmployeeModal } from "../../components/till/ManageEmployeeModal";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -65,7 +66,9 @@ export const ViewEditTill = () => {
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
     const [isManager, setIsManager] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+    const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
 
     const localTabState = useHookstate(tabState);
     const localOrderState = useHookstate(orderState);
@@ -82,6 +85,10 @@ export const ViewEditTill = () => {
         navigate(`${location.pathname.replace('edit', 'view')}`);
     }
 
+    const handleOpenEmployee = () => {
+        setOpenEmployeeModal(true);
+    }
+    
     const handleOrderInformation = () => {
         if(localOrderState.employeeId.get() === '' && localOrderState.tillId.get() === ''){
             localOrderState.employeeId.set(userState.employee.get().id);
@@ -109,10 +116,10 @@ export const ViewEditTill = () => {
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} onClick = {() => handleOpenEmployee()} /></Grid2>
                                 <Grid2 xs={12} md={5} lg={4.7} xl={4}>
-                                    {!isLoadingTill ? 
-                                        <MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /> : 
+                                    {!isLoadingTill ?
+                                        <MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /> :
                                         <Skeleton className={classes.loader} variant={'rectangle'} />
                                 }</Grid2>
                                 <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton makeResponsive label={'View Till'} variant={'outlined'} onClick={handleViewTill} /></Grid2>
@@ -136,6 +143,7 @@ export const ViewEditTill = () => {
                             }
                         </Grid2>
                     </Grid2>
+                    {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees} tillId={till.formattedTill.id}/>}
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)

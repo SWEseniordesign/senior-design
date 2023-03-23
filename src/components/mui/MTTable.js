@@ -12,7 +12,9 @@ import {
     Box, 
     TablePagination,
     IconButton,
-    Collapse} from '@mui/material';
+    Collapse,
+    Snackbar,
+    Alert} from '@mui/material';
 import MtButton from './MTButton';
 import { EditTabModal } from '../till/EditTabModal';
 import MTDropdown from './MTDropdown';
@@ -22,6 +24,7 @@ import moment from 'moment/moment';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { itemState } from '../../states/itemState';
+import { userState } from '../../states/userState';
 
 const useStyles = makeStyles({
     root: {
@@ -31,14 +34,17 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle, hasMoreInfo} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle, hasMoreInfo, hasDelete, tillId} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
     const [editRow, setEditRow] = useState();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
     const localTabState = useHookstate(tabState);
     const localItemState = useHookstate(itemState);
+    const localUserState = useHookstate(userState);
 
     useEffect(() => {
         for (const row of rows) {
@@ -68,6 +74,8 @@ export const MTTable = (props) => {
                 return moment(row[propId]).format('MMMM Do YYYY, h:mm:ss a');
             case 'totalPrice':
                 return '$' + row[propId];
+            case 'isManager':
+                return row[propId] ? 'Yes' : 'No';
             default:
                 return row[propId];
         }
@@ -77,6 +85,14 @@ export const MTTable = (props) => {
         localItemState.itemListOpen[i].set(info => !info);
     }
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSnackbarOpen(false);
+    };
+
     const classes = useStyles();
 
     return (
@@ -85,7 +101,7 @@ export const MTTable = (props) => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell />
+                            {hasMoreInfo && <TableCell />}
                             {columns.map((col) => {
                                 if(!!(col.subprops)){
                                     return col.subprops.map((prop, i) => {
@@ -101,6 +117,7 @@ export const MTTable = (props) => {
                                     </TableCell>
                                 }
                             })}
+                            {hasDelete && <TableCell align='right'><Typography sx={{fontSize: '18px'}}>Delete</Typography></TableCell>}
                             {!!(action) && <TableCell align='right'><Typography sx={{
                                         fontSize: '18px',
                                     }}>Action</Typography>
@@ -121,18 +138,22 @@ export const MTTable = (props) => {
                                             if(typeof row[dataPropId] === 'object' && !!(columns[i].subprops)){
                                                 return Object.keys(row[dataPropId]).map((key, index) => {
                                                     if(!!(row[dataPropId][columns[i].subprops[index]?.dataPropId])){
-                                                        return dataPropId !== 'color' ? 
-                                                            <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> : 
+                                                        return dataPropId !== 'color' ?
+                                                            <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> :
                                                             <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
                                                     }
-                                                   
                                                 })
                                             } else {
-                                                return dataPropId !== 'color' ? 
-                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{determineFormattedOutput(dataPropId, row)}</Typography></TableCell> : 
+                                                return dataPropId !== 'color' ?
+                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{determineFormattedOutput(dataPropId, row)}</Typography></TableCell> :
                                                     <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
                                             }
                                         })}
+                                        {!!(hasDelete) &&
+                                            <TableCell align='right'>
+                                                <MtButton label={"Delete"} onClick={(e) => hasDelete(e, row)} />
+                                            </TableCell>
+                                        }
                                         {!!(action) && (actionStyle === 'normal' ?
                                                 <TableCell align='right'>
                                                     <MtButton label={"ACTION"} onClick={action} />
@@ -150,7 +171,7 @@ export const MTTable = (props) => {
                                                     ]} />
                                                 </TableCell>)}
                                         </TableRow>
-                                        <TableRow>
+                                        {hasMoreInfo && <TableRow >
                                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
                                                 <Collapse in={localItemState.itemListOpen[i].get()} timeout="auto" unmountOnExit >
                                                     <Box>
@@ -184,8 +205,8 @@ export const MTTable = (props) => {
                                                     </Box>
                                                 </Collapse>
                                             </TableCell>
-                                        </TableRow>       
-                                    </>                         
+                                        </TableRow>}
+                                    </>
                             }
 
                         })}
@@ -209,6 +230,11 @@ export const MTTable = (props) => {
                 />
             }
             {!!(editRow) && <EditTabModal tabEdit={editRow} />}
+            <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={handleClose} >
+                            <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%'}}>
+                                {alertMessage.message}
+                            </Alert>
+                        </Snackbar>
         </div>
     )
 }
