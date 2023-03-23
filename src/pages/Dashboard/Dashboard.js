@@ -11,6 +11,8 @@ import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
 import { getAllTills } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
+import { tabState } from "../../states/tabState";
+import { useHookstate } from "@hookstate/core";
 
 const useStyle = makeStyles({
     root: {
@@ -49,6 +51,8 @@ const Dashboard = () => {
     const classes = useStyle();
     const navigate = useNavigate();
 
+    const localTabState = useHookstate(tabState);
+
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
 
     const pieData = [
@@ -66,8 +70,11 @@ const Dashboard = () => {
     const handleNavigateTill = (till) => {
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
         //? Leaving this for now since it can be tested
-        navigate(`/edit-till/${till.id}`)
-
+        localTabState.tabs.set([]);
+        localTabState.activeTab.set('');
+        if(localTabState.tabs.get().length === 0 && localTabState.activeTab.get() === '') {
+            navigate(`/edit-till/${till.id}`)
+        }
     }
 
     const CustomTooltip = ({ active, payload, label }) => {

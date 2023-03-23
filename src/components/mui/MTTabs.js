@@ -118,12 +118,12 @@ export const MTTabs = (props) => {
     const localItemState = useHookstate(itemState);
     const localOrderState = useHookstate(orderState);
 
-    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till.formattedTill.id}),
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery(["tabs", till.formattedTill.id], () => getAllTabs({tillId: till.formattedTill.id}),
     {
         enabled: true,
         refetchOnWindowFocus: false,
     });
-    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery("cards", () => getAllCards({tabId: localTabState.activeTab.get()}),
+    const {isLoading: isLoadingCards, data: cards, refetch: fetchCards} = useQuery(["cards", localTabState.activeTab.get()], () => getAllCards({tabId: localTabState.activeTab.get()}),
     {
         enabled: false,
         refetchOnWindowFocus: false,
@@ -136,15 +136,17 @@ export const MTTabs = (props) => {
         if(!(tabs?.err) && tabs?.tabs.length > 0){
             localTabState.tabs.set([]);
             localTabState.tabs.merge(tabs.tabs)
-            if(typeof localTabState.activeTab.get() !== 'string') localTabState.activeTab.set(tabs.tabs[0].id);
+            if(localTabState.activeTab.get() === '') localTabState.activeTab.set(tabs.tabs[0].id);
             localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: '+', canAdd: true}])
+        } else {
+            localTabState.tabs.set([{id: localTabState.tabs.get().length, name: '+', canAdd: true}]);
         }
     }, [tabs]);
 
     //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
         let activeTab = localTabState.activeTab.get();
-        if(typeof activeTab === 'string' && activeTab !== ''){
+        if(typeof activeTab === 'string'){
             fetchCards();
         }
     }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);
@@ -198,7 +200,7 @@ export const MTTabs = (props) => {
             localOrderState.order[itemIndex]['quantity'].set(i => i + 1);
         } else {
             item.quantity = 1;
-            localOrderState.order.merge([item]);   
+            localOrderState.order.merge([item]);
         }
     }
 
@@ -255,6 +257,7 @@ export const MTTabs = (props) => {
             }
             return card;
         }));
+        handleLayoutChange(e, true);
     }
 
     //* Sets new dimensions to the card that has been moved.
@@ -307,6 +310,19 @@ export const MTTabs = (props) => {
                     resizeHandles: ["se"]
                 }
             })
+        }
+
+        if(layout.length === 0){
+            layout.push({
+                i: '0',
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1,
+                static: false,
+                resizeHandles: []
+            });
+        } else {
             layout.push({
                 i: layout.length.toString(),
                 x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
@@ -426,7 +442,7 @@ export const MTTabs = (props) => {
                                                                                     />
                                                                                 }
                                                                                 <CardContent>
-                                                                                    <Typography variant="h6" component="div" 
+                                                                                    <Typography variant="h6" component="div"
                                                                                     sx={{
                                                                                         display: '-webkit-box',
                                                                                         overflow: 'hidden',
@@ -435,8 +451,8 @@ export const MTTabs = (props) => {
                                                                                         WebkitLineClamp: 2,
                                                                                         WebkitBoxOrient: 'vertical',
                                                                                     }}
-                                                                                    > 
-                                                                                    {item.name} 
+                                                                                    >
+                                                                                    {item.name}
                                                                                     </Typography>
                                                                                     <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
                                                                                     { item.name.length < 11 &&
@@ -475,11 +491,11 @@ export const MTTabs = (props) => {
 
                                 })}
                                 <div key={!!(localCards) ? (localCards.length).toString() : 0}>
-                                    <Tooltip title={"Add Card"} arrow>
+                                    {!!(tabs.tabs) && <Tooltip title={"Add Card"} arrow>
                                         <Box className={classes.addCard} sx={{backgroundColor: 'lightgrey'}} onClick={() => localCardState.isAdd.set(true)}>
                                             <Typography variant="h6">+</Typography>
                                         </Box>
-                                    </Tooltip>
+                                    </Tooltip>}
                                     {localCardState.isAdd.get() && <AddCardModal cards={localCards} />}
                                     {localCardState.isEdit.get() && <EditCardModal cards={localCards} />}
                                 </div>
@@ -529,7 +545,7 @@ export const MTTabs = (props) => {
                                                                                 />
                                                                             }
                                                                             <CardContent>
-                                                                                <Typography variant="h6" component="div" 
+                                                                                <Typography variant="h6" component="div"
                                                                                 sx={{
                                                                                     display: '-webkit-box',
                                                                                     overflow: 'hidden',
@@ -538,8 +554,8 @@ export const MTTabs = (props) => {
                                                                                     WebkitLineClamp: 2,
                                                                                     WebkitBoxOrient: 'vertical',
                                                                                 }}
-                                                                                > 
-                                                                                {item.name} 
+                                                                                >
+                                                                                {item.name}
                                                                                 </Typography>
                                                                                 <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
                                                                                 { item.name.length < 11 &&
