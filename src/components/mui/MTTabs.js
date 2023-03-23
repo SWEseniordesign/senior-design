@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Grid, Card, CardMedia, CardContent, CardActionArea, CardActions } from "@mui/material";
+import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Card, CardMedia, CardContent, CardActionArea, CardActions } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -224,7 +224,8 @@ export const MTTabs = (props) => {
 
     //* Filters out the item that wants to be removed.
     const removeItem = async (e, cardId, itemId) => {
-        let deleteResponse = await deleteItem({itemId: itemId, cardId: cardId});
+        console.log(itemId)
+        let deleteResponse = await deleteItem({id: itemId, cardId: cardId});
 
         if(deleteResponse.deleted){
             let newCards = localCards?.map((card) => {

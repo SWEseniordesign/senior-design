@@ -142,7 +142,7 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //find item by its objectid
-    let itemId = req.body.itemId;
+    let itemId = req.body.id;
     let cardId = req.body.cardId;
 
     //Verify objectId is valid
@@ -204,7 +204,7 @@ router.post('/update', verifyJWTAdmin, async (req, res) => {
         props: req.body.props,
         stock: req.body.stock
     };
-    let itemId = req.body.itemId;
+    let itemId = req.body.id;
 
     if(!mongoose.isValidObjectId(itemId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
     if(!((String)(new ObjectId(itemId)) === itemId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
