@@ -197,7 +197,7 @@ export const MTTable = (props) => {
                     component={'div'}
                     rowsPerPage={rowsPerPageSelection}
                     rowsPerPageOptions={[5, 10]}
-                    count={rows.length-1}
+                    count={rows.length}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
