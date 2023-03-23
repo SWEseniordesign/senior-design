@@ -200,7 +200,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills: businessResult.tills
     }       
 
-    if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
+    // if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
 
     //Grab tills
     let tills = [];
@@ -222,7 +222,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills.push(formattedTill);
     }
 
-    return res.status(200).send({business, tills, code: 200});
+    return res.status(200).send({business: business, tills: tills, code: 200});
 });
 
 

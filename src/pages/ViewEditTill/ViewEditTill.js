@@ -90,10 +90,11 @@ export const ViewEditTill = () => {
     }
     
     const handleOrderInformation = () => {
-        if(localOrderState.employeeId.get() === '' && localOrderState.tillId.get() === ''){
-            localOrderState.employeeId.set(userState.employee.get().id);
-            localOrderState.tillId.set(till.formattedTill.id);
-        }
+        // if(localOrderState.employeeId.get() === '' && localOrderState.tillId.get() === ''){
+            console.log(userState.employee.get()._id)
+        localOrderState.employeeId.set(userState.employee.get()._id);
+        localOrderState.tillId.set(till.formattedTill.id);
+        // }
         localOrderState.isOpen.set(true);
     }
 
