@@ -1,4 +1,4 @@
-import { Modal, Paper, Typography } from "@mui/material";
+import { Alert, Modal, Paper, Typography, Snackbar } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { COLOR_PALETTE } from "../../Constants";
@@ -56,12 +56,22 @@ export const ManageEmployeeModal = (props) => {
     const [employeeObjects, setEmployeeObjects] = useState([]);
     const [email, setEmail] = useState('');
     const [isManager, setIsManager] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
     
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSnackbarOpen(false);
+    };
+
+    //Get employee from backend
     async function getEmployees() {
         let empObjects = [];
         for (let i = 0; i < employees.length; i++) { 
             let employee = await getEmployee({email: employees[i]});
-            console.log(employee);
             empObjects.push(employee.formattedEmployee);
         }
         setEmployeeObjects(empObjects);
@@ -69,16 +79,21 @@ export const ManageEmployeeModal = (props) => {
 
     async function addEmp() {
         let employee = {email: email, isManager: isManager, tillId: tillId};
-        let ret = await addEmployee(employee);
-        console.log(ret);
-        if(ret.code === 201){
-
+        let response = await addEmployee(employee);
+        console.log(response);
+        if(!(response) || response.code !== 201){
+            setAlertMessage({message: !(response) ? 'Failed add employee' : response.err, status: 'warning'});
+        } else {
+            let message = (isManager ? 'Manager '+ email + ' added':  'Employee '+ email + ' added');
+            setAlertMessage({message: message, status: 'success'});
+            setEmployeeObjects(prevState => [...prevState, response.formattedEmployee]);
         }
+        setSnackbarOpen(true);
     }
 
     useEffect(() => {
         getEmployees();
-    }, [employees]);
+    }, [open]);
 
     const classes = useStyles();
 
@@ -91,7 +106,7 @@ export const ManageEmployeeModal = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'}>Manage Employees</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination action = {() => {}} />
+                <MTTable columns={tableColumns} rows={employeeObjects} hasPagination hasDelete = {() => {}} />
                 <div className={classes.title}>
                     <Typography variant={'h4'}>Add Employee</Typography>
                 </div>
@@ -115,6 +130,11 @@ export const ManageEmployeeModal = (props) => {
                     onClick = {() => addEmp()}>
                     </MtButton>
                 </div>
+                <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={handleClose}>
+                            <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
+                                {alertMessage.message}
+                            </Alert>
+                        </Snackbar>
             </Paper>
         </Modal>
     )

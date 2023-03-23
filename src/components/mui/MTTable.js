@@ -10,7 +10,9 @@ import {
     TableRow, 
     Typography, 
     Box, 
-    TablePagination} from '@mui/material';
+    TablePagination,
+    Snackbar,
+    Alert} from '@mui/material';
 import MtButton from './MTButton';
 import { EditTabModal } from '../till/EditTabModal';
 import MTDropdown from './MTDropdown';
@@ -18,6 +20,7 @@ import { COLOR_PALETTE } from '../../Constants';
 import { useHookstate } from '@hookstate/core';
 import { tabState } from '../../states/tabState';
 import moment from 'moment/moment';
+import { removeEmployee } from '../../requests/tills-req';
 
 const useStyles = makeStyles({
     root: {
@@ -27,11 +30,13 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, hasDelete, action, actionStyle} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
     const [editRow, setEditRow] = useState();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
     const localTabState = useHookstate(tabState);
 
@@ -47,6 +52,28 @@ export const MTTable = (props) => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPageSelection(event.target.value);
         setPage(0);
+    };
+
+    const handleDeleteButton = (e, row) => {
+        console.log(row);
+        deleteEmployee(row);
+    }
+
+    async function deleteEmployee(row) {
+        let response  = await removeEmployee(row.email);
+        if(!(response) || response.code !== 201){
+            setAlertMessage({message: 'Failed delete employee', status: 'warning'});
+        } else {
+            setAlertMessage({message: "Employee deleted", status: 'success'});
+        }
+        setSnackbarOpen(true);
+    }
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSnackbarOpen(false);
     };
 
     const classes = useStyles();
@@ -72,6 +99,7 @@ export const MTTable = (props) => {
                                     </TableCell>
                                 }
                             })}
+                            {hasDelete && <TableCell align='right'><Typography sx={{fontSize: '18px'}}>Delete</Typography></TableCell>}
                             {!!(action) && <TableCell align='right'><Typography sx={{
                                         fontSize: '18px',
                                     }}>Action</Typography>
@@ -97,7 +125,11 @@ export const MTTable = (props) => {
                                                     <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{dataPropId === 'date' ? moment(row[dataPropId]).format('MMMM Do YYYY, h:mm:ss a') : row[dataPropId]}</Typography></TableCell> : 
                                                     <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
                                             }
-                                        })}
+                                        })}{hasDelete && 
+                                            <TableCell align='right'>
+                                                <MtButton label={"Delete"} onClick={(e) => handleDeleteButton(e, row)} />
+                                            </TableCell>
+                                        }
                                         {!!(action) && (actionStyle === 'normal' ?
                                                 <TableCell align='right'>
                                                     <MtButton label={"ACTION"} onClick={action} />
@@ -126,7 +158,7 @@ export const MTTable = (props) => {
                     component={'div'}
                     rowsPerPage={rowsPerPageSelection}
                     rowsPerPageOptions={[5, 10]}
-                    count={rows.length-1}
+                    count={rows.length}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
@@ -138,6 +170,11 @@ export const MTTable = (props) => {
                 />
             }
             {!!(editRow) && <EditTabModal tabEdit={editRow} />}
+            <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={handleClose}>
+                            <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%' }}>
+                                {alertMessage.message}
+                            </Alert>
+                        </Snackbar>
         </div>
     )
 }
