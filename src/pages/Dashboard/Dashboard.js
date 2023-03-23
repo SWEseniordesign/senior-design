@@ -9,6 +9,7 @@ import Dialog from '@material-ui/core/Dialog';
 import { DialogActions, DialogContent, DialogContentText, DialogTitle }  from '@material-ui/core';
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from '../../components/mui/MTTextField'
+import MTDropdown from "../../components/mui/MTDropdown";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -150,7 +151,7 @@ const Dashboard = () => {
         setSubmitAddTillTriggered(true);
         setAddTillOpen(false);
     };
-    
+
     const handleAddTillSubmit = async(e) => {
         e.preventDefault();
         try{
@@ -185,6 +186,13 @@ const Dashboard = () => {
         setSubmitAddTillTriggered(true);
         setAddTillOpen(false);
     };
+
+    //* MenuItems that are apart of each individual till dropdown.
+    const dropdownMenuItems_ForTills = [
+        {id: 1, title: 'Edit Till', action: () => {}},
+        {id: 2, title: 'Delete Till', action: () => {}},
+        //{id: 1, title: 'Edit Till', action: () => handleEditTill()}
+    ];
 
     return (
             <div className={classes.root}>
@@ -310,10 +318,7 @@ const Dashboard = () => {
                                                             <ListItem
                                                                 key={till.id}
                                                                 secondaryAction={
-                                                                    <IconButton edge="end" aria-label="delete">
-                                                                        <MoreVertIcon />
-                                                                        {/* TODO More menu */}
-                                                                    </IconButton>
+                                                                    <MTDropdown isIconButton menuItems={dropdownMenuItems_ForTills}/>
                                                                 }
                                                                 disablePadding
                                                             >
