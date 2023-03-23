@@ -84,10 +84,22 @@ const Dashboard = () => {
         {name: 'Snacks', orders: 10}
     ];
  
+    const [businessId, setBusinessId] = useState('')
     const [business, setBusiness] = useState({})
     const [owner, setOwner] = useState({})
     const [tills, setTills] = useState([])
     const [loading, setLoading] = useState(true)
+
+    const [newTillName, setNewTillName] = useState('');
+    const [newTillLoginId, setNewTillLoginId] = useState('');
+    //LOGIN ID GETS GENERATED, TELL THEM WHAT IT IS AFTER MAKE TILL
+    //onCHangeFunc textfield
+    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
+    const [addTillOpen, setAddTillOpen] = useState(false);
+    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
+    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
+    const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
+    const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
 
     const handleNavigateTill = (till) => {
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
@@ -122,20 +134,12 @@ const Dashboard = () => {
             setOwner(user.formattedUser);
             setTills(result.tills);
             setLoading(false);
+            setBusinessId(result.business.id);
         }
         getBusAndTills();
     }, [])
 
-    const [newTillName, setNewTillName] = useState('');
-    const [newTillLoginId, setNewTillLoginId] = useState('');
-    //LOGIN ID GETS GENERATED, TELL THEM WHAT IT IS AFTER MAKE TILL
-    //onCHangeFunc textfield
-    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
-    const [addTillOpen, setAddTillOpen] = useState(false);
-    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
-    const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
+
 
     
 
@@ -151,7 +155,7 @@ const Dashboard = () => {
         e.preventDefault();
         try{
             let newTill = {
-                //businessId: '63d2b33a2a75670dbd74fb3b',
+                businessId: businessId,
                 //NEED TO GET BUSID
                 name: newTillName,
                 managerPassword: newTillManagerPassword,
