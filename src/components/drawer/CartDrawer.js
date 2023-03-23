@@ -14,6 +14,8 @@ import HotdogPic from './testItemPics/hotdog.jpg';
 import CocaColaPic from './testItemPics/coca-cola.jpg';
 import { none, useHookstate } from "@hookstate/core";
 import { orderState } from "../../states/orderState";
+import { userState } from "../../states/userState";
+import { createTransaction } from "../../requests/transactions-req";
 
 const useStyles = makeStyles({
   drawer: {
@@ -37,17 +39,7 @@ const useStyles = makeStyles({
 
 const CartDrawer = () => {
 
-  const testCartItems = [
-    {id: 0, name: "Hamburger", price: 3.50, quantity: 1, image: HamburgerPic},
-    {id: 1, name: "Hotdog", price: 2.00, quantity: 1, image: HotdogPic},
-    {id: 2, name: "Coca Cola", price: 1.75, quantity: 1, image: CocaColaPic}
-  ]
-
   const localOrderState = useHookstate(orderState);
-
-  //const [openDrawer, setOpenDrawer] = useState(false);
-  //const [cartItems, setCartItems] = useState([]);
-  const [cartItems, setCartItems] = useState(testCartItems);
 
   const addItemToCart = (item) => {
     let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
@@ -57,7 +49,6 @@ const CartDrawer = () => {
   };
 
   const removeItemFromCart = (item) => {
-
       let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
       if(itemIndex > -1){
         if(localOrderState.order[itemIndex].get().quantity === 1){
@@ -72,15 +63,28 @@ const CartDrawer = () => {
       return localOrderState.order.get().reduce((total, item) => total + (item.price * item.quantity), 0);
   }
     
-console.log(localOrderState)
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+
+    let itemIdArr = [];
+
+    localOrderState.order.get().map((item) => {
+      itemIdArr.push(item);
+    });
+
     let newTransaction = {
-      employeeId: '',
-      tillId: '',
-      items: localOrderState.order.get(),
-      price: ''
+      employeeId: userState.employee.get()._id,
+      tillId: userState.tillId.get(),
+      items: itemIdArr,
+      price: (getSubtotal() * 1.15).toFixed(2)
     }
-      console.log("need to add checkout fucntionality");
+
+    let transactionResponse = await createTransaction(newTransaction);
+    if(!!(transactionResponse.err)){
+      console.log(transactionResponse.err);
+    } else {
+      localOrderState.order.set([]);
+    }
+
   };
 
   const classes = useStyles();

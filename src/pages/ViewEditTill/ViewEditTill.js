@@ -16,6 +16,7 @@ import { useHookstate } from "@hookstate/core";
 import { tabState } from "../../states/tabState";
 import { ViewTransactionModal } from "../../components/till/ViewTransactionModal";
 import { orderState } from "../../states/orderState";
+import { userState } from "../../states/userState";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,7 +83,7 @@ export const ViewEditTill = () => {
 
     const handleOrderInformation = () => {
         if(localOrderState.employeeId.get() === '' && localOrderState.tillId.get() === ''){
-            localOrderState.employeeId.set('');
+            localOrderState.employeeId.set(userState.employee.get().id);
             localOrderState.tillId.set(till.formattedTill.id);
         }
         localOrderState.isOpen.set(true);

@@ -118,7 +118,7 @@ export const MTTabs = (props) => {
     const localItemState = useHookstate(itemState);
     const localOrderState = useHookstate(orderState);
 
-    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till?.formattedTill.id}),
+    const {isLoading: isLoadingTabs, data: tabs} = useQuery("tabs", () => getAllTabs({tillId: till.formattedTill.id}),
     {
         enabled: true,
         refetchOnWindowFocus: false,
