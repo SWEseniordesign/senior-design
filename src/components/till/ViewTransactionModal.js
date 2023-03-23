@@ -62,7 +62,7 @@ export const ViewTransactionModal = (props) => {
                 <div className={classes.title}>
                     <Typography variant={'h4'} color={'info'}>Transaction History</Typography>
                 </div>
-                {!isLoadingTransactions && <MTTable columns={tableColumns} rows={transactions.transactions} hasPagination />}
+                {!isLoadingTransactions && <MTTable columns={tableColumns} rows={transactions.transactions} hasPagination hasMoreInfo />}
             </Paper>
         </Modal>
     )

@@ -1,4 +1,4 @@
-import react, { useState } from 'react';
+import react, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { 
     Paper, 
@@ -11,15 +11,19 @@ import {
     Typography, 
     Box, 
     TablePagination,
+    IconButton,
+    Collapse,
     Snackbar,
     Alert} from '@mui/material';
 import MtButton from './MTButton';
 import { EditTabModal } from '../till/EditTabModal';
 import MTDropdown from './MTDropdown';
-import { COLOR_PALETTE } from '../../Constants';
 import { useHookstate } from '@hookstate/core';
 import { tabState } from '../../states/tabState';
 import moment from 'moment/moment';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { itemState } from '../../states/itemState';
 import { removeEmployee } from '../../requests/tills-req';
 
 const useStyles = makeStyles({
@@ -30,7 +34,7 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, hasDelete, action, actionStyle} = props;
+    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle, hasMoreInfo, hasDelete} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
@@ -39,6 +43,15 @@ export const MTTable = (props) => {
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
     const localTabState = useHookstate(tabState);
+    const localItemState = useHookstate(itemState);
+
+    useEffect(() => {
+        for (const row of rows) {
+            if(localItemState.itemListOpen.get().length <= rows.length){
+                localItemState.itemListOpen.set(b => [...b, false])
+            }
+        }
+    }, [hasMoreInfo])
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -53,6 +66,21 @@ export const MTTable = (props) => {
         setRowsPerPageSelection(event.target.value);
         setPage(0);
     };
+
+    const determineFormattedOutput = (propId, row) => {
+        switch(propId){
+            case 'date':
+                return moment(row[propId]).format('MMMM Do YYYY, h:mm:ss a');
+            case 'totalPrice':
+                return '$' + row[propId];
+            default:
+                return row[propId];
+        }
+    }
+
+    const handleMoreInfo = (i) => {
+        localItemState.itemListOpen[i].set(info => !info);
+    }
 
     const handleDeleteButton = (e, row) => {
         console.log(row);
@@ -84,10 +112,11 @@ export const MTTable = (props) => {
                 <Table>
                     <TableHead>
                         <TableRow>
+                            <TableCell />
                             {columns.map((col) => {
                                 if(!!(col.subprops)){
-                                    return col.subprops.map((prop) => {
-                                        return <TableCell align='left'><Typography sx={{
+                                    return col.subprops.map((prop, i) => {
+                                        return <TableCell align='left' key={i}><Typography sx={{
                                             fontSize: '20px'
                                         }}>{prop.label}</Typography>
                                         </TableCell>
@@ -109,23 +138,30 @@ export const MTTable = (props) => {
                     <TableBody>
                         {rows.slice(page * rowsPerPageSelection, page * rowsPerPageSelection + rowsPerPageSelection).map((row, i) => {
                             if(row.name !== '+'){
-                                return <TableRow key={i}>
+                                return <>
+                                    <TableRow key={i}>
+                                        {hasMoreInfo && <TableCell>
+                                            <IconButton size='small' onClick={() => handleMoreInfo(i)}>
+                                                {localItemState.itemListOpen[i].get() ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon /> }
+                                            </IconButton>
+                                        </TableCell>}
                                         {columns.map(({dataPropId}, i) => {
                                             if(typeof row[dataPropId] === 'object' && !!(columns[i].subprops)){
                                                 return Object.keys(row[dataPropId]).map((key, index) => {
                                                     if(!!(row[dataPropId][columns[i].subprops[index]?.dataPropId])){
-                                                        return dataPropId !== 'color' ? 
-                                                            <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> : 
+                                                        return dataPropId !== 'color' ?
+                                                            <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> :
                                                             <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
                                                     }
-                                                   
+
                                                 })
                                             } else {
-                                                return dataPropId !== 'color' ? 
-                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{dataPropId === 'date' ? moment(row[dataPropId]).format('MMMM Do YYYY, h:mm:ss a') : row[dataPropId]}</Typography></TableCell> : 
+                                                return dataPropId !== 'color' ?
+                                                    <TableCell key={dataPropId}><Typography sx={{fontSize: '16px'}}>{determineFormattedOutput(dataPropId, row)}</Typography></TableCell> :
                                                     <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
                                             }
-                                        })}{hasDelete && 
+                                        })}
+                                        {hasDelete &&
                                             <TableCell align='right'>
                                                 <MtButton label={"Delete"} onClick={(e) => handleDeleteButton(e, row)} />
                                             </TableCell>
@@ -146,7 +182,43 @@ export const MTTable = (props) => {
                                                             {id: 2, title: 'Delete', action: (e) => action(e, row.id)}
                                                     ]} />
                                                 </TableCell>)}
-                                        </TableRow>                                
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                                                <Collapse in={localItemState.itemListOpen[i].get()} timeout="auto" unmountOnExit >
+                                                    <Box>
+                                                    <Typography variant="h6">
+                                                        Items
+                                                    </Typography>
+                                                    <Table size="small">
+                                                        <TableHead>
+                                                        <TableRow>
+                                                            <TableCell>Id</TableCell>
+                                                            <TableCell>Name</TableCell>
+                                                            <TableCell align="right">Price</TableCell>
+                                                            <TableCell align="right">Quantity</TableCell>
+                                                        </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                        {row.items.map((item, i) => (
+                                                            <TableRow key={i}>
+                                                                <TableCell component="th" scope="row">
+                                                                    {item.id}
+                                                                </TableCell>
+                                                                <TableCell>{item.name}</TableCell>
+                                                                <TableCell align="right">{item.price}</TableCell>
+                                                                <TableCell align="right">
+                                                                    {item.quantity}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                    </Box>
+                                                </Collapse>
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
                             }
 
                         })}

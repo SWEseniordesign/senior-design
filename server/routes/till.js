@@ -346,7 +346,7 @@ router.post('/auth', async function(req, res){
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '8h'});
     if(!token) return res.status(500).send({err: 'Internal server error', code: 500});
-    return res.status(200).send({token: "Bearer " + token, objId: till._id.toString(), code: 200}); 
+    return res.status(200).send({token: "Bearer " + token, employeeObj: employee, tillId: till._id.toString(), code: 200}); 
 });
 
 
