@@ -388,7 +388,7 @@ export const MTTabs = (props) => {
                                 layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                rowHeight={225}
+                                rowHeight={350}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards.map((card, index) => {
@@ -510,7 +510,7 @@ export const MTTabs = (props) => {
                                     layouts={{lg: layout}}
                                     draggableHandle=".draggableHandle"
                                     cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                    rowHeight={225}
+                                    rowHeight={310}
                                     onLayoutChange={(e) => handleLayoutChange(e, false)}
                                     >
                                     {localCards?.map((card, index) => {
