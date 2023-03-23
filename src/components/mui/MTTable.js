@@ -85,7 +85,7 @@ export const MTTable = (props) => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell />
+                            {hasMoreInfo && <TableCell />}
                             {columns.map((col) => {
                                 if(!!(col.subprops)){
                                     return col.subprops.map((prop, i) => {
@@ -150,7 +150,7 @@ export const MTTable = (props) => {
                                                     ]} />
                                                 </TableCell>)}
                                         </TableRow>
-                                        <TableRow>
+                                        {hasMoreInfo && <TableRow>
                                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
                                                 <Collapse in={localItemState.itemListOpen[i].get()} timeout="auto" unmountOnExit >
                                                     <Box>
@@ -184,8 +184,8 @@ export const MTTable = (props) => {
                                                     </Box>
                                                 </Collapse>
                                             </TableCell>
-                                        </TableRow>       
-                                    </>                         
+                                        </TableRow>}
+                                    </>
                             }
 
                         })}
@@ -209,6 +209,11 @@ export const MTTable = (props) => {
                 />
             }
             {!!(editRow) && <EditTabModal tabEdit={editRow} />}
+                <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={handleClose} sx={{position: 'absolute', left: '100%'}}>
+                    <Alert onClose={handleClose} severity={alertMessage.status} variant="filled">
+                        {alertMessage.message}
+                    </Alert>
+                </Snackbar>
         </div>
     )
 }
