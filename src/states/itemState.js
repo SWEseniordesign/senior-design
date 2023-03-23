@@ -6,4 +6,5 @@ export const itemState = hookstate({
     card: {},
     isEdit: false,
     isAdd: false,
+    itemListOpen: []
 });

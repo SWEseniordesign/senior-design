@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, IconButton, Skeleton, Tooltip } from "@mui/material";
+import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Grid, Card, CardMedia, CardContent, CardActionArea, CardActions } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -14,7 +14,7 @@ import { COLOR_PALETTE } from "../../Constants";
 import { deleteTab, getAllTabs } from "../../requests/tabs-req";
 import { deleteCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { useQuery } from "react-query";
-import { none, useHookstate } from "@hookstate/core";
+import { useHookstate } from "@hookstate/core";
 import './MTTabs.css'
 import MTDropdown from "./MTDropdown";
 import { deleteItem } from "../../requests/items-req";
@@ -22,6 +22,8 @@ import { EditItemModal } from "../till/EditItemModal";
 import { EditCardModal } from "../till/EditCardModal";
 import { cardState } from "../../states/cardState";
 import { itemState } from "../../states/itemState";
+import missingImage from '../../resources/missing-img.png'
+import { orderState } from "../../states/orderState";
 
 
 const useStyle = makeStyles({
@@ -79,11 +81,10 @@ const useStyle = makeStyles({
     },
     item: {
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: 'column',
         width: '100%',
-        minHeight: '100px',
-        maxHeight: '100px',
+        minHeight: '220px',
+        maxHeight: '220px',
         border: `1px solid ${COLOR_PALETTE.NAVY_BLUE}`
     },
     dragDots: {
@@ -115,6 +116,7 @@ export const MTTabs = (props) => {
     const localTabState = useHookstate(tabState);
     const localCardState = useHookstate(cardState);
     const localItemState = useHookstate(itemState);
+    const localOrderState = useHookstate(orderState);
 
     const {isLoading: isLoadingTabs, data: tabs} = useQuery(["tabs", till.formattedTill.id], () => getAllTabs({tillId: till.formattedTill.id}),
     {
@@ -189,6 +191,17 @@ export const MTTabs = (props) => {
         localItemState.isEdit.set(true);
         localItemState.item.set(item);
         localItemState.card.set(card);
+    }
+
+    //* Adds item to order + increases quantity by 1
+    const handleAddItemToOrder = (item) => {
+        let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
+        if(itemIndex > -1){
+            localOrderState.order[itemIndex]['quantity'].set(i => i + 1);
+        } else {
+            item.quantity = 1;
+            localOrderState.order.merge([item]);
+        }
     }
 
     //* Filters out the card that wants to be removed.
@@ -374,7 +387,7 @@ export const MTTabs = (props) => {
                                 layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                rowHeight={170}
+                                rowHeight={225}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards.map((card, index) => {
@@ -413,25 +426,61 @@ export const MTTabs = (props) => {
                                                     <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                         {card.items.map((item, index) => {
                                                             return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                        <Box className={classes.item} sx={{
-                                                                            bgcolor: 'rgba(255, 255, 255, 0.7)',
-                                                                            borderRadius: '10px',
-                                                                        }}>
-                                                                            <MTDropdown hasDropdownIcon={false} tooltip={'Item Options'} label={item.name} menuItems={[
-                                                                                {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
-                                                                                {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
-                                                                            ]} />
-                                                                        </Box>
+                                                                        <Card>
+                                                                            <CardActionArea>
+                                                                                {item.image ?
+                                                                                    <CardMedia
+                                                                                    component="img"
+                                                                                    image={item.image}
+                                                                                    alt={item.name}
+                                                                                    />
+                                                                                    :
+                                                                                    <CardMedia
+                                                                                    component="img"
+                                                                                    image={missingImage}
+                                                                                    alt={item.name}
+                                                                                    />
+                                                                                }
+                                                                                <CardContent>
+                                                                                    <Typography variant="h6" component="div"
+                                                                                    sx={{
+                                                                                        display: '-webkit-box',
+                                                                                        overflow: 'hidden',
+                                                                                        width: '100%',
+                                                                                        textOverflow: 'ellipsis',
+                                                                                        WebkitLineClamp: 2,
+                                                                                        WebkitBoxOrient: 'vertical',
+                                                                                    }}
+                                                                                    >
+                                                                                    {item.name}
+                                                                                    </Typography>
+                                                                                    <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
+                                                                                    { item.name.length < 11 &&
+                                                                                        <Typography component="br" variant="h6"></Typography>
+                                                                                    }
+                                                                                </CardContent>
+                                                                            </CardActionArea>
+                                                                            <CardActions sx={{display: 'flex', justifyContent: 'right'}}>
+                                                                                <MTDropdown isIconButton tooltip={'Card Options'} menuItems={[
+                                                                                    {id: 1, title: 'Edit', action: (e) => handleEditItem(e, item, card)},
+                                                                                    {id: 2, title: 'Delete', action: (e) => removeItem(e, card.id, item.id)}
+                                                                                    ]} />
+                                                                            </CardActions>
+                                                                        </Card>
                                                                     </div>)
                                                         })}
                                                         <div id={index} style={{gridColumn: 1 / 2, cursor: "pointer"}} onClick={(e) => handleAddItem(e, card.id)}>
                                                             <Tooltip key={index} title={"Add Item"} arrow>
-                                                                <Box className={classes.item} sx={{
-                                                                    bgcolor: 'rgba(255, 255, 255, 0.9)',
-                                                                    borderRadius: '10px',
+                                                                <Card sx={{
+                                                                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                                                                    border: '1px solid rgba(0, 0, 0, 0.5)',
+                                                                    minHeight: 200,
+                                                                    display: 'flex',
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center',
                                                                 }}>
                                                                     <Typography>+</Typography>
-                                                                </Box>
+                                                                </Card>
                                                             </Tooltip>
                                                         </div>
                                                     </div>
@@ -460,7 +509,7 @@ export const MTTabs = (props) => {
                                     layouts={{lg: layout}}
                                     draggableHandle=".draggableHandle"
                                     cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                    rowHeight={175}
+                                    rowHeight={225}
                                     onLayoutChange={(e) => handleLayoutChange(e, false)}
                                     >
                                     {localCards?.map((card, index) => {
@@ -480,15 +529,42 @@ export const MTTabs = (props) => {
                                                             <div className={classes.grid} style={{overflowY: card.items.length >= 3 ? 'scroll' : ''}}>
                                                                 {card.items.map((item, index) => {
                                                                     return (<div key={index} style={{gridColumn: 1 / 2}}>
-                                                                                <Box className={classes.item} sx={{
-                                                                                    bgcolor: 'rgba(255, 255, 255, 0.5)',
-                                                                                    borderRadius: '10px',
-                                                                                }}>
-                                                                                    <Typography sx={{
-                                                                                        textAlign: 'center',
-                                                                                    }}>{item.name}</Typography>
-                                                                                </Box>
-                                                                            </div>)
+                                                                    <Card>
+                                                                        <CardActionArea onClick={() => handleAddItemToOrder(item)}>
+                                                                            {item.image ?
+                                                                                <CardMedia
+                                                                                component="img"
+                                                                                image={item.image}
+                                                                                alt={item.name}
+                                                                                />
+                                                                                :
+                                                                                <CardMedia
+                                                                                component="img"
+                                                                                image={missingImage}
+                                                                                alt={item.name}
+                                                                                />
+                                                                            }
+                                                                            <CardContent>
+                                                                                <Typography variant="h6" component="div"
+                                                                                sx={{
+                                                                                    display: '-webkit-box',
+                                                                                    overflow: 'hidden',
+                                                                                    width: '100%',
+                                                                                    textOverflow: 'ellipsis',
+                                                                                    WebkitLineClamp: 2,
+                                                                                    WebkitBoxOrient: 'vertical',
+                                                                                }}
+                                                                                >
+                                                                                {item.name}
+                                                                                </Typography>
+                                                                                <Typography variant="body2" color="text.secondary"> {item.price} </Typography>
+                                                                                { item.name.length < 11 &&
+                                                                                    <Typography component="br" variant="h6"></Typography>
+                                                                                }
+                                                                            </CardContent>
+                                                                        </CardActionArea>
+                                                                    </Card>
+                                                                </div>)
                                                                 })}
                                                             </div>
                                                         :

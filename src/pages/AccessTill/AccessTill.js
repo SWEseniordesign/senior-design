@@ -71,15 +71,17 @@ export const AccessTill = () => {
                 email: email,
                 password: password
             }
-            let error = await authTill(empCreds);
+            let tillResponse = await authTill(empCreds);
 
-            if(!!(error.err)){
-                setAlertMessage({message: error.err, status: 'warning'});
-            } else if(!!(error.token)) {
-                userState.token.set(error.token);
-                userState.tillId.set(error.objId);
-                userState.isLoggedIn.set(true);
-                navigate(`/view-till/${error.objId}`);
+            console.log(tillResponse);
+
+            if(!!(tillResponse.err)){
+                setAlertMessage({message: tillResponse.err, status: 'warning'});
+            } else if(!!(tillResponse.token)) {
+                userState.token.set(tillResponse.token);
+                userState.employee.set(tillResponse.employeeObj);
+                userState.tillId.set(tillResponse.tillId);
+                navigate(`/view-till/${tillResponse.tillId}`);
             }
 
             setOpen(true);
