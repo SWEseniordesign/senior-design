@@ -230,11 +230,11 @@ export const MTTable = (props) => {
                 />
             }
             {!!(editRow) && <EditTabModal tabEdit={editRow} />}
-            <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={handleClose} >
-                            <Alert onClose={handleClose} severity={alertMessage.status} variant="filled" sx={{ width: '100%'}}>
-                                {alertMessage.message}
-                            </Alert>
-                        </Snackbar>
+                <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={handleClose} sx={{position: 'absolute', left: '100%'}}>
+                    <Alert onClose={handleClose} severity={alertMessage.status} variant="filled">
+                        {alertMessage.message}
+                    </Alert>
+                </Snackbar>
         </div>
     )
 }
