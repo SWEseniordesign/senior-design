@@ -1,12 +1,11 @@
-import { Grid, Paper, Typography, Snackbar, Alert, Link } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from "../../components/mui/MTTextField";
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { userState } from "../../states/userState";
-import { isLoggedIn_Redirect } from "../helper/routesHelper";
 import { authTill } from "../../requests/tills-req";
 
 const useStyle = makeStyles({

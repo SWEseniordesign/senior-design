@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from "../../components/mui/MTTextField";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { login } from "../../requests/users-req";
 import { userState } from "../../states/userState";

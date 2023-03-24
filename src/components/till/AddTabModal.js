@@ -33,8 +33,6 @@ export const AddTabModal = (props) => {
     const {tillId} = props;
     const localTabState = useHookstate(tabState);
     
-    const [open, setOpen] = useState(false);
-
     const [newTabName, setNewTabName] = useState('');
     const [newTabColor, setNewTabColor] = useState('#FFFFFF');
     const [loading, setLoading] = useState(false);

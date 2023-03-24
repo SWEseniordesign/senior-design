@@ -1,7 +1,7 @@
 import { useHookstate } from "@hookstate/core";
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
 import { updateTab } from "../../requests/tabs-req";
@@ -43,6 +43,7 @@ export const EditTabModal = (props) => {
             if(tab.id === tabEdit.id){
                 localTabState.tabs[i].merge({name: newTabName, color: newTabColor.hex});
             }
+            return undefined;
         })        
         let editResponse = await updateTab({ tabId: tabEdit.id, name: newTabName, color: newTabColor.hex });
         console.log(editResponse);

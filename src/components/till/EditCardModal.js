@@ -1,13 +1,11 @@
 import { useHookstate } from "@hookstate/core";
 import { Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
 import { updateCard } from "../../requests/cards-req";
-import { updateTab } from "../../requests/tabs-req";
 import { cardState } from "../../states/cardState";
-import { tabState } from "../../states/tabState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
 import MTTextField from "../mui/MTTextField";

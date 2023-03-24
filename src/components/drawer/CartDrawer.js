@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MtButton from "../mui/MTButton";
-import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants"
-
+import { FONT_FAMILY } from "../../Constants"
 import { ChevronRight } from "@mui/icons-material";
-import SettingsIcon from '@mui/icons-material/Settings';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-
-import HamburgerPic from './testItemPics/hamburger.jpg';
-import HotdogPic from './testItemPics/hotdog.jpg';
-import CocaColaPic from './testItemPics/coca-cola.jpg';
 import { none, useHookstate } from "@hookstate/core";
 import { orderState } from "../../states/orderState";
-import { userState } from "../../states/userState";
 import { createTransaction } from "../../requests/transactions-req";
 
 const useStyles = makeStyles({
@@ -29,7 +22,6 @@ const useStyles = makeStyles({
   drawerHeader: {
     display: "flex",
     alignItems: "center",
-    //padding
     justifyContent: "flex-end",
   },
   drawerTitle: {
@@ -69,6 +61,7 @@ const CartDrawer = () => {
 
     localOrderState.order.get().map((item) => {
       itemIdArr.push(item);
+      return undefined;
     });
 
     let newTransaction = {

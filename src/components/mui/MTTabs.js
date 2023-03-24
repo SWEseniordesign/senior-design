@@ -141,6 +141,7 @@ export const MTTabs = (props) => {
         } else {
             localTabState.tabs.set([{id: localTabState.tabs.get().length, name: '+', canAdd: true}]);
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tabs]);
 
     //* Whenever a tab is selected, refetch the cards
@@ -149,6 +150,7 @@ export const MTTabs = (props) => {
         if(typeof activeTab === 'string'){
             fetchCards();
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [localTabState.activeTab.get(), localCardState.isAdd.get(), localItemState.isAdd.get()]);
 
     //* When the cards have been fetched, set the local cards state with the fetched cards
@@ -377,6 +379,8 @@ export const MTTabs = (props) => {
                                         value={i}
                                         label={tab.name}
                                         onClick={() => handleTabId(tab.id)} />
+                            } else {
+                                return undefined;
                             }
                         })}
                     </TabList>
