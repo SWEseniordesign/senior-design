@@ -244,8 +244,8 @@ export const Home = () => {
                 </div>
                 {uState.token.get() === "" ?
                     <div className={classes.buttonBox}>
-                        <MTButton variant="contained" onClick={handleSignUp} label={'SIGN UP'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
-                        <MTButton variant="outlined" onClick={handleLogin} label={'LOGIN'} textColor={COLOR_PALETTE.NAVY_BLUE} borderColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
+                        <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} backgroundColor={COLOR_PALETTE.NAVY_BLUE}/>
+                        <MTButton variant="outlined" onClick={handleLogin} label={'SIGN IN'} textColor={COLOR_PALETTE.NAVY_BLUE} borderColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
                     </div>
                 :
                     <div className={classes.buttonBox}>

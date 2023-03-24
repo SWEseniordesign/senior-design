@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Grid, Card, CardMedia, CardContent, CardActionArea, CardActions } from "@mui/material";
+import { Tab, Typography, Box, IconButton, Skeleton, Tooltip, Card, CardMedia, CardContent, CardActionArea, CardActions } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { tabState } from "../../states/tabState";
@@ -224,7 +224,8 @@ export const MTTabs = (props) => {
 
     //* Filters out the item that wants to be removed.
     const removeItem = async (e, cardId, itemId) => {
-        let deleteResponse = await deleteItem({itemId: itemId, cardId: cardId});
+        console.log(itemId)
+        let deleteResponse = await deleteItem({id: itemId, cardId: cardId});
 
         if(deleteResponse.deleted){
             let newCards = localCards?.map((card) => {
@@ -371,7 +372,7 @@ export const MTTabs = (props) => {
                                 }
                             } else if(!isEdit && tab.name !== '+'){
                                 return <Tab 
-                                        sx={{fontSize: '16px', bgcolor: !!(tab.color) ? tab.color : ''}}
+                                        sx={{fontSize: '24px', bgcolor: !!(tab.color) ? tab.color : ''}}
                                         key={i}
                                         value={i}
                                         label={tab.name}
@@ -387,7 +388,7 @@ export const MTTabs = (props) => {
                                 layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                rowHeight={225}
+                                rowHeight={350}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards.map((card, index) => {
@@ -474,12 +475,12 @@ export const MTTabs = (props) => {
                                                                 <Card sx={{
                                                                     bgcolor: 'rgba(255, 255, 255, 0.2)',
                                                                     border: '1px solid rgba(0, 0, 0, 0.5)',
-                                                                    minHeight: 200,
+                                                                    minHeight: 250,
                                                                     display: 'flex',
                                                                     justifyContent: 'center',
                                                                     alignItems: 'center',
                                                                 }}>
-                                                                    <Typography>+</Typography>
+                                                                    <Typography variant='h4'>+</Typography>
                                                                 </Card>
                                                             </Tooltip>
                                                         </div>
@@ -509,7 +510,7 @@ export const MTTabs = (props) => {
                                     layouts={{lg: layout}}
                                     draggableHandle=".draggableHandle"
                                     cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
-                                    rowHeight={225}
+                                    rowHeight={310}
                                     onLayoutChange={(e) => handleLayoutChange(e, false)}
                                     >
                                     {localCards?.map((card, index) => {

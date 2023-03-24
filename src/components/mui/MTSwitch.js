@@ -15,9 +15,9 @@ export default function MTSwitch(props) {
 
   //* Available props that can be passed into the custom switch. 
   //? eg. <MTTextField (any_of_these_props)={what_you_want_to_pass_in}/>
-  const { label } = props;
-
+  const { label, onChangeFunc, value } = props;
+  
   return (
-    <FormControlLabel control={<Switch color = 'primary' className={classes.MTSwitch} />} label={label} />
+    <FormControlLabel control={<Switch color = 'primary' className={classes.MTSwitch} checked = {value} onChange = {() => onChangeFunc(!value) } />} label={label} />
   );
 }

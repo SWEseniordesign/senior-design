@@ -149,7 +149,7 @@ export const EditItemModal = (props) => {
         let newItemImage = await getBase64FromCanvas(previewCanvasRef.current);
 
         let updatedItem = {
-            itemId: item.itemId,
+            id: item.id,
             name: newItemName,
             price: newItemPrice,
             image: newItemImage,

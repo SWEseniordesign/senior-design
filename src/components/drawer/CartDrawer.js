@@ -72,13 +72,16 @@ const CartDrawer = () => {
     });
 
     let newTransaction = {
-      employeeId: userState.employee.get()._id,
-      tillId: userState.tillId.get(),
+      employeeId: localOrderState.employeeId.get(),
+      tillId: localOrderState.tillId.get(),
       items: itemIdArr,
       price: (getSubtotal() * 1.15).toFixed(2)
     }
 
+    console.log(newTransaction)
+
     let transactionResponse = await createTransaction(newTransaction);
+    console.log(!!(transactionResponse.err))
     if(!!(transactionResponse.err)){
       console.log(transactionResponse.err);
     } else {
