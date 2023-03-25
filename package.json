@@ -48,7 +48,7 @@
     "server": "cross-env NODE_ENV=production node server/server.js",
     "dev": "cross-env NODE_ENV=development nodemon server/server.js",
     "start": "set PORT=3000 && react-scripts start",
-    "build": "react-scripts build && cross-env NODE_ENV=development && node ./server/server.js",
+    "build": "react-scripts build",
     "test": "jest --testTimeout=10000 --detectOpenHandles",
     "eject": "react-scripts eject",
     "dbscript": "node ./server/testhelper/initializedatabase",
