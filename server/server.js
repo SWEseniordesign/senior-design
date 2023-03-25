@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const serverless = require('serverless-http');
 let   cors = require('cors');
 
 // Load config
@@ -36,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/items', require('./routes/items'));
-app.use('/user', require('./routes/user'));
+app.use('.netlify/functions/user', require('./routes/user'));
 app.use('/employee', require('./routes/employee'));
 app.use('/business', require('./routes/business'));
 app.use('/till', require('./routes/till'));
@@ -52,4 +53,4 @@ if(process.env.NODE_ENV !== 'test'){
 }
 
 
-module.exports = app;
+module.exports.handler = serverless(app);
