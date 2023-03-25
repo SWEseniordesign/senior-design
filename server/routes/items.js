@@ -23,37 +23,35 @@ router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
+
     //find item by its objectid
     let objectId = req.body.id;
 
-    //if objectId is 12 bytes in length, move on to next check
-    if(mongoose.isValidObjectId(objectId)){
-        //if objectId is an actually objectId, attempt to find it
-        if((String)(new ObjectId(objectId)) === objectId){
-            Item.findById(objectId, function(err, item){
-                if(err){
-                    console.log(err);
-                    return res.status(500).send({err: 'Internal Server Error', code: 500});
-                } else {
-                    //If tab not found
-                    if(item === null) return res.status(404).send({err: `Item does not exist`, code: 404});
-                    let formattedItem = {
-                        id: item._id,
-                        name: item.name,
-                        price: item.price,
-                        image: item.image,
-                        props: item.props,
-                        stock: item.stock
-                    };
-                    return res.status(200).send({formattedItem, code: 200});
-                }
-            });
+    //Verify objectId
+    if(!mongoose.isValidObjectId(objectId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(objectId)) === objectId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Find item
+    Item.findById(objectId, function(err, item){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
-            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+            //If tab not found
+            if(item === null) return res.status(404).send({err: `Item does not exist`, code: 404});
+            let formattedItem = {
+                id: item._id,
+                name: item.name,
+                price: item.price,
+                image: item.image,
+                props: item.props,
+                stock: item.stock
+            };
+            return res.status(200).send({formattedItem, code: 200});
         }
-    } else {
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    }
+    });
 });
 
 
@@ -74,6 +72,11 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
+    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invald price input', code: 400});
+
     //Create temp new item
     let new_item = new Item({
         name: req.body.name,
@@ -85,12 +88,8 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
     let cardId = req.body.cardId;
 
     //verify ObjectId is valid
-    if(!(mongoose.isValidObjectId(cardId))){
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    }
-    if(!((String)(new ObjectId(cardId)) === cardId)){
-        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
-    }
+    if(!(mongoose.isValidObjectId(cardId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(cardId)) === cardId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Find card to link
     let card = await Card.findById(cardId).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
@@ -140,6 +139,10 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
 router.post('/delete', verifyJWTAdmin, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //Verify input
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
 
     //find item by its objectid
     let itemId = req.body.id;
@@ -196,6 +199,13 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
  */
 router.post('/update', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Verify input
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
+    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invald price input', code: 400});
+    if(typeof req.body.image === 'undefined' || !req.body.image) return res.status(400).send({err: 'Invald image input', code: 400});
+    if(typeof req.body.stock === 'undefined' || !req.body.stock) return res.status(400).send({err: 'Invald stock input', code: 400});
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
 
     let updatedItem = {
         name: req.body.name,

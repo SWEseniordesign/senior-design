@@ -26,35 +26,33 @@ router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
+
     //find tab by its objectid
     let objectId = req.body.id;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(objectId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(objectId)) === objectId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
  
-    //if objectId is 12 bytes in length, move on to next check
-    if(mongoose.isValidObjectId(objectId)){
-        //if objectId is an actually objectId, attempt to find it
-        if((String)(new ObjectId(objectId)) === objectId){
-            Tab.findById(objectId, function(err, tab){
-                if(err){
-                    console.log(err);
-                    return res.status(500).send({err: 'Internal Server Error', code: 500});
-                } else {
-                    //If tab not found
-                    if(tab === null) return res.status(404).send({err: `Tab does not exist`, code: 404});
-                    let formattedTab = {
-                        id: tab._id,
-                        name: tab.name,
-                        color: tab.color,
-                        cards: tab.cards
-                    };
-                    return res.status(200).send({formattedTab, code: 200});
-                }
-            });
+    //Find Tab
+    Tab.findById(objectId, function(err, tab){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
-            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+            //If tab not found
+            if(tab === null) return res.status(404).send({err: `Tab does not exist`, code: 404});
+            let formattedTab = {
+                id: tab._id,
+                name: tab.name,
+                color: tab.color,
+                cards: tab.cards
+            };
+            return res.status(200).send({formattedTab, code: 200});
         }
-    } else {
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    }
+    });
 });
 
 
@@ -75,6 +73,10 @@ router.post('/create', verifyJWTAdmin, async (req, res) => {
     //check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald tillId input', code: 400});
+
     //Create temp new tab
     let new_tab = new Tab({
         name: req.body.name,
@@ -84,12 +86,8 @@ router.post('/create', verifyJWTAdmin, async (req, res) => {
     let tillId = req.body.tillId;
 
     //verify ObjectId is valid
-    if(!(mongoose.isValidObjectId(tillId))){
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    }
-    if(!((String)(new ObjectId(tillId)) === tillId)){
-        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
-    }
+    if(!(mongoose.isValidObjectId(tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(tillId)) === tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Find till to link
     let till = await Till.findById(tillId).catch( err => {return res.status(500).send({err: 'Error finding till to link to tab', code: 500});});
@@ -139,6 +137,9 @@ router.post('/create', verifyJWTAdmin, async (req, res) => {
 router.post('/getall', verifyJWT, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //Verify input
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald tillId input', code: 400});
 
     //Store tillId
     let tillId = req.body.tillId.toString();
@@ -196,6 +197,10 @@ router.post('/update', verifyJWTAdmin, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
+    //Verify input
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
+    if(typeof req.body.tabId === 'undefined' || !req.body.tabId) return res.status(400).send({err: 'Invald tabId input', code: 400});
+
     //Create temp object
     let updatedTab = {
         name: req.body.name,
@@ -236,6 +241,10 @@ router.post('/update', verifyJWTAdmin, async function(req, res){
 router.post('/delete', verifyJWT, async function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
+
+    //Verify input
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald tillId input', code: 400});
+    if(typeof req.body.tabId === 'undefined' || !req.body.tabId) return res.status(400).send({err: 'Invald tabId input', code: 400});
 
     //Store Ids
     let tabId = req.body.tabId.toString();

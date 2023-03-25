@@ -61,6 +61,10 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
     //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
+    if(typeof req.body.type === 'undefined' || !req.body.type) return res.status(400).send({err: 'Invald type input', code: 400});
+
     //Check if a user exist & if they have a businessId assigned to them
     let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(user === null) return res.status(403).send({err: 'User does not exist', code: 403});
