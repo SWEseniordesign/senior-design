@@ -10,7 +10,6 @@ const mongoose = require('mongoose');
  */
 const connectDB = async () => {
     try {
-        console.log(process.env.MONGO_URI_DEV)
         //if yarn server was ran, connect to myTill
         if(process.env.npm_lifecycle_event === 'server'){
             console.log('Connecting to Database: myTill');

@@ -147,6 +147,7 @@ export const MTTabs = (props) => {
     //* Whenever a tab is selected, refetch the cards
     useEffect(() => {
         let activeTab = localTabState.activeTab.get();
+        console.log(activeTab)
         if(typeof activeTab === 'string'){
             fetchCards();
         }

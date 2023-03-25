@@ -72,14 +72,13 @@ export const AccessTill = () => {
             }
             let tillResponse = await authTill(empCreds);
 
-            console.log(tillResponse);
-
             if(!!(tillResponse.err)){
                 setAlertMessage({message: tillResponse.err, status: 'warning'});
             } else if(!!(tillResponse.token)) {
                 userState.token.set(tillResponse.token);
                 userState.employee.set(tillResponse.employeeObj);
                 userState.tillId.set(tillResponse.tillId);
+                userState.isLoggedIn.set(false);
                 navigate(`/view-till/${tillResponse.tillId}`);
             }
 
