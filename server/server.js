@@ -53,4 +53,4 @@ if(process.env.NODE_ENV !== 'test'){
 }
 
 
-module.exports = serverless(app);
+module.exports.handler = serverless(app);
