@@ -40,7 +40,7 @@ router.post('/login', async function(req, res) {
             };
             const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '1h'});
             if(!token) return res.status(500).send({err: 'Internal server error', code: 500})
-            return res.status(200).send({token: "Bearer " + token, code: 200}); 
+            return res.status(200).send({body: JSON.stringify({token: "Bearer " + token}), statusCode: 200}); 
         }
         else {
             return res.status(404).send({err: 'Invalid email or password', code: 404});
