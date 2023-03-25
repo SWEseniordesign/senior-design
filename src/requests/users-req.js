@@ -27,7 +27,7 @@ export async function login (obj) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(obj)
+        body: obj
     })
     .then(res => data = res.json())
     .catch(err => console.log(err));
