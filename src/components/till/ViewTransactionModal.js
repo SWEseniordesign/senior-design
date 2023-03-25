@@ -1,11 +1,9 @@
-import { useHookstate } from "@hookstate/core";
 import { Modal, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
 import { useQuery } from "react-query";
 import { COLOR_PALETTE } from "../../Constants";
 import { getAllTransactions } from "../../requests/tills-req";
-import { tabState } from "../../states/tabState";
 import { MTTable } from "../mui/MTTable";
 
 const useStyles = makeStyles({

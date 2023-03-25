@@ -25,7 +25,6 @@ const MTDropdown = (props) => {
     const uState = useHookstate(userState);
     const {
         label,
-        customLabel,
         menuItems=[],
         variant,
         isAccount,
@@ -53,6 +52,7 @@ const MTDropdown = (props) => {
         if(uState.token.get() !== ''){
             userRefetch();
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uState.token.get()])
 
     const classes = useStyles();

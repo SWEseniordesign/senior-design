@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { 
     Paper, 
@@ -24,7 +24,6 @@ import moment from 'moment/moment';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { itemState } from '../../states/itemState';
-import { userState } from '../../states/userState';
 
 const useStyles = makeStyles({
     root: {
@@ -34,24 +33,24 @@ const useStyles = makeStyles({
 
 export const MTTable = (props) => {
 
-    const {columns, rows, rowsPerPageOptions, hasPagination, action, actionStyle, hasMoreInfo, hasDelete, tillId} = props;
+    const {columns, rows, hasPagination, action, actionStyle, hasMoreInfo, hasDelete} = props;
 
     const [page, setPage] = useState(0);
     const [rowsPerPageSelection, setRowsPerPageSelection] = useState(5);
     const [editRow, setEditRow] = useState();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
+    const [alertMessage] = useState({message: '', status: 'success'});
 
     const localTabState = useHookstate(tabState);
     const localItemState = useHookstate(itemState);
-    const localUserState = useHookstate(userState);
 
     useEffect(() => {
-        for (const row of rows) {
+        for (let i = 0; i < rows.length; i++) {
             if(localItemState.itemListOpen.get().length <= rows.length){
                 localItemState.itemListOpen.set(b => [...b, false])
             }
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasMoreInfo])
 
     const handleChangePage = (event, newPage) => {
@@ -141,6 +140,8 @@ export const MTTable = (props) => {
                                                         return dataPropId !== 'color' ?
                                                             <TableCell key={key}><Typography sx={{fontSize: '16px'}}>{row[dataPropId][key]}</Typography></TableCell> :
                                                             <TableCell><Box sx={{bgcolor: row[dataPropId], border: '1px solid grey', height: '25px', width: '100%', borderRadius: '5px'}} /></TableCell>
+                                                    } else {
+                                                        return undefined;
                                                     }
                                                 })
                                             } else {
@@ -207,6 +208,8 @@ export const MTTable = (props) => {
                                             </TableCell>
                                         </TableRow>}
                                     </>
+                            } else {
+                                return undefined;
                             }
 
                         })}

@@ -1,6 +1,6 @@
 import { IconButton, Skeleton, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -64,9 +64,8 @@ export const ViewEditTill = () => {
     const navigate = useNavigate();
 
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
-    const [isManager, setIsManager] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+    // const [isManager, setIsManager] = useState(false);
+    // const [isAdmin, setIsAdmin] = useState(false);
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
     const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
 
@@ -90,11 +89,8 @@ export const ViewEditTill = () => {
     }
     
     const handleOrderInformation = () => {
-        // if(localOrderState.employeeId.get() === '' && localOrderState.tillId.get() === ''){
-            console.log(userState.employee.get()._id)
         localOrderState.employeeId.set(userState.employee.get()._id);
         localOrderState.tillId.set(till.formattedTill.id);
-        // }
         localOrderState.isOpen.set(true);
     }
 

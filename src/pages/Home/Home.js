@@ -1,4 +1,4 @@
-import { Typography, Button, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
+import { Typography, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
 import React, { useState, useEffect } from "react";
@@ -6,7 +6,7 @@ import { COLOR_PALETTE } from "../../Constants";
 import { userState } from "../../states/userState";
 import { useHookstate } from "@hookstate/core";
 import MTButton from '../../components/mui/MTButton'
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
@@ -14,22 +14,18 @@ import tillPic from "../../resources/HomePictures/till-sc.png";
 import { pageState } from "../../states/pageState";
 
 
-import { createEmployee, getEmployee } from "../../requests/employees-req";
-import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
-import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
-import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard, updateCard } from "../../requests/cards-req";
-import { createItem, getItem, deleteItem, updateItem} from "../../requests/items-req";
-import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
-import { createTransaction, getTransaction } from "../../requests/transactions-req";
+// import { createEmployee, getEmployee } from "../../requests/employees-req";
+// import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
+// import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
+// import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
+// import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard, updateCard } from "../../requests/cards-req";
+// import { createItem, getItem, deleteItem, updateItem} from "../../requests/items-req";
+import { getUserBusiness } from "../../requests/users-req";
+// import { createTransaction, getTransaction } from "../../requests/transactions-req";
 
 
 const useStyle = makeStyles({
     root: {
-        //display: 'flex',
-        //margin: '80px',
-        //marginLeft: '240px',
-        //marginRight: '240px',
         marginLeft: '16%',
         marginRight: '16%'
     },
@@ -37,8 +33,6 @@ const useStyle = makeStyles({
         marginTop: '160px',
         marginBottom: '140px',
         width: '70%',
-        //display: 'flex',
-        //justifyContent: 'center',
     },
     heroTitle: {
         display: 'flex',
@@ -48,8 +42,6 @@ const useStyle = makeStyles({
     },
     buttonBox: {
         display: 'flex',
-        //justifyContent: 'center',
-        //justify-content: 'space-evenly',
         align: 'center',
         items: 'center',
         flexDirection: 'box',
@@ -66,8 +58,6 @@ const useStyle = makeStyles({
     },
     steps: { //remove this?
         width: '100%'
-        //display: 'flex',
-        //flexDirection: 'row'
       },
     imageWrapper: {
         position: 'relative',
