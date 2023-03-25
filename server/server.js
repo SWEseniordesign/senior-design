@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const serverless = require('serverless-http');
+const router = express.Router();
 let   cors = require('cors');
 
 // Load config
@@ -36,14 +37,16 @@ if (process.env.NODE_ENV === 'development') {
 // }));
 
 // Routes
-app.use('/items', require('./routes/items'));
-app.use('/user', require('./routes/user'));
-app.use('/employee', require('./routes/employee'));
-app.use('/business', require('./routes/business'));
-app.use('/till', require('./routes/till'));
-app.use('/tab', require('./routes/tab'));
-app.use('/card', require('./routes/card'));
-app.use('/transaction', require('./routes/transaction'));
+// app.use('/items', require('./routes/items'));
+// app.use('/user', require('./routes/user'));
+// app.use('/employee', require('./routes/employee'));
+// app.use('/business', require('./routes/business'));
+// app.use('/till', require('./routes/till'));
+// app.use('/tab', require('./routes/tab'));
+// app.use('/card', require('./routes/card'));
+// app.use('/transaction', require('./routes/transaction'));
+
+app.use('/server/routes' ,router);
 
 const PORT = process.env.PORT || 5000;
 if(process.env.NODE_ENV !== 'test'){
@@ -52,5 +55,5 @@ if(process.env.NODE_ENV !== 'test'){
     );
 }
 
-
+module.exports = app;
 module.exports.handler = serverless(app);
