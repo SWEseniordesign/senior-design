@@ -22,7 +22,7 @@ export async function saveUser (obj) {
 */
 export async function login (obj) {
     let data;
-    await fetch('https://mytill.netlify.app/user/login', {
+    await fetch('https://mytill.netlify.app/server/routes/user/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
