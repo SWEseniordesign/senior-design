@@ -20,7 +20,7 @@ router.post('/login', async function(req, res) {
     //Check if there is a body in the request
     if(Object.keys(req.body).length === 0) return res.status(400).send({err: 'No request body', code: 400});
 
-    console.log(req);
+    return req;
 
     //find the user
     let find_user = await User.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
