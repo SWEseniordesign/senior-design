@@ -29,7 +29,7 @@ export async function login (obj) {
         },
         body: JSON.stringify(obj)
     })
-    .then(res => console.log(res.json()))
+    .then(res => data = res.json())
     .catch(err => console.log(err));
     return data;
 }

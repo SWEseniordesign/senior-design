@@ -52,8 +52,7 @@
     "test": "jest --testTimeout=10000 --detectOpenHandles",
     "eject": "react-scripts eject",
     "dbscript": "node ./server/testhelper/initializedatabase",
-    "initdb": "yarn dbscript",
-    "balls": "cross-env NODE_ENV=development && node ./server/server.js"
+    "initdb": "yarn dbscript"
   },
   "eslintConfig": {
     "extends": [
