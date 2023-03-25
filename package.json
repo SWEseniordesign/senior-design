@@ -29,7 +29,6 @@
     "mongoose": "^6.6.5",
     "morgan": "^1.10.0",
     "mui-image": "^1.0.7",
-    "netlify-lambda": "^2.0.16",
     "nodemon": "^2.0.20",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
@@ -49,11 +48,12 @@
     "server": "cross-env NODE_ENV=production node server/server.js",
     "dev": "cross-env NODE_ENV=development nodemon server/server.js",
     "start": "set PORT=3000 && react-scripts start",
-    "build": "./node_modules/.bin/netlify-lambda build server && react-scripts build",
+    "build": "react-scripts build && cross-env NODE_ENV=development && node ./server/server.js",
     "test": "jest --testTimeout=10000 --detectOpenHandles",
     "eject": "react-scripts eject",
     "dbscript": "node ./server/testhelper/initializedatabase",
-    "initdb": "yarn dbscript"
+    "initdb": "yarn dbscript",
+    "balls": "cross-env NODE_ENV=development && node ./server/server.js"
   },
   "eslintConfig": {
     "extends": [
