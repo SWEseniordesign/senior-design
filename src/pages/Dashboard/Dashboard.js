@@ -99,7 +99,7 @@ const Dashboard = () => {
         async function getBusAndTills(){
             const result = await getAllTills();
             const user = await getUserName();
-            console.log(result);
+
             setBusiness(result.business);
             setOwner(user.formattedUser);
             setTills(result.tills);
@@ -107,8 +107,6 @@ const Dashboard = () => {
         }
         getBusAndTills();
     }, [])
-
-    console.log(business);
 
     return (
             <div className={classes.root}>

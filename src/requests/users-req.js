@@ -25,8 +25,7 @@ export async function login (obj) {
     await fetch('http://localhost:8080/user/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': 'https://mytill.netlify.app'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(obj)
     })
