@@ -1,9 +1,9 @@
-import { useHookstate } from "@hookstate/core";
 import { Modal, Paper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
+import { useQuery } from "react-query";
 import { COLOR_PALETTE } from "../../Constants";
-import { tabState } from "../../states/tabState";
+import { getAllTransactions } from "../../requests/tills-req";
 import { MTTable } from "../mui/MTTable";
 
 const useStyles = makeStyles({
@@ -12,7 +12,7 @@ const useStyles = makeStyles({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '50%',
+        width: '75%',
         height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
@@ -30,33 +30,37 @@ const useStyles = makeStyles({
 })
 
 //* The modal that pops up when the user wants to view the list of tabs.
-export const ListTabsModel = (props) => {
+export const ViewTransactionModal = (props) => {
 
-    const {deleteTabFunc} = props;
+    const {open, setOpen, tillId} = props;
 
-    const localTabState = useHookstate(tabState);
+    const {isLoading: isLoadingTransactions, data: transactions} = useQuery('transactions', () => getAllTransactions({tillId: tillId}))
 
     const handleCloseModal = () => {
-        localTabState.isListOfTabs.set(false);
+        setOpen(false);
     }
 
     const tableColumns = [
-        {id: 0, dataPropId: 'name', label: 'Name', width: '100%'},
-        {id: 1, dataPropId: 'color', label: 'Color', width: '100%'}
+        {id: 0, dataPropId: 'employee', label: 'Employee', subprops: [
+            {id: 0, dataPropId: 'id', label: 'Employee Id', width: '100%'},
+            {id: 1, dataPropId: 'email', label: 'Employee Email', width: '100%'},
+        ], width: '100%'},
+        {id: 1, dataPropId: 'date', label: 'Date', width: '100%'},
+        {id: 2, dataPropId: 'totalPrice', label: 'Total Price', width: '100%'}
     ]
-
+    
     const classes = useStyles();
 
     return (
         <Modal
-            open={localTabState.isListOfTabs.get()}
+            open={open}
             onClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
                 <div className={classes.title}>
-                    <Typography variant={'h4'}>List of Tabs</Typography>
+                    <Typography variant={'h4'} color={'info'}>Transaction History</Typography>
                 </div>
-                <MTTable columns={tableColumns} rows={tabState.tabs.get()} hasPagination actionStyle={'dropdown'} action={deleteTabFunc} />
+                {!isLoadingTransactions && <MTTable columns={tableColumns} rows={!!(transactions.err) ? [] : transactions.transactions} hasPagination hasMoreInfo />}
             </Paper>
         </Modal>
     )

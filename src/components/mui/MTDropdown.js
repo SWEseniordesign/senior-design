@@ -25,16 +25,16 @@ const MTDropdown = (props) => {
     const uState = useHookstate(userState);
     const {
         label,
-        customLabel,
         menuItems=[],
         variant,
         isAccount,
+        isEmployee,
         menuOpenAction,
         isIconButton,
         tooltip,
         hasDropdownIcon,
         textColor } = props; // Parameters that can be passed into the custom dropdown
-    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
+    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false, refetchOnWindowFocus: false });
 
     //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {
@@ -50,9 +50,10 @@ const MTDropdown = (props) => {
     }
 
     useEffect(() => {
-        if(uState.token.get() !== ''){
+        if(uState.token.get() !== '' && !(user)){
             userRefetch();
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uState.token.get()])
 
     const classes = useStyles();
@@ -118,16 +119,29 @@ const MTDropdown = (props) => {
                         }}
                         open={Boolean(anchorEl)}
                         onClose={handleCloseMenu}>
-                        {menuItems.map((item) => {
-                            return (
-                                <MenuItem key={item.id} onClick={() => {
-                                    item.action();
-                                    handleCloseMenu();
-                                }}>
-                                    <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
-                                </MenuItem>
-                            );
-                        })}
+                        {userState.isLoggedIn.get() ? 
+                            menuItems.map((item) => {
+                                return (
+                                    <MenuItem key={item.id} disabled={item.disabled} onClick={() => {
+                                        item.action();
+                                        handleCloseMenu();
+                                    }}>
+                                        <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
+                                    </MenuItem>
+                                );
+                            })
+                        :
+                            isEmployee.map((item) => {
+                                return (
+                                    <MenuItem key={item.id} disabled={item.disabled} onClick={() => {
+                                        item.action();
+                                        handleCloseMenu();
+                                    }}>
+                                        <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
+                                    </MenuItem>
+                                );
+                            })
+                        }
                     </Menu>
                 </div>
             }

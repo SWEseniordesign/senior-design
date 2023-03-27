@@ -83,7 +83,6 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
         stock: req.body.stock
     });
     let cardId = req.body.cardId;
-    console.log(cardId);
 
     //verify ObjectId is valid
     if(!(mongoose.isValidObjectId(cardId))){
@@ -104,7 +103,7 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
             let formattedItem = {
-                id: item._id,
+                id: item._id.toString(),
                 name: item.name,
                 price: item.price,
                 image: item.image,
@@ -143,7 +142,7 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //find item by its objectid
-    let itemId = req.body.itemId;
+    let itemId = req.body.id;
     let cardId = req.body.cardId;
 
     //Verify objectId is valid
@@ -158,7 +157,7 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
-        return res.status(200).send({deleted: true, code: 200});
+        // return res.status(200).send({deleted: true, code: 200});
     });
 
     //Find Card
@@ -167,7 +166,7 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
-        //If card not found 
+        //If card not found
         if(card === null) return res.status(404).send({err: `Card not found`, code: 404});
 
         //Find item in Card
@@ -188,18 +187,49 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
 
 
 /**
- * TODO: implement
- * Modify an item's name
+ * Update an Item's name, price, & stock
  *
- * @route POST /items/name
+ * @route POST /items/update
  * @expects 
  * @success 
  * @error 
  */
-router.get('/name', verifyJWTAdmin, async (req, res) => {
+router.post('/update', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
-    let find_item = await Item.findOne({name: req.body.name}).exec();
-    if(!find_item) return res.status(403).send({err: 'Item does not exist', code: 403});
+
+    let updatedItem = {
+        name: req.body.name,
+        price: req.body.price,
+        image: req.body.image,
+        props: req.body.props,
+        stock: req.body.stock
+    };
+    let itemId = req.body.id;
+
+    if(!mongoose.isValidObjectId(itemId)) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(itemId)) === itemId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    Item.updateOne({
+        _id: new ObjectId(itemId),
+        $or: [
+            { name:  { $ne: updatedItem.name  }},
+            { price: { $ne: updatedItem.price }},
+            { image: { $ne: updatedItem.image }},
+            { props: { $ne: updatedItem.props }},
+            { stock: { $ne: updatedItem.stock }}
+        ]
+    },
+    {
+        $set: {
+            name:  updatedItem.name,
+            price: updatedItem.price,
+            image: updatedItem.image,
+            props: updatedItem.props,
+            stock: updatedItem.stock
+        }
+    }).catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
+
+    return res.status(200).send({updated: true, code: 200});
 });
 
 

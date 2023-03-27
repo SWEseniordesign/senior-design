@@ -1,4 +1,4 @@
-import { Typography, Button, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
+import { Typography, Grid, Box, Link, Snackbar, Alert } from "@mui/material";
 import Image from 'mui-image';
 import { makeStyles } from "@mui/styles";
 import React, { useState, useEffect } from "react";
@@ -6,7 +6,7 @@ import { COLOR_PALETTE } from "../../Constants";
 import { userState } from "../../states/userState";
 import { useHookstate } from "@hookstate/core";
 import MTButton from '../../components/mui/MTButton'
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
@@ -14,21 +14,18 @@ import tillPic from "../../resources/HomePictures/till-sc.png";
 import { pageState } from "../../states/pageState";
 
 
-import { createEmployee, getEmployee } from "../../requests/employees-req";
-import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
-import { createTill, getTill, getAllTills } from "../../requests/tills-req";
-import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
-import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard } from "../../requests/cards-req";
-import { createItem, getItem, deleteItem} from "../../requests/items-req";
-import { getUserBusiness, saveUser, getUserName } from "../../requests/users-req";
+// import { createEmployee, getEmployee } from "../../requests/employees-req";
+// import { createBusiness, getBusiness, addAdmins } from "../../requests/businesses-req";
+// import { createTill, getTill, getAllTills, getAllTransactions } from "../../requests/tills-req";
+// import { createTab, getTab, getAllTabs, editTab, deleteTab } from "../../requests/tabs-req";
+// import { createCard, getCard, getAllCards, modifyCardPosition, deleteCard, updateCard } from "../../requests/cards-req";
+// import { createItem, getItem, deleteItem, updateItem} from "../../requests/items-req";
+import { getUserBusiness } from "../../requests/users-req";
+// import { createTransaction, getTransaction } from "../../requests/transactions-req";
 
 
 const useStyle = makeStyles({
     root: {
-        //display: 'flex',
-        //margin: '80px',
-        //marginLeft: '240px',
-        //marginRight: '240px',
         marginLeft: '16%',
         marginRight: '16%'
     },
@@ -36,8 +33,6 @@ const useStyle = makeStyles({
         marginTop: '160px',
         marginBottom: '140px',
         width: '70%',
-        //display: 'flex',
-        //justifyContent: 'center',
     },
     heroTitle: {
         display: 'flex',
@@ -47,8 +42,6 @@ const useStyle = makeStyles({
     },
     buttonBox: {
         display: 'flex',
-        //justifyContent: 'center',
-        //justify-content: 'space-evenly',
         align: 'center',
         items: 'center',
         flexDirection: 'box',
@@ -65,8 +58,6 @@ const useStyle = makeStyles({
     },
     steps: { //remove this?
         width: '100%'
-        //display: 'flex',
-        //flexDirection: 'row'
       },
     imageWrapper: {
         position: 'relative',
@@ -222,7 +213,15 @@ export const Home = () => {
 //             tillId: '64079e7cfbc83db9e075f8d0',
 //             tabId: '6408ed7cd6ce8120f2794123'
 //         }
-//         let error = await deleteTab(tabId);
+//         let transaction = {
+//             employeeId: '640cd70c0cbf6b214a69bb33',
+//             tillId:     '640cd70a0cbf6b214a69baeb',
+//             items: [{id: '640cd70b0cbf6b214a69bb1d', quantity: 3}, {id: '640cd70b0cbf6b214a69bb21', quantity: 1}],
+//             price: 690
+//         }
+//         let transactionId = {transactionId: '6410d239726448181e23ecf2'}
+
+//         let error = await getAllTransactions({tillId: '640cd70a0cbf6b214a69baf0'});
 //        let id = {email: 'test@unb.ca'};
 //        console.log(error);
 //    }
@@ -235,8 +234,8 @@ export const Home = () => {
                 </div>
                 {uState.token.get() === "" ?
                     <div className={classes.buttonBox}>
-                        <MTButton variant="contained" onClick={handleSignUp} label={'SIGN UP'} backgroundColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
-                        <MTButton variant="outlined" onClick={handleLogin} label={'LOGIN'} textColor={COLOR_PALETTE.NAVY_BLUE} borderColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
+                        <MTButton variant="contained" onClick={handleSignUp} label={'CREATE ACCOUNT'} backgroundColor={COLOR_PALETTE.NAVY_BLUE}/>
+                        <MTButton variant="outlined" onClick={handleLogin} label={'SIGN IN'} textColor={COLOR_PALETTE.NAVY_BLUE} borderColor={COLOR_PALETTE.NAVY_BLUE} width='136px'  />
                     </div>
                 :
                     <div className={classes.buttonBox}>

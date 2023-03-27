@@ -10,39 +10,48 @@ import { ViewEditTill } from '../pages/ViewEditTill/ViewEditTill';
 const SiteRoutes = [
     {
         path: '/',
-        component: <Home/>
+        component: <Home/>,
+        simplifiedHeader: false
     },
     {
         path: '/login',
-        component: <Login/>
+        component: <Login/>,
+        simplifiedHeader: false
     },
     {
         path: '/create-account',
-        component: <CreateAccount/>
+        component: <CreateAccount/>,
+        simplifiedHeader: false
     },
     {
         path: '/create-business',
-        component: <CreateBusiness/>
+        component: <CreateBusiness/>,
+        simplifiedHeader: false
     },
     {
         path: '/access-business',
-        component: <AccessBusiness/>
+        component: <AccessBusiness/>,
+        simplifiedHeader: false
     },
     {
         path: '/edit-till/:id',
-        component: <ViewEditTill/>
+        component: <ViewEditTill/>,
+        simplifiedHeader: true
     },
     {
         path: '/view-till/:id',
-        component: <ViewEditTill/>
+        component: <ViewEditTill/>,
+        simplifiedHeader: true
     },
     {
         path: '/access-till',
-        component: <AccessTill/>
+        component: <AccessTill/>,
+        simplifiedHeader: false
     },
     {
         path: '/dashboard',
-        component: <Dashboard/>
+        component: <Dashboard/>,
+        simplifiedHeader: false
     },
 ]
 

@@ -64,9 +64,9 @@ export async function addCards (obj) {
 /*
 modify a Tab's color and name
 */
-export async function editTab (obj) {
+export async function updateTab (obj) {
     let data;
-    await fetch('http://localhost:8080/tab/edit', {
+    await fetch('http://localhost:8080/tab/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

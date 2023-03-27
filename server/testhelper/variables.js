@@ -73,7 +73,8 @@ let testTill = {
     employees: [],
     tabs: [],
     props: [],
-    businessId: ''
+    businessId: '',
+    transactions: []
 };
     let testTabPizza = {
         name: 'Pizza',
@@ -184,7 +185,8 @@ let testTill2 = {
     employees: [],
     tabs: [],
     props: [],
-    businessId: ''
+    businessId: '',
+    transactions: []
 };
 
 let testEmployee = {
@@ -223,6 +225,13 @@ let testItem = {
     stock: 4
 };
 
+let testTransaction = {
+    employeeId: '',
+    price: 69,
+    tillId: '',
+    items: []
+}
+
  const fakeObjectIdType1 = 'yo';
  const fakeObjectIdType2 = 'yoyoyoyoyoyo';
  const fakeObjectId = '63d2b33a2a75670dbd74fb3b';
@@ -260,5 +269,6 @@ module.exports = {
     testItem,
     fakeObjectIdType1,
     fakeObjectIdType2,
-    fakeObjectId
+    fakeObjectId,
+    testTransaction
 };

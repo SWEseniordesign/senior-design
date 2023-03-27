@@ -1,18 +1,27 @@
 import { IconButton, Skeleton, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import CartDrawer from "../../components/drawer/CartDrawer";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getTill } from "../../requests/tills-req";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { useHookstate } from "@hookstate/core";
+import { tabState } from "../../states/tabState";
+import { ViewTransactionModal } from "../../components/till/ViewTransactionModal";
+import { orderState } from "../../states/orderState";
+import { userState } from "../../states/userState";
+import { ManageEmployeeModal } from "../../components/till/ManageEmployeeModal";
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        marginTop: '65px',
         width: '100%',
         height: 'calc(100vh - 75px)',
         display: 'flex',
@@ -29,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
     },
     tabbar: {
-        width: '95%',
+        width: '100%',
         display: 'flex',
         alignItems: 'flex-start',
         marginTop: '12px',
@@ -45,8 +54,7 @@ const useStyles = makeStyles((theme) => ({
     loader: {
         width: '100%',
         height: '100%'
-    }
-    
+    },
 }))
 
 export const ViewEditTill = () => {
@@ -55,11 +63,15 @@ export const ViewEditTill = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const localTabState = useHookstate(tabState);
+    const localOrderState = useHookstate(orderState);
+
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
     const [isManager, setIsManager] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [openEditModel, setOpenEditModal] = useState(false);
-    const {isLoading: isLoadingTill, data: till} = useQuery("tills", () => getTill({id: params.id}));
+    const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+    const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
+
+    const {isLoading: isLoadingTill, data: till} = useQuery(["tills", params.id], () => getTill({id: params.id}), { refetchOnWindowFocus: false });
 
     const handleEditTill = () => {
         setIsEdit(true);
@@ -70,6 +82,20 @@ export const ViewEditTill = () => {
         setIsEdit(false);
         navigate(`${location.pathname.replace('edit', 'view')}`);
     }
+
+    const handleOpenEmployee = () => {
+        setOpenEmployeeModal(true);
+    }
+    
+    const handleOrderInformation = () => {
+        localOrderState.employeeId.set(userState.employee.get()._id);
+        localOrderState.tillId.set(till.formattedTill.id);
+        localOrderState.isOpen.set(true);
+    }
+
+    useEffect(() => {
+        setIsManager(userState.employee.get().isManager);
+    }, [])
 
     const classes = useStyles();
 
@@ -82,23 +108,29 @@ export const ViewEditTill = () => {
                         <Grid2 container className={classes.actions}>
                             <Grid2 xs={12} lg={4}>
                                 {!isLoadingTill ? <Typography sx={{
-                                fontSize: '24px'
-                                }}>{till?.formattedTill?.name}</Typography> :
+                                    fontSize: '24px',
+                                    overflowX: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}>{till.formattedTill.name}</Typography> :
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={5} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={3.5} xl={3}><MtButton makeResponsive label={'Manage Employees'} variant={'outlined'} onClick = {() => handleOpenEmployee()} /></Grid2>
+                                <Grid2 xs={12} md={5} lg={4.7} xl={4}>
+                                    {!isLoadingTill ?
+                                        <MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /> :
+                                        <Skeleton className={classes.loader} variant={'rectangle'} />
+                                }</Grid2>
                                 <Grid2 xs={12} md={2} lg={2} xl={2}><MtButton makeResponsive label={'View Till'} variant={'outlined'} onClick={handleViewTill} /></Grid2>
-                                {/* <Grid2 xs={12} md={1.5} lg={1.5} xl={1}><MtButton makeResponsive label={'SAVE'} variant={'contained'} /></Grid2> */}
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>
                             {!!(till) ?
                                 <div className={classes.tabbar}>
-                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                    <MTTabs till={till} isLoadingTill={isLoadingTill} isEdit={isEdit} />
                                     <Tooltip title={"List of Tabs"} arrow>
-                                        <IconButton size="large" sx={{borderRadius: 0, borderBottom: '1px solid black'}} onClick={() => setOpenEditModal((editModal) => !editModal)}>
+                                        <IconButton size="large" sx={{borderRadius: 0, borderBottom: '1px solid black'}} onClick={() => localTabState.isListOfTabs.set(true)}>
                                             <SettingsIcon fontSize="medium" />
                                         </IconButton>
                                     </Tooltip>
@@ -124,14 +156,20 @@ export const ViewEditTill = () => {
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} /></Grid2>
-                                <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>
+                                <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /></Grid2>
+                                {(isManager || userState.isLoggedIn.get()) && <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>}
+                                <Grid2 xs={12} md={6} lg={2} xl={2}>
+                                    <IconButton onClick={() => handleOrderInformation()}>
+                                        <ShoppingCartIcon fontSize="medium" />
+                                    </IconButton>
+                                    <CartDrawer />
+                                </Grid2>
                             </Grid2>
                         </Grid2>
                         <Grid2 xs={12} lg={12}>
                             {!!(till) ?
                                 <div className={classes.tabbar}>
-                                    <MTTabs till={till} openEditModal={openEditModel} setOpenEditModal={setOpenEditModal} isLoadingTill={isLoadingTill} isEdit={isEdit} />
+                                    <MTTabs till={till} isLoadingTill={isLoadingTill} isEdit={isEdit} />
                                 </div>
                                 :
                                 <div className={classes.noTillErrorMessage}>
@@ -143,6 +181,8 @@ export const ViewEditTill = () => {
                     </Grid2>
             </div>
         }
+        {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees} tillId={till.formattedTill.id}/>}
+        {transactionModalOpen && <ViewTransactionModal open={transactionModalOpen} setOpen={setTransactionModalOpen} tillId={till.formattedTill.id} />}
         </div>
     )
 }

@@ -16,6 +16,8 @@ import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
 import { getAllTills, getTill, createTill } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
+import { tabState } from "../../states/tabState";
+import { useHookstate } from "@hookstate/core";
 
 const useStyle = makeStyles({
     root: {
@@ -76,6 +78,8 @@ const Dashboard = () => {
     const classes = useStyle();
     const navigate = useNavigate();
 
+    const localTabState = useHookstate(tabState);
+
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
 
     const pieData = [
@@ -107,8 +111,11 @@ const Dashboard = () => {
     const handleNavigateTill = (till) => {
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
         //? Leaving this for now since it can be tested
-        navigate(`/edit-till/${till.id}`)
-
+        localTabState.tabs.set([]);
+        localTabState.activeTab.set('');
+        if(localTabState.tabs.get().length === 0 && localTabState.activeTab.get() === '') {
+            navigate(`/edit-till/${till.id}`)
+        }
     }
 
     const CustomTooltip = ({ active, payload, label }) => {
@@ -133,6 +140,7 @@ const Dashboard = () => {
         async function getBusAndTills(){
             const result = await getAllTills();
             const user = await getUserName();
+
             setBusiness(result.business);
             setOwner(user.formattedUser);
             setTills(result.tills);
@@ -218,7 +226,7 @@ const Dashboard = () => {
                                                                 fontSize: '36px',
                                                                 lineHeight: '40px',
                                                                 display: 'flex'}}>
-                                                    {loading ? <Skeleton width={'80%'} /> : `Welcome, ${owner.fname}!`}
+                                                    {loading ? <Skeleton width={'80%'} /> : `Welcome, ${owner?.fname}!`}
                                                 </Typography>
                                             </Box>
                                             <Divider/>
@@ -228,7 +236,7 @@ const Dashboard = () => {
                                                                 fontSize: '48px',
                                                                 lineHeight: '60px',
                                                                 display: 'flex'}}>
-                                                    {loading ? <Skeleton width={'80%'} /> : business.name}
+                                                    {loading ? <Skeleton width={'80%'} /> : business?.name}
                                                 </Typography>
                                                 <Typography variant='h5' sx={{
                                                                 fontFamily: FONT_FAMILY,
@@ -236,7 +244,7 @@ const Dashboard = () => {
                                                                 fontSize: '28px',
                                                                 lineHeight: '36px',
                                                                 display: 'flex'}}>
-                                                    {loading ? <Skeleton width={'80%'} /> : business.type}
+                                                    {loading ? <Skeleton width={'80%'} /> : business?.type}
                                                 </Typography>
                                         </Box>
                                     </Card>
@@ -297,7 +305,7 @@ const Dashboard = () => {
                                                             fontSize: '20px',
                                                             lineHeight: '48px',
                                                             display: 'flex'}}>
-                                                 {loading ? <Skeleton width={'40%'} /> : business.name}
+                                                 {loading ? <Skeleton width={'40%'} /> : business?.name}
                                             </Typography>
                                             <Divider/>
                                             <Box id='list-container' mt={4} sx={{overflow: 'auto', height: '80%'}}>
@@ -321,7 +329,7 @@ const Dashboard = () => {
                                                     })
                                                     :
                                                     // List
-                                                    tills.map((till) => {
+                                                    tills?.map((till) => {
                                                         return (
                                                             <ListItem
                                                                 key={till.id}
