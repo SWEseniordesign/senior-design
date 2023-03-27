@@ -1,6 +1,6 @@
 import { IconButton, Skeleton, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -67,7 +67,7 @@ export const ViewEditTill = () => {
     const localOrderState = useHookstate(orderState);
 
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
-    const [isManager, setIsManager] = useState(userState.employee.get().isManager);
+    const [isManager, setIsManager] = useState(false);
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
     const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
 
@@ -92,6 +92,10 @@ export const ViewEditTill = () => {
         localOrderState.tillId.set(till.formattedTill.id);
         localOrderState.isOpen.set(true);
     }
+
+    useEffect(() => {
+        setIsManager(userState.employee.get().isManager);
+    }, [])
 
     const classes = useStyles();
 
