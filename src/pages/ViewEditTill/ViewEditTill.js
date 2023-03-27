@@ -67,7 +67,7 @@ export const ViewEditTill = () => {
     const localOrderState = useHookstate(orderState);
 
     const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
-    const [isManager, setIsManager] = useState(userState.employee.get().isManager);
+    const [isManager, setIsManager] = useState(false);
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
     const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
 
@@ -92,6 +92,10 @@ export const ViewEditTill = () => {
         localOrderState.tillId.set(till.formattedTill.id);
         localOrderState.isOpen.set(true);
     }
+
+    useEffect(() => {
+        setIsManager(userState.employee.get().isManager);
+    }, [])
 
     const classes = useStyles();
 
