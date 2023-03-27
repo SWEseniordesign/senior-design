@@ -14,7 +14,7 @@ import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
-import { getAllTills, createTill } from "../../requests/tills-req";
+import { getAllTills, getTill, createTill } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({
@@ -100,7 +100,9 @@ const Dashboard = () => {
     const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
     const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
+    const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
     const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
+    const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
 
     const handleNavigateTill = (till) => {
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
@@ -138,10 +140,13 @@ const Dashboard = () => {
             setBusinessId(result.business.id);
         }
         getBusAndTills();
-    }, [])
+    }, [submitAddTillTriggered])
 
 
-
+    const handleEditTill = (till) => {
+        console.log(till.id);
+        //const newTill = getTill(till.id);
+    };
     
 
     const handleAddTillClick = () => {
@@ -157,7 +162,6 @@ const Dashboard = () => {
         try{
             let newTill = {
                 businessId: businessId,
-                //NEED TO GET BUSID
                 name: newTillName,
                 managerPassword: newTillManagerPassword,
                 employees: [],
@@ -165,8 +169,6 @@ const Dashboard = () => {
                 props: []
                 //loginId: newTillLoginId
                 //hide managerPassword
-                //employees: [] NEED EMAIL AND IS MANAGER!!!
-                //etc
             }
             let response = await createTill(newTill);
             if(!(response) || response.code !== 201){
@@ -174,6 +176,12 @@ const Dashboard = () => {
                 setFailedAddTillDialogOpen(true);
             } else {
                 setAlertMessage({message: 'Till Created!', status: 'success'});
+                //CHECK FOR DUPLICATE NAME?
+                console.log(response.formattedTill.id);
+                //const newTill = await getTill(response.formattedTill.id);
+                //console.log(newTill)
+                //setNewTillLoginId();
+                setSuccessAddTillDialogOpen(true);
                 //setBusinessName('');
                 //setBusinessType('');
             }
@@ -188,10 +196,10 @@ const Dashboard = () => {
     };
 
     //* MenuItems that are apart of each individual till dropdown.
-    const dropdownMenuItems_ForTills = [
-        {id: 1, title: 'Edit Till', action: () => {}},
-        {id: 2, title: 'Delete Till', action: () => {}},
-        //{id: 1, title: 'Edit Till', action: () => handleEditTill()}
+    const dropdownMenuItems_ForTills = (till) => [
+        {id: 1, title: 'Edit Till', action: () => handleEditTill(till)},
+        //{id: 1, title: 'Edit Till', action: () => {}},
+        {id: 2, title: 'Delete Till', action: () => {}}
     ];
 
     return (
@@ -318,10 +326,13 @@ const Dashboard = () => {
                                                             <ListItem
                                                                 key={till.id}
                                                                 secondaryAction={
-                                                                    <MTDropdown isIconButton menuItems={dropdownMenuItems_ForTills}/>
+                                                                    <MTDropdown isIconButton menuItems={dropdownMenuItems_ForTills(till)}/>
                                                                 }
                                                                 disablePadding
                                                             >
+                                                                <div onClick={() => console.log("ayo")}>
+        {/* Render the contents of the ListItem */}
+      </div>
                                                                 <ListItemButton
                                                                     onClick={() => handleNavigateTill(till)}>
                                                                     <ListItemAvatar>
@@ -386,7 +397,7 @@ const Dashboard = () => {
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
                                             >
-                                                <DialogTitle id="alert-dialog-title">{"Failled to add till"}</DialogTitle>
+                                                <DialogTitle id="alert-dialog-title">{"Failed to add till"}</DialogTitle>
                                                 <DialogContent>
                                                     <DialogContentText id="alert-dialog-description">
                                                         Could not add till.
@@ -394,6 +405,22 @@ const Dashboard = () => {
                                                 </DialogContent>
                                                 <DialogActions>
                                                     <MTButton label={'CLOSE'} variant={'contained'} onClick={closeFailedAddTillDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
+                                            <Dialog
+                                                open={successAddTillDialogOpen}
+                                                onClose={closeSuccessAddTillDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Successfully added till"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        The till loginId is {newTillLoginId}.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSuccessAddTillDialog}></MTButton>
                                                 </DialogActions>
                                             </Dialog>
                                         </Box>
