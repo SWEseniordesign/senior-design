@@ -112,10 +112,11 @@ const Dashboard = () => {
     const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
 
     /* Stuff for View Till Credentials Dialog */
-    const [tillCredsDialogOpen, setTillCredsDialogOpen] = useState(false);
-    const closeTillCredsDialog = () => setTillCredsDialogOpen(false);
+    const [thisTillName, setThisTillName] = useState('');
     const [thisTillLoginId, setThisTillLoginId] = useState('');
     const [thisTillManagerPassword, setThisTillManagerPassword] = useState('');
+    const [tillCredsDialogOpen, setTillCredsDialogOpen] = useState(false);
+    const closeTillCredsDialog = () => setTillCredsDialogOpen(false);
 
     const handleNavigateTill = (till) => {
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
@@ -167,6 +168,7 @@ const Dashboard = () => {
         console.log(thisTill);
     };
     const handleTillCreds = (till) => {
+        setThisTillName(till.name);
         setThisTillLoginId(till.loginId);
         setThisTillManagerPassword(till.managerPassword)
         setTillCredsDialogOpen(true);
@@ -446,7 +448,7 @@ const Dashboard = () => {
                                                 aria-labelledby="alert-dialog-title"
                                                 aria-describedby="alert-dialog-description"
                                             >
-                                                <DialogTitle id="alert-dialog-title">{"Till Credentials"}</DialogTitle>
+                                                <DialogTitle id="alert-dialog-title">{thisTillName} {"Credentials"}</DialogTitle>
                                                 <DialogContent>
                                                     <DialogContentText id="alert-dialog-description">
                                                         Till loginId: {thisTillLoginId}.
