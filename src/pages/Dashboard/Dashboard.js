@@ -18,6 +18,7 @@ import { getAllTills, getTill, createTill } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 import { tabState } from "../../states/tabState";
 import { useHookstate } from "@hookstate/core";
+import { ObjectId } from 'bson-objectid';
 
 const useStyle = makeStyles({
     root: {
@@ -97,6 +98,7 @@ const Dashboard = () => {
 
     const [newTillName, setNewTillName] = useState('');
     const [newTillLoginId, setNewTillLoginId] = useState('');
+    const [newTillId, setNewTillId] = useState('');
     //LOGIN ID GETS GENERATED, TELL THEM WHAT IT IS AFTER MAKE TILL
     //onCHangeFunc textfield
     const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
@@ -148,12 +150,22 @@ const Dashboard = () => {
             setBusinessId(result.business.id);
         }
         getBusAndTills();
-    }, [submitAddTillTriggered])
+    }, [submitAddTillTriggered]) //check this was ok to do?
 
 
-    const handleEditTill = (till) => {
+    const handleEditTill = async(till) => {
         console.log(till.id);
-        //const newTill = getTill(till.id);
+        //const id = new ObjectId(); // generates a new ObjectId
+        //console.log(id.toString()); // prints the ObjectId as a string
+        const newTill = await getTill(till);
+        console.log(newTill);
+    };
+    const handleGetTillTest = async(createdTill) => {
+
+        /*console.log(id)
+        const testTill2 = await getTill('64223a9d967eadf18d9b98a1');
+        const testTill = await getTill(id);
+        console.log(testTill2);*/
     };
     
 
@@ -185,14 +197,23 @@ const Dashboard = () => {
             } else {
                 setAlertMessage({message: 'Till Created!', status: 'success'});
                 //CHECK FOR DUPLICATE NAME?
-                console.log(response.formattedTill.id);
-                //const newTill = await getTill(response.formattedTill.id);
+                
+                /*console.log("hi")
+                console.log(response.formattedTill.id)
+                setNewTillId(response.formattedTill.id);
+                console.log(newTillId)*/
+                //console.log(newId)
+                //handleGetTillTest(newId);
+                //const newTill = await getTill('6422331ec85d9d746ffecc38');
                 //console.log(newTill)
                 //setNewTillLoginId();
                 setSuccessAddTillDialogOpen(true);
                 //setBusinessName('');
                 //setBusinessType('');
             }
+            //response.formattedTill.id;
+            //console.log(newId)
+            //handleGetTillTest(newId);
 
             setAddTillOpen(true);
         } catch(e){
@@ -201,6 +222,8 @@ const Dashboard = () => {
 
         setSubmitAddTillTriggered(true);
         setAddTillOpen(false);
+        console.log(newTillId)
+        //handleGetTillTest(newTillId);
     };
 
     //* MenuItems that are apart of each individual till dropdown.
