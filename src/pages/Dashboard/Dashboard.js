@@ -95,18 +95,27 @@ const Dashboard = () => {
     const [tills, setTills] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const [newTillName, setNewTillName] = useState('');
-    const [newTillLoginId, setNewTillLoginId] = useState('');
+    
     //onCHangeFunc textfield
-    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
-    const [addTillOpen, setAddTillOpen] = useState(false);
-    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
+    //use alert message for fail instead???
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
+    /* Stuff for Add Till Modal */
+    const [newTillName, setNewTillName] = useState('');
+    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
+    const [newTillLoginId, setNewTillLoginId] = useState('');
+    const [addTillOpen, setAddTillOpen] = useState(false);
+    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false); //need this as well as addTillOpen or only need one?
     const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
     const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
     const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
     const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
+
+    /* Stuff for View Till Credentials Dialog */
+    const [tillCredsDialogOpen, setTillCredsDialogOpen] = useState(false);
+    const closeTillCredsDialog = () => setTillCredsDialogOpen(false);
+    const [thisTillLoginId, setThisTillLoginId] = useState('');
+    const [thisTillManagerPassword, setThisTillManagerPassword] = useState('');
 
     const handleNavigateTill = (till) => {
         //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
@@ -152,18 +161,15 @@ const Dashboard = () => {
 
 
     const handleEditTill = async(till) => {
+        //put in try catch???
         console.log(till.id);
-        //const id = new ObjectId(); // generates a new ObjectId
-        //console.log(id.toString()); // prints the ObjectId as a string
-        const thisTill = await getTill(till);
+        const thisTill = await getTill(till); //dont need to get first, this was just test
         console.log(thisTill);
     };
-    const handleTillCreds = async(till) => {
-
-        /*console.log(id)
-        const testTill2 = await getTill('64223a9d967eadf18d9b98a1');
-        const testTill = await getTill(id);
-        console.log(testTill2);*/
+    const handleTillCreds = (till) => {
+        setThisTillLoginId(till.loginId);
+        setThisTillManagerPassword(till.managerPassword)
+        setTillCredsDialogOpen(true);
     };
     
 
@@ -209,8 +215,8 @@ const Dashboard = () => {
     //* MenuItems that are apart of each individual till dropdown.
     const dropdownMenuItems_ForTills = (till) => [
         {id: 1, title: 'Edit Till', action: () => handleEditTill(till)},
-        //{id: 1, title: 'Edit Till', action: () => {}},
-        {id: 2, title: 'Delete Till', action: () => {}}
+        {id: 2, title: 'View Credentials', action: () => {handleTillCreds(till)}},
+        {id: 3, title: 'Delete Till', action: () => {}}
     ];
 
     return (
@@ -432,6 +438,25 @@ const Dashboard = () => {
                                                 </DialogContent>
                                                 <DialogActions>
                                                     <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSuccessAddTillDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
+                                            <Dialog
+                                                open={tillCredsDialogOpen}
+                                                onClose={closeTillCredsDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Till Credentials"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        Till loginId: {thisTillLoginId}.
+                                                    </DialogContentText>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        Till manager password: {thisTillManagerPassword}.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeTillCredsDialog}></MTButton>
                                                 </DialogActions>
                                             </Dialog>
                                         </Box>
