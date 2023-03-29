@@ -14,7 +14,7 @@ import { COLOR_PALETTE } from "../../Constants";
 import { deleteTab, getAllTabs } from "../../requests/tabs-req";
 import { deleteCard, getAllCards, modifyCardPosition } from "../../requests/cards-req";
 import { useQuery } from "react-query";
-import { useHookstate } from "@hookstate/core";
+import { none, useHookstate } from "@hookstate/core";
 import './MTTabs.css'
 import MTDropdown from "./MTDropdown";
 import { deleteItem } from "../../requests/items-req";
@@ -118,7 +118,7 @@ export const MTTabs = (props) => {
     const localItemState = useHookstate(itemState);
     const localOrderState = useHookstate(orderState);
 
-    const {isLoading: isLoadingTabs, data: tabs} = useQuery(["tabs", till.formattedTill.id], () => getAllTabs({tillId: till.formattedTill.id}),
+    const {isLoading: isLoadingTabs, data: tabs, refetch: fetchTabs} = useQuery(["tabs", till.formattedTill.id], () => getAllTabs({tillId: till.formattedTill.id}),
     {
         enabled: true,
         refetchOnWindowFocus: false,
@@ -130,6 +130,11 @@ export const MTTabs = (props) => {
     });
 
     const ResponsiveLayout = WidthProvider(Responsive);
+
+    useEffect(() => {
+        setValue(0);
+        fetchTabs();
+    }, [localTabState.isEdit.get(), localTabState.isAdd.get()])
 
     //* Once we have the till information and the tab information, we can store the tabs in the local state
     useEffect(() => {
@@ -246,7 +251,8 @@ export const MTTabs = (props) => {
     const removeTab = async (e, rowIdToDelete) => {
         let deleteResponse = await deleteTab({tabId: rowIdToDelete, tillId: till.formattedTill.id});
         if(deleteResponse.code === 200){
-            localTabState.tabs.get().filter((tab) => tab.id !== rowIdToDelete);
+            let tabIndex = localTabState.tabs.get().findIndex((i) => i.id === rowIdToDelete);
+            localTabState.tabs[tabIndex].set(none);
         } else {
             console.log(deleteResponse.err);
         }
