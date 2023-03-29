@@ -80,66 +80,14 @@ const Dashboard = () => {
 
     const localTabState = useHookstate(tabState);
 
+    /* Pie chart data and functionality */
     const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
-
     const pieData = [
         {name: 'Food', orders: 40},
         {name: 'Drinks', orders: 15},
         {name: 'Combos', orders: 35},
         {name: 'Snacks', orders: 10}
     ];
- 
-    const [businessId, setBusinessId] = useState('')
-    const [business, setBusiness] = useState({})
-    const [owner, setOwner] = useState({})
-    const [tills, setTills] = useState([])
-    const [loading, setLoading] = useState(true)
-
-    
-    //onCHangeFunc textfield
-    //use alert message for fail instead???
-    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-
-    /* Stuff for Add Till Dialog */
-    const [newTillName, setNewTillName] = useState('');
-    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
-    const [newTillLoginId, setNewTillLoginId] = useState('');
-    const [addTillOpen, setAddTillOpen] = useState(false);
-    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
-    const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
-    const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
-    const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
-    const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
-
-    /* Stuff for Edit Till Dialog */
-    const [tillToUpdate, setTillToUpdate] = useState({});
-    const [updatedTillName, setUpdatedTillName] = useState('');
-    const [updatedTillManagerPassword, setUpdatedTillManagerPassword] = useState('');
-    const [editTillOpen, setEditTillOpen] = useState(false);
-    const [submitEditTillTriggered, setSubmitEditTillTriggered] = useState(false);
-    const [failedEditTillDialogOpen, setFailedEditTillDialogOpen] = useState(false);
-    const [successEditTillDialogOpen, setSuccessEditTillDialogOpen] = useState(false);
-    const closeFailedEditTillDialog = () => setFailedEditTillDialogOpen(false);
-    const closeSuccessEditTillDialog = () => setSuccessEditTillDialogOpen(false);
-    const closeEditTill = () => setEditTillOpen(false);
-
-    /* Stuff for View Till Credentials Dialog */
-    const [thisTillName, setThisTillName] = useState('');
-    const [thisTillLoginId, setThisTillLoginId] = useState('');
-    const [thisTillManagerPassword, setThisTillManagerPassword] = useState('');
-    const [tillCredsDialogOpen, setTillCredsDialogOpen] = useState(false);
-    const closeTillCredsDialog = () => setTillCredsDialogOpen(false);
-
-    const handleNavigateTill = (till) => {
-        //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
-        //? Leaving this for now since it can be tested
-        localTabState.tabs.set([]);
-        localTabState.activeTab.set('');
-        if(localTabState.tabs.get().length === 0 && localTabState.activeTab.get() === '') {
-            navigate(`/edit-till/${till.id}`)
-        }
-    }
-
     const CustomTooltip = ({ active, payload, label }) => {
         if (active) {
            return (
@@ -157,6 +105,53 @@ const Dashboard = () => {
      }
      return null;
     };
+ 
+    const [businessId, setBusinessId] = useState('')
+    const [business, setBusiness] = useState({})
+    const [owner, setOwner] = useState({})
+    const [tills, setTills] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    /* State variables for Add Till Dialog */
+    const [newTillName, setNewTillName] = useState('');
+    const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
+    const [newTillLoginId, setNewTillLoginId] = useState('');
+    const [addTillOpen, setAddTillOpen] = useState(false);
+    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
+    const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
+    const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
+    const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
+    const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
+
+    /* State variables for Edit Till Dialog */
+    const [tillToUpdate, setTillToUpdate] = useState({});
+    const [updatedTillName, setUpdatedTillName] = useState('');
+    const [updatedTillManagerPassword, setUpdatedTillManagerPassword] = useState('');
+    const [editTillOpen, setEditTillOpen] = useState(false);
+    const [submitEditTillTriggered, setSubmitEditTillTriggered] = useState(false);
+    const [failedEditTillDialogOpen, setFailedEditTillDialogOpen] = useState(false);
+    const [successEditTillDialogOpen, setSuccessEditTillDialogOpen] = useState(false);
+    const closeFailedEditTillDialog = () => setFailedEditTillDialogOpen(false);
+    const closeSuccessEditTillDialog = () => setSuccessEditTillDialogOpen(false);
+    const closeEditTill = () => setEditTillOpen(false);
+
+    /* State variables for View Till Credentials Dialog */
+    const [thisTillName, setThisTillName] = useState('');
+    const [thisTillLoginId, setThisTillLoginId] = useState('');
+    const [thisTillManagerPassword, setThisTillManagerPassword] = useState('');
+    const [tillCredsDialogOpen, setTillCredsDialogOpen] = useState(false);
+    const closeTillCredsDialog = () => setTillCredsDialogOpen(false);
+
+    const handleNavigateTill = (till) => {
+        //? This is how we will navigate to the till pages. Either do whats below or do this: navigate(`/view-till/${till.id}`)
+        //? Leaving this for now since it can be tested
+        localTabState.tabs.set([]);
+        localTabState.activeTab.set('');
+        if(localTabState.tabs.get().length === 0 && localTabState.activeTab.get() === '') {
+            navigate(`/edit-till/${till.id}`)
+        }
+    }
+
 
     useEffect (() => {
         async function getBusAndTills(){
@@ -181,17 +176,12 @@ const Dashboard = () => {
     }
     
     const handleEditTillSubmit = async(e) => {
-        //put in try catch???
         e.preventDefault();
         try{
             let updatedTill = {
-                //businessId: businessId,
                 id: tillToUpdate.id,
-                name: updatedTillName,
-                managerPassword: updatedTillManagerPassword,
-                //employees: [],
-                //tabs: [],
-                //props: []
+                name: updatedTillName !== '' ? updatedTillName : tillToUpdate.name,
+                managerPassword: updatedTillManagerPassword !== '' ? updatedTillManagerPassword : tillToUpdate.managerPassword,
             }
             let response = await editTill(updatedTill);
             if(!(response) || response.code !== 200){
@@ -442,10 +432,10 @@ const Dashboard = () => {
                                                                 <div className={classes.dialogElement}>
                                                                     <Grid container rowSpacing={3}>
                                                                         <Grid item xs={12} md={12}>
-                                                                            <MTTextField label={'Name'} value={newTillName} onChangeFunc={setNewTillName} isFullWidth isRequired mb={4} />
+                                                                            <MTTextField label={'Name'} value={newTillName} onChangeFunc={setNewTillName} isFullWidth isRequired autocomplete="off" mb={4} />
                                                                         </Grid>
                                                                         <Grid item xs={12} md={12}>
-                                                                            <MTTextField label={'Manager Password'} type='password' value={newTillManagerPassword} onChangeFunc={setNewTillManagerPassword} isFullWidth isRequired hasPasswordHideShow mb={4} />
+                                                                            <MTTextField label={'Manager Password'} type='password' value={newTillManagerPassword} onChangeFunc={setNewTillManagerPassword} isFullWidth isRequired hasPasswordHideShow autocomplete="off" mb={4} />
                                                                         </Grid>
                                                                     </Grid>
                                                                 </div>
@@ -474,13 +464,16 @@ const Dashboard = () => {
                                                                 </Typography>
                                                             </DialogTitle>
                                                             <DialogContent>
+                                                                <DialogContentText id="alert-dialog-description">
+                                                                    The keep the name or manager password the same, please leave field blank.
+                                                                </DialogContentText>
                                                                 <div className={classes.dialogElement}>
                                                                     <Grid container rowSpacing={3}>
                                                                         <Grid item xs={12} md={12}>
-                                                                            <MTTextField label={'New Name'} value={updatedTillName} onChangeFunc={setUpdatedTillName} isFullWidth isRequired mb={4} />
+                                                                            <MTTextField label={'New Name'} value={updatedTillName} onChangeFunc={setUpdatedTillName} isFullWidth isRequired autocomplete="off" mb={4} />
                                                                         </Grid>
                                                                         <Grid item xs={12} md={12}>
-                                                                            <MTTextField label={'New Manager Password'} type='password' value={updatedTillManagerPassword} onChangeFunc={setUpdatedTillManagerPassword} isFullWidth isRequired hasPasswordHideShow mb={4} />
+                                                                            <MTTextField label={'New Manager Password'} type='password' value={updatedTillManagerPassword} onChangeFunc={setUpdatedTillManagerPassword} isFullWidth isRequired hasPasswordHideShow autocomplete="off" mb={4} />
                                                                         </Grid>
                                                                     </Grid>
                                                                 </div>
