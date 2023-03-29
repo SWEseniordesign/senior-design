@@ -1,7 +1,6 @@
 {
   "name": "senior-design",
   "version": "0.1.0",
-  "homepage": "https://github.com/SWEseniordesign/senior-design",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.4",
