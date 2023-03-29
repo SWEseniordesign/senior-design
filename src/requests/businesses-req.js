@@ -28,6 +28,25 @@ export async function createBusiness (obj) {
 }
 
 /*
+    TODO:
+    Edits a business from its name
+*/
+export async function editBusiness (obj) {
+    let data;
+    await fetch('http://localhost:8080/business/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => {return err;});   
+    return data;
+}
+
+/*
 Get a business from its name
     Pass in a json object with a key called name or a object shown in the above comments
 */
