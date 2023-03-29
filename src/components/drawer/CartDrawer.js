@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MtButton from "../mui/MTButton";
@@ -9,6 +9,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { none, useHookstate } from "@hookstate/core";
 import { orderState } from "../../states/orderState";
 import { createTransaction } from "../../requests/transactions-req";
+import { userState } from "../../states/userState";
 
 const useStyles = makeStyles({
   drawer: {
@@ -32,6 +33,7 @@ const useStyles = makeStyles({
 const CartDrawer = () => {
 
   const localOrderState = useHookstate(orderState);
+  const [err, setErr] = useState('');
 
   const addItemToCart = (item) => {
     let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
@@ -76,7 +78,7 @@ const CartDrawer = () => {
     let transactionResponse = await createTransaction(newTransaction);
     console.log(!!(transactionResponse.err))
     if(!!(transactionResponse.err)){
-      console.log(transactionResponse.err);
+      setErr(transactionResponse.err);
     } else {
       localOrderState.order.set([]);
     }
@@ -141,7 +143,8 @@ const CartDrawer = () => {
                 <Typography>{`$${(getSubtotal() * 1.15).toFixed(2)}`}</Typography>
             </ListItem>
             <ListItem>
-                <MtButton variant="contained" onClick={handleCheckout} label={'CHECKOUT'} />
+                <MtButton variant="contained" disabled={!(userState.employee.get()._id)} onClick={handleCheckout} label={'CHECKOUT'} />
+                {!(userState.employee.get()._id) && <Typography variant={"subtitle2"} sx={{marginLeft: '12px'}}>Cannot make transaction. User is a Business Owner</Typography>}
             </ListItem>
         </List>
 

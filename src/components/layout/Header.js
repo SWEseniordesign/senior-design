@@ -81,7 +81,7 @@ const Header = (props) => {
     //* Activated when the user opens the avatar dropdown. Checks if the user has a business.
     const userHasBusiness = async() => {
         let response;
-        if(userState.token.get() !== '' && userState.employee.get() === {}){
+        if(userState.token.get() !== ''){
             response = await getUserBusiness();
         }
 
@@ -121,8 +121,6 @@ const Header = (props) => {
             }}
         ];
 
-    console.log(uState.get())
-
     const classes = useStyles();
 
     return (
@@ -147,7 +145,7 @@ const Header = (props) => {
                             <>
                                 <div className={classes.separator}></div>
                                 <div className={classes.dropdownContainer}>
-                                    <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
+                                    {/* <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/> */}
                                     <MTDropdown hasDropdownIcon label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
                                 </div>
                             </>}
