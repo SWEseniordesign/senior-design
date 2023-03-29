@@ -161,6 +161,70 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
 
 
 /**
+ * Edit a till's name and manager password.
+ *
+ * @route POST /till/edit
+ * @expects JWT in header of request, till info in JSON in body of request
+ * @success 200 OK, returns {formattedTill, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: Till ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: Till ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Till not found
+ *        500 Internal Server Error
+ */
+router.post('/edit', verifyJWT, function(req, res) {
+    //Check if req body exists
+    if (!req.body) return res.status(400).send({err: 'No request body', code: 400});
+  
+    //Find till by its ObjectId
+    const objectId = req.body.id;
+  
+    //Verify ObjectId is valid
+    if (!mongoose.isValidObjectId(objectId)) {
+      return res.status(400).send({err: 'Type 1: Till ID is not a valid ObjectId', code: 400});
+    }
+    //Verify ObjectId is actually an ObjectId
+    if (String(new ObjectId(objectId)) !== objectId) {
+      return res.status(400).send({err: 'Type 2: Till ID is not a valid ObjectId', code: 400});
+    }
+  
+    //Find the till and update its name and manager password
+    Till.findByIdAndUpdate(
+      objectId,
+      {name: req.body.name, managerPassword: req.body.managerPassword},
+      {new: true},
+      function(err, till) {
+        if (err) {
+          console.log(err);
+          return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+  
+        //If till is not found, return an error
+        if (till === null) {
+          return res.status(404).send({err: `Till does not exist`, code: 404});
+        }
+  
+        //Formats and returns the updated till
+        const formattedTill = {
+          id: till._id.toString(),
+          loginId: till.loginId,
+          name: till.name,
+          managerPassword: till.managerPassword,
+          employees: till.employees,
+          tabs: till.tabs,
+          props: till.props,
+          transactions: till.transactions
+        };
+  
+        return res.status(200).send({formattedTill, code: 200});
+      }
+    );
+  });
+  
+
+
+/**
  * Get all tills from business via jwt
  *
  * @route POST /till/getall

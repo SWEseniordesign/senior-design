@@ -116,7 +116,7 @@ const Dashboard = () => {
     const [updatedTillName, setUpdatedTillName] = useState('');
     const [updatedTillManagerPassword, setUpdatedTillManagerPassword] = useState('');
     const [editTillOpen, setEditTillOpen] = useState(false);
-    //const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false); //need this as well as addTillOpen or only need one?
+    const [submitEditTillTriggered, setSubmitEditTillTriggered] = useState(false); //need this as well as addTillOpen or only need one?
     //const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
     //const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
     //const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
@@ -174,7 +174,7 @@ const Dashboard = () => {
             setBusinessId(result.business.id);
         }
         getBusAndTills();
-    }, [submitAddTillTriggered]) //check this was ok to do?
+    }, [submitAddTillTriggered, submitEditTillTriggered]) //check this was ok to do?
 
     const handleEditTill = (till) => {
         setEditTillOpen(true);
@@ -183,9 +183,38 @@ const Dashboard = () => {
     
     const handleEditTillSubmit = async(e) => {
         //put in try catch???
+        e.preventDefault();
+        try{
+            let updatedTill = {
+                //businessId: businessId,
+                id: tillToUpdate.id,
+                name: updatedTillName,
+                managerPassword: updatedTillManagerPassword,
+                //employees: [],
+                //tabs: [],
+                //props: []
+            }
+            let response = await editTill(updatedTill);
+            if(!(response) || response.code !== 201){
+                setAlertMessage({message: !(response) ? 'Failed to edit till.' : response.err, status: 'warning'});
+                //setFailedAddTillDialogOpen(true);
+            } else {
+                setAlertMessage({message: 'Till Created!', status: 'success'});
+                //setSuccessAddTillDialogOpen(true);
+            }
+            //const createdTill = await getTill(response.formattedTill);
+            //setNewTillLoginId(createdTill.formattedTill.loginId)
+
+            setEditTillOpen(true); //remove?
+        } catch(e){
+            console.log(e);
+        }
+
+        setSubmitEditTillTriggered(true);
+        setEditTillOpen(false);
         
-        const thisTill = await getTill(tillToUpdate); //dont need to get first, this was just test
-        console.log(thisTill);
+        //const thisTill = await getTill(tillToUpdate); //dont need to get first, this was just test
+        //console.log(thisTill);
     };
     const handleTillCreds = (till) => {
         setThisTillName(till.name);
@@ -459,7 +488,7 @@ const Dashboard = () => {
                                                             </DialogContent>
                                                             <DialogActions>
                                                                 <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={closeEditTill} isFullWidth></MTButton>
-                                                                <MTButton label={'CREATE'} variant={'contained'} type={'submit'} onClick={handleEditTillSubmit} isFullWidth></MTButton>
+                                                                <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleEditTillSubmit} isFullWidth></MTButton>
                                                             </DialogActions>
                                                         </div>
                                                     </Dialog>
