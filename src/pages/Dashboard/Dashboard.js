@@ -2,7 +2,6 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recha
 import { Grid, Paper, Card, Typography, Box, Fab, IconButton, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Avatar, Divider, CircularProgress, Skeleton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import AddIcon from '@mui/icons-material/Add';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BusinessIcon from '@mui/icons-material/Business';
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle }  from '@material-ui/core';
@@ -14,7 +13,7 @@ import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
-import { getBusiness, editBusiness } from "../../requests/businesses-req";
+import { editBusiness } from "../../requests/businesses-req";
 import { getAllTills, getTill, createTill, editTill } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 import { tabState } from "../../states/tabState";
@@ -82,7 +81,7 @@ const Dashboard = () => {
     const localTabState = useHookstate(tabState);
 
     /* Pie chart data and functionality */
-    const PIE_COLORS = [COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40", "#1D9DA8"];
+    const PIE_COLORS = [COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40", "#13a8a6"];
     const pieData = [
         {name: 'Food', orders: 40},
         {name: 'Drinks', orders: 15},
