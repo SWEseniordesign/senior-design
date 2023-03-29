@@ -14,7 +14,7 @@ import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getUserName } from "../../requests/users-req";
-import { getAllTills, getTill, createTill } from "../../requests/tills-req";
+import { getAllTills, getTill, createTill, editTill } from "../../requests/tills-req";
 import { checkLoggedInStatus_Redirect } from "../helper/routesHelper";
 import { tabState } from "../../states/tabState";
 import { useHookstate } from "@hookstate/core";
@@ -100,7 +100,7 @@ const Dashboard = () => {
     //use alert message for fail instead???
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
-    /* Stuff for Add Till Modal */
+    /* Stuff for Add Till Dialog */
     const [newTillName, setNewTillName] = useState('');
     const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
     const [newTillLoginId, setNewTillLoginId] = useState('');
@@ -110,6 +110,22 @@ const Dashboard = () => {
     const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
     const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
     const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
+
+    /* Stuff for Edit Till Dialog */
+    const [tillToUpdate, setTillToUpdate] = useState({});
+    const [updatedTillName, setUpdatedTillName] = useState('');
+    const [updatedTillManagerPassword, setUpdatedTillManagerPassword] = useState('');
+    const [editTillOpen, setEditTillOpen] = useState(false);
+    //const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false); //need this as well as addTillOpen or only need one?
+    //const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
+    //const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
+    //const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
+    //const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
+    //ALERT MESSAGE INSTEAD LIE LOGIN PAGE!
+    //const handleEditTill = async(till) => {
+        //setEditTillOpen
+    //};
+    const closeEditTill = () => setEditTillOpen(false);
 
     /* Stuff for View Till Credentials Dialog */
     const [thisTillName, setThisTillName] = useState('');
@@ -160,11 +176,15 @@ const Dashboard = () => {
         getBusAndTills();
     }, [submitAddTillTriggered]) //check this was ok to do?
 
-
-    const handleEditTill = async(till) => {
+    const handleEditTill = (till) => {
+        setEditTillOpen(true);
+        setTillToUpdate(till);
+    }
+    
+    const handleEditTillSubmit = async(e) => {
         //put in try catch???
-        console.log(till.id);
-        const thisTill = await getTill(till); //dont need to get first, this was just test
+        
+        const thisTill = await getTill(tillToUpdate); //dont need to get first, this was just test
         console.log(thisTill);
     };
     const handleTillCreds = (till) => {
@@ -405,6 +425,41 @@ const Dashboard = () => {
                                                             <DialogActions>
                                                                 <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleAddTillClose} isFullWidth></MTButton>
                                                                 <MTButton label={'CREATE'} variant={'contained'} type={'submit'} onClick={handleAddTillSubmit} isFullWidth></MTButton>
+                                                            </DialogActions>
+                                                        </div>
+                                                    </Dialog>
+                                                </div>
+                                            )}
+                                            {editTillOpen && (
+                                                <div className={classes.overlay}>
+                                                    <Dialog open={editTillOpen} onClose={closeEditTill} className={classes.dialog} PaperProps={{ style: { zIndex: 10002 } }} aria-labelledby="form-dialog-title">
+                                                        <div className={classes.dialogContainer}>
+                                                            <DialogTitle id="form-dialog-title">
+                                                                <Typography sx={{
+                                                                                fontFamily: FONT_FAMILY,
+                                                                                fontWeight: '600',
+                                                                                fontSize: '32px',
+                                                                                lineHeight: '40px',
+                                                                                display: 'flex',
+                                                                                justifyContent: 'center'}}>
+                                                                    Edit Till
+                                                                </Typography>
+                                                            </DialogTitle>
+                                                            <DialogContent>
+                                                                <div className={classes.dialogElement}>
+                                                                    <Grid container rowSpacing={3}>
+                                                                        <Grid item xs={12} md={12}>
+                                                                            <MTTextField label={'New Name'} value={updatedTillName} onChangeFunc={setUpdatedTillName} isFullWidth isRequired mb={4} />
+                                                                        </Grid>
+                                                                        <Grid item xs={12} md={12}>
+                                                                            <MTTextField label={'New Manager Password'} type='password' value={updatedTillManagerPassword} onChangeFunc={setUpdatedTillManagerPassword} isFullWidth isRequired hasPasswordHideShow mb={4} />
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                </div>
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={closeEditTill} isFullWidth></MTButton>
+                                                                <MTButton label={'CREATE'} variant={'contained'} type={'submit'} onClick={handleEditTillSubmit} isFullWidth></MTButton>
                                                             </DialogActions>
                                                         </div>
                                                     </Dialog>
