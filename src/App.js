@@ -1,6 +1,6 @@
 import React from 'react';
 import Router from './router/Router';
-import { BrowserRouter, HashRouter } from 'react-router-dom'; 
+import { BrowserRouter } from 'react-router-dom'; 
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
@@ -8,9 +8,9 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <HashRouter>
+      <BrowserRouter>
         <Router />
-      </HashRouter>      
+      </BrowserRouter>      
     </QueryClientProvider>
   );
 }
