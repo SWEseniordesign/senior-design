@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/SWEseniordesign/senior-design/static/css/main.73239039.css",
-    "main.js": "/SWEseniordesign/senior-design/static/js/main.f1723efc.js",
+    "main.js": "/SWEseniordesign/senior-design/static/js/main.d2200520.js",
     "static/media/till-sc.png": "/SWEseniordesign/senior-design/static/media/till-sc.751a18cb5b2524ce8925.png",
     "static/media/cashier.jpeg": "/SWEseniordesign/senior-design/static/media/cashier.577d0d3fd539435e2e67.jpeg",
     "static/media/fast-food-workers.jpeg": "/SWEseniordesign/senior-design/static/media/fast-food-workers.2a2a2ddc95477a97737e.jpeg",
     "index.html": "/SWEseniordesign/senior-design/index.html",
     "main.73239039.css.map": "/SWEseniordesign/senior-design/static/css/main.73239039.css.map",
-    "main.f1723efc.js.map": "/SWEseniordesign/senior-design/static/js/main.f1723efc.js.map"
+    "main.d2200520.js.map": "/SWEseniordesign/senior-design/static/js/main.d2200520.js.map"
   },
   "entrypoints": [
     "static/css/main.73239039.css",
-    "static/js/main.f1723efc.js"
+    "static/js/main.d2200520.js"
   ]
 }
