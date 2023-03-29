@@ -257,32 +257,28 @@ export const MTTabs = (props) => {
         setLocalCards(localCards?.map((card) => {
             if(card.id === cardId){
                 card.static = !card.static
-            }
-            return card;
-        }));
-        handleLayoutChange(e, true);
-    }
-
-    //* Sets new dimensions to the card that has been moved.
-    const handleLayoutChange = (e, updateLock) => {
-        let newDimensions;
-
-        localCards?.map(async (card, i) => {
-            if(!!(updateLock)){
-                newDimensions = {
+                updateCardProps({
                     cardId: card.id,
                     x: card.dimensions.x,
                     y: card.dimensions.y,
-                    width:card.dimensions.w,
-                    height: card.dimensions.h,
+                    width: card.dimensions.width,
+                    height: card.dimensions.height,
                     static: card.static
-                }
-                await modifyCardPosition(newDimensions);
-            } else if(card.dimensions.x !== e[i].x || card.dimensions.y !== e[i].y || card.dimensions.width !== e[i].w || card.dimensions.height !== e[i].h || card.static !== e[i].static){
+                });
+            }
+            return card;
+        }));
+    }
+
+    //* Sets new dimensions to the card that has been moved.
+    const handleLayoutChange = async(e, updateLock, cardId) => {
+        let newDimensions;
+        localCards?.map((card, i) => {
+            if(card.dimensions.x !== e[i].x || card.dimensions.y !== e[i].y || card.dimensions.width !== e[i].w || card.dimensions.height !== e[i].h || card.static !== e[i].static){
                 card.dimensions.x = e[i].x;
                 card.dimensions.y = e[i].y;
-                card.dimensions.w = e[i].w;
-                card.dimensions.h = e[i].h;
+                card.dimensions.width = e[i].w;
+                card.dimensions.height = e[i].h;
                 newDimensions = {
                     cardId: card.id,
                     x: e[i].x,
@@ -291,10 +287,16 @@ export const MTTabs = (props) => {
                     height: e[i].h,
                     static: card.static
                 }
-                await modifyCardPosition(newDimensions);
             }
             return card;
         })
+
+        if(!!(newDimensions)) updateCardProps(newDimensions);
+
+    }
+
+    const updateCardProps = async(newDimensions) => {
+        await modifyCardPosition(newDimensions);
     }
 
     //* Initializes the layout of the cards.
@@ -326,10 +328,11 @@ export const MTTabs = (props) => {
                 resizeHandles: []
             });
         } else {
+            let wid = layout.reduce((sum, item) => sum + item.w, 0);
             layout.push({
                 i: layout.length.toString(),
-                x: layout[layout.length-1].x === 2 ? 0 : layout[layout.length-1].x + 1,
-                y: layout[layout.length-1].x < 2 ? layout[layout.length-1].y : layout[layout.length-1].y + 1,
+                x: wid >= 6 ? 0 : wid,
+                y: wid >= 6 ? layout[layout.length-1].y : layout[layout.length-1].y + 1,
                 w: 1,
                 h: 1,
                 static: false,
@@ -347,7 +350,7 @@ export const MTTabs = (props) => {
     }
 
     const classes = useStyle();
-    const layout = createLayout();
+    const layout = !isLoadingCards && createLayout();
 
     return (
         <div className={classes.root}>
@@ -374,7 +377,7 @@ export const MTTabs = (props) => {
                                 }
                             } else if(!isEdit && tab.name !== '+'){
                                 return <Tab 
-                                        sx={{fontSize: '24px', bgcolor: !!(tab.color) ? tab.color : ''}}
+                                        sx={{fontSize: '20px', bgcolor: !!(tab.color) ? tab.color : ''}}
                                         key={i}
                                         value={i}
                                         label={tab.name}
@@ -391,7 +394,7 @@ export const MTTabs = (props) => {
                                 className={classes.layout}
                                 layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
-                                cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
+                                cols={{ lg: 6, md: 6, sm: 3, xs: 1, xxs: 1 }}
                                 rowHeight={350}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
@@ -513,7 +516,7 @@ export const MTTabs = (props) => {
                                     className={classes.layout}
                                     layouts={{lg: layout}}
                                     draggableHandle=".draggableHandle"
-                                    cols={{ lg: 3, md: 3, sm: 3, xs: 3, xxs: 2 }}
+                                    cols={{ lg: 6, md: 6, sm: 3, xs: 1, xxs: 1 }}
                                     rowHeight={310}
                                     onLayoutChange={(e) => handleLayoutChange(e, false)}
                                     >

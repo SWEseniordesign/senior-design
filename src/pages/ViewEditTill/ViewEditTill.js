@@ -156,7 +156,7 @@ export const ViewEditTill = () => {
                                 <Skeleton className={classes.loader} variant={'rectangle'} />}
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
-                                <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /></Grid2>
+                                {(isManager || userState.isLoggedIn.get()) && <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /></Grid2>}
                                 {(isManager || userState.isLoggedIn.get()) && <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>}
                                 <Grid2 xs={12} md={6} lg={2} xl={2}>
                                     <IconButton onClick={() => handleOrderInformation()}>

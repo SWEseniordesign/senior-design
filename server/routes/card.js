@@ -228,12 +228,12 @@ router.post('/modifyposition', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Verify input
-    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
-    if(typeof req.body.x === 'undefined' || !req.body.x) return res.status(400).send({err: 'Invalid x input', code: 400});
-    if(typeof req.body.y === 'undefined' || !req.body.y) return res.status(400).send({err: 'Invalid y input', code: 400});
-    if(typeof req.body.width === 'undefined' || !req.body.width) return res.status(400).send({err: 'Invalid width input', code: 400});
-    if(typeof req.body.height === 'undefined' || !req.body.height) return res.status(400).send({err: 'Invalid height input', code: 400});
-    if(typeof req.body.static === 'undefined' || !req.body.static) return res.status(400).send({err: 'Invalid static input', code: 400});
+    if(typeof req.body.cardId === 'undefined') return res.status(400).send({err: 'Invalid cardId input', code: 400});
+    if(typeof req.body.x === 'undefined') return res.status(400).send({err: 'Invalid x input', code: 400});
+    if(typeof req.body.y === 'undefined') return res.status(400).send({err: 'Invalid y input', code: 400});
+    if(typeof req.body.width === 'undefined') return res.status(400).send({err: 'Invalid width input', code: 400});
+    if(typeof req.body.height === 'undefined') return res.status(400).send({err: 'Invalid height input', code: 400});
+    if(typeof req.body.static === 'undefined') return res.status(400).send({err: 'Invalid static input', code: 400});
 
     //Create temp object
     let updatedDimensions = {
