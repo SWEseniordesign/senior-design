@@ -4,8 +4,8 @@ import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { CompactPicker } from "react-color";
 import { COLOR_PALETTE } from "../../Constants";
-import { updateTab } from "../../requests/tabs-req";
-import { tabState } from "../../states/tabState";
+import { updateCard } from "../../requests/cards-req";
+import { cardState } from "../../states/cardState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
 import MTTextField from "../mui/MTTextField";
@@ -16,7 +16,7 @@ const useStyle = makeStyles({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '20%',
+        width: 'fit-content',
         height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
@@ -27,35 +27,41 @@ const useStyle = makeStyles({
     }
 })
 
-//* The modal that pops up when the user wants to edit a tab.
-export const EditTabModal = (props) => {
-    const {tabEdit} = props;
+//* The modal that pops up when the user wants to edit a card.
+export const EditCardModal = (props) => {
 
-    const [newTabName, setNewTabName] = useState(tabEdit.name);
-    const [newTabColor, setNewTabColor] = useState(tabEdit.color);
+    const {cards} = props;
+
+    const localCardState = useHookstate(cardState);
+
+    const [newTabName, setNewTabName] = useState('');
+    const [newTabColor, setNewTabColor] = useState('#FFFFFF');
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
-    const localTabState = useHookstate(tabState);
 
-    const handleAddTab = async (e) => {
+    const handleEditCard = async (e) => {
         setLoading(true);
-        localTabState.tabs.get().map((tab, i) => {
-            if(tab.id === tabEdit.id){
-                localTabState.tabs[i].merge({name: newTabName, color: newTabColor.hex});
-            }
-            return undefined;
-        })        
-        let editResponse = await updateTab({ tabId: tabEdit.id, name: newTabName, color: newTabColor.hex });
-        console.log(editResponse);
+    
+        let editResponse = await updateCard({ cardId: localCardState.editCard.get().id, name: newTabName, color: newTabColor.hex });
+
         if(editResponse.updated){
-            setSaveMessage("Tab Saved!");
+            setSaveMessage("Card Saved!");
         } else {
-            setSaveMessage("Error saving the tab");
+            setSaveMessage("Error saving the card");
         }
+
+        cards.map((card) => {
+            if(card.id === localCardState.editCard.get().id){
+                card.name = newTabName;
+                card.color = newTabColor.hex;
+            }
+            return card;
+        })
+
         setLoading(false);
 
         let timeout = setTimeout(() => {
-            if(editResponse.updated) localTabState.isEdit.set(false);
+            if(editResponse.updated) localCardState.isEdit.set(false);
         }, 2000)
 
         return () => clearTimeout(timeout);
@@ -63,21 +69,21 @@ export const EditTabModal = (props) => {
     }
 
     const handleCloseModal = () => {
-        localTabState.isEdit.set(false);
+        localCardState.isEdit.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={localTabState.isEdit.get()}
+            open={localCardState.isEdit.get()}
             handleOnClose={() => handleCloseModal()}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
-                    <Typography variant="h5">Editing Tab: {localTabState.tabs.get().filter((tab) => tab.id === tabEdit.id)[0]?.name}</Typography>
+                    <Typography variant="h5">Editing Card: {localCardState.editCard.get().name}</Typography>
                     <MTTextField label={'New Title'} value={newTabName} onChangeFunc={setNewTabName}/>
                     <CompactPicker color={newTabColor} onChange={(color) => setNewTabColor(color)}/>
-                    <MtButton label={'SAVE'} variant={'contained'} onClick={() => handleAddTab()} width={'64%'} loading={loading} isLoadingButton />
+                    <MtButton label={'SAVE'} variant={'contained'} onClick={() => handleEditCard()} width={'64%'} loading={loading} isLoadingButton />
                     {saveMessage !== '' && <Typography variant="subtitle2">{saveMessage}</Typography>}
             </Paper>
         </MTModal>

@@ -3,12 +3,12 @@ import { Paper, Typography, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState, useRef, useEffect } from "react";
 import { COLOR_PALETTE } from "../../Constants";
-import { createItem } from "../../requests/items-req";
 import { itemState } from "../../states/itemState";
 import MtButton from "../mui/MTButton";
 import { MTModal } from "../mui/MTModal";
 import MTTextField from "../mui/MTTextField";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { updateItem } from "../../requests/items-req";
 import ReactCrop, {centerCrop, makeAspectCrop} from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -19,7 +19,6 @@ const useStyle = makeStyles({
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 'fit-content',
-        minWidth: '20%',
         height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
@@ -27,18 +26,22 @@ const useStyle = makeStyles({
         justifyContent: 'center',
         gap: '12px',
         padding: '24px'
+    },
+    group: {
+        display: 'flex',
+        gap: '12px',
     }
 })
 
-//* The modal that pops up when the user wants to add a item.
-export const AddItemModal = (props) => {
-
-    const {items, card} = props;
+//* The modal that pops up when the user wants to edit a tab.
+export const EditItemModal = (props) => {
+    const {item, card} = props;
 
     const localItemState = useHookstate(itemState);
 
     const [newItemName, setNewItemName] = useState('');
     const [newItemPrice, setNewItemPrice] = useState('');
+    const [newItemStock, setNewItemStock] = useState('');
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
 
@@ -131,40 +134,47 @@ export const AddItemModal = (props) => {
 
     const getBase64FromCanvas = async (canvas) => {
         if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
-            return null;
+            return '';
         }
         let base64 = canvas.toDataURL('image/jpeg');
         if(!base64){
-            return null;
+            return '';
         }
         return base64;
     }
 
-    const handleAddItem = async (e) => {
+    const handleEditItem = async (e) => {
         setLoading(true);
 
         let newItemImage = await getBase64FromCanvas(previewCanvasRef.current);
-        let addResponse = await createItem(
-            {
-                cardId: card.id, 
-                name: newItemName, 
-                price: newItemPrice,
-                image: newItemImage ? newItemImage : '',
-                props: [],
-                stock: 1
-            },
-        );
 
-        if(addResponse.code === 201){
-            items.push({id: items.length !== 0 ? items[items.length-1].id + 1 : 0, name: newItemName, price: newItemPrice})
-            setSaveMessage("Item Created!");
+        let updatedItem = {
+            id: item.id,
+            name: newItemName,
+            price: newItemPrice,
+            image: newItemImage,
+            props: [],
+            stock: newItemStock
+        }     
+
+        let editResponse = await updateItem(updatedItem);
+
+        if(editResponse.updated){
+            card.items = card.items.map((cItem) => {
+                if(item.id === cItem.id){
+                    return updatedItem;
+                }
+                return cItem;
+            })
+
+            setSaveMessage("Item Saved!");
         } else {
-            setSaveMessage("Error creating the item");
+            setSaveMessage("Error saving the item");
         }
         setLoading(false);
 
         let timeout = setTimeout(() => {
-            localItemState.isAdd.set(false);
+            if(editResponse.updated) localItemState.isEdit.set(false);
         }, 2000)
 
         return () => clearTimeout(timeout);
@@ -172,21 +182,24 @@ export const AddItemModal = (props) => {
     }
 
     const handleCloseModal = () => {
-        localItemState.isAdd.set(false);
+        localItemState.isEdit.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={localItemState.isAdd.get()}
-            handleOnClose={handleCloseModal}
+            open={localItemState.isEdit.get()}
+            handleOnClose={() => handleCloseModal()}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>
-                    <Typography variant="h5">Add Item to {localItemState.card.get().name}</Typography>
-                    <MTTextField label={'Name'} value={newItemName} onChangeFunc={setNewItemName}/>
-                    <MTTextField label={'Price'} value={newItemPrice} onChangeFunc={setNewItemPrice} icon={'$'}/>
-                    <MtButton label={'UPLOAD IMAGE'} startIcon={<FileUploadIcon/>} variant={'outlined'} onClick={() => onUploadButtonClick()} width={'64%'} />
+                    <Typography variant="h5" sx={{overflow: 'hidden', whiteSpace: 'nowrap'}}>Editing Item: {localItemState.item.get().name}</Typography>
+                    <MTTextField label={'New Name'} value={newItemName} onChangeFunc={setNewItemName} isFullWidth />
+                    <div className={classes.group}>
+                        <MTTextField label={'New Price'} value={newItemPrice} onChangeFunc={setNewItemPrice}/>
+                        <MTTextField label={'New Stock'} value={newItemStock} onChangeFunc={setNewItemStock}/>
+                    </div>
+                    <MtButton label={'CHANGE IMAGE'} startIcon={<FileUploadIcon/>} variant={'outlined'} onClick={() => onUploadButtonClick()} width={'64%'} />
                     <input hidden type="file" id="upload" ref={inputFileRef} accept="image/*" onChange={onSelectFile} />
                     <Typography variant="subtitle2">{imgName} 
                         {imgName? 
@@ -223,7 +236,7 @@ export const AddItemModal = (props) => {
                         </div>
                         </>
                     )}
-                    <MtButton label={'ADD'} variant={'contained'} onClick={() => handleAddItem()} width={'64%'} loading={loading} isLoadingButton />
+                    <MtButton label={'SAVE'} variant={'contained'} onClick={() => handleEditItem()} width={'64%'} loading={loading} isLoadingButton />
                     {saveMessage !== '' && <Typography variant="subtitle2">{saveMessage}</Typography>}
             </Paper>
         </MTModal>

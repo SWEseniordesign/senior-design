@@ -30,9 +30,9 @@ const useStyle = makeStyles({
 //* The modal that pops up when the user wants to add a tab.
 export const AddTabModal = (props) => {
 
-    const {tillId, open, setOpen} = props;
+    const {tillId} = props;
     const localTabState = useHookstate(tabState);
-
+    
     const [newTabName, setNewTabName] = useState('');
     const [newTabColor, setNewTabColor] = useState('#FFFFFF');
     const [loading, setLoading] = useState(false);
@@ -42,32 +42,35 @@ export const AddTabModal = (props) => {
         setLoading(true);
         localTabState.tabs[localTabState.tabs.get().length-1].set(none);
 
-        console.log(tillId)
-
         let addResponse = await createTab({tillId: tillId, name: newTabName, color: newTabColor.hex, cards: []});
         if(addResponse.code === 201){
-            // localTabState.tabs.merge([{name: newTabName, color: newTabColor.hex, cards: []}]);
+            localTabState.tabs.merge([{id: localTabState.tabs.get().length, name: newTabName, color: newTabColor.hex, cards: []}]);
             setSaveMessage("Tab Created!");
         } else {
             setSaveMessage("Error create the tab");
         }
-
-        localTabState.tabs.merge([{id: -1, name: '+', canAdd: true}]);
+        localTabState.tabs.merge([{id: localTabState.tabs.get().length+1, name: '+', canAdd: true}]);
 
         setLoading(false);
 
         setNewTabColor('#FFFFFF');
+
+        let timeout = setTimeout(() => {
+            localTabState.isAdd.set(false);
+        }, 2000)
+
+        return () => clearTimeout(timeout);
     }
 
     const handleCloseModal = () => {
-        setOpen(false);
+        localTabState.isAdd.set(false);
     }
 
     const classes = useStyle();
 
     return (
         <MTModal
-            open={open}
+            open={localTabState.isAdd.get()}
             handleOnClose={handleCloseModal}
         >
             <Paper className={classes.paper} sx={{ bgcolor: COLOR_PALETTE.BABY_BLUE }}>

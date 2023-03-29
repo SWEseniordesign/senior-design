@@ -5,9 +5,11 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const Business = require('../models/Business');
 const Till = require('../models/Till');
-const verifyJWT = require('../middleware/auth');
-const bcrypt = require('bcrypt');
+const Employee = require('../models/Employee');
+const {verifyJWT, verifyJWTAdmin, verifyJWTOwner} = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
+const Transaction = require('../models/Transaction');
+const Item = require('../models/Item');
 
 
 /**
@@ -42,13 +44,14 @@ router.post('/get', verifyJWT, function(req, res){
                     //If till not found
                     if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
                     let formattedTill = {
-                        id: till._id,
+                        id: till._id.toString(),
                         loginId: till.loginId,
                         name: till.name,
                         managerPassword: till.managerPassword,
                         employees: till.employees,
                         tabs: till.tabs,
-                        props: till.props
+                        props: till.props,
+                        transactions: till.transactions
                     };
                     return res.status(200).send({formattedTill, code: 200});
                 }
@@ -75,7 +78,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        404 Not Found, Till not found
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTOwner, async (req, res) => {
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -85,7 +88,8 @@ router.post('/create', verifyJWT, async (req, res) => {
         managerPassword: req.body.managerPassword,
         employees: req.body.employees,
         tabs: req.body.tabs,
-        props: req.body.props
+        props: req.body.props,
+        transactions: []
     });
     let businessId = req.body.businessId;
 
@@ -157,6 +161,70 @@ router.post('/create', verifyJWT, async (req, res) => {
 
 
 /**
+ * Edit a till's name and manager password.
+ *
+ * @route POST /till/edit
+ * @expects JWT in header of request, till info in JSON in body of request
+ * @success 200 OK, returns {formattedTill, code}
+ * @error 400 Bad Request, No Request Body passed
+ *        400 Bad Request, Type1: Till ObjectId is not 12 bytes
+ *        400 Bad Request, Type2: Till ObjectId is not valid
+ *        401 Unauthorized, Invalid Token
+ *        404 Not Found, Till not found
+ *        500 Internal Server Error
+ */
+router.post('/edit', verifyJWT, function(req, res) {
+    //Check if req body exists
+    if (!req.body) return res.status(400).send({err: 'No request body', code: 400});
+  
+    //Find till by its ObjectId
+    const objectId = req.body.id;
+  
+    //Verify ObjectId is valid
+    if (!mongoose.isValidObjectId(objectId)) {
+      return res.status(400).send({err: 'Type 1: Till ID is not a valid ObjectId', code: 400});
+    }
+    //Verify ObjectId is actually an ObjectId
+    if (String(new ObjectId(objectId)) !== objectId) {
+      return res.status(400).send({err: 'Type 2: Till ID is not a valid ObjectId', code: 400});
+    }
+  
+    //Find the till and update its name and manager password
+    Till.findByIdAndUpdate(
+      objectId,
+      {name: req.body.name, managerPassword: req.body.managerPassword},
+      {new: true},
+      function(err, till) {
+        if (err) {
+          console.log(err);
+          return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+  
+        //If till is not found, return an error
+        if (till === null) {
+          return res.status(404).send({err: `Till does not exist`, code: 404});
+        }
+  
+        //Formats and returns the updated till
+        const formattedTill = {
+          id: till._id.toString(),
+          loginId: till.loginId,
+          name: till.name,
+          managerPassword: till.managerPassword,
+          employees: till.employees,
+          tabs: till.tabs,
+          props: till.props,
+          transactions: till.transactions
+        };
+  
+        return res.status(200).send({formattedTill, code: 200});
+      }
+    );
+  });
+  
+
+
+/**
  * Get all tills from business via jwt
  *
  * @route POST /till/getall
@@ -196,7 +264,7 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills: businessResult.tills
     }       
 
-    if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
+    // if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
 
     //Grab tills
     let tills = [];
@@ -218,59 +286,104 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills.push(formattedTill);
     }
 
-    return res.status(200).send({business, tills, code: 200});
+    return res.status(200).send({business: business, tills: tills, code: 200});
 });
 
 
 /**
- * TODO: implement
- * Add employees to till
+ * Add an Employee to a Till
  *
- * @route POST /till/employees
+ * @route POST /till/addemployee
  * @expects 
  * @success 
  * @error 
  */
-router.post('/employees', verifyJWT, async function(req, res){
+router.post('/addemployee', verifyJWTAdmin, async function(req, res){
+    //check if req body exists 
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_till = await Till.findOne({name: req.body.name}).exec();
-    if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
+    //Store tillId
+    let tillId = req.body.tillId;
+
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(tillId)) === tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Find the Employee via the email
+    let foundEmployee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+
+    //If the Employee already exists in db, link them to the Till
+    if(foundEmployee){
+        let formattedEmployee = {
+            id: foundEmployee._id.toString(),
+            email: foundEmployee.email,
+            isManager: foundEmployee.isManager
+        }
+        //Find Till
+        Till.findById(tillId, function(err, till){
+            if(err) {
+                console.log(err);
+                return res.status(500).send({err: 'Internal Server Error', code: 500});
+            }
+
+            //If Employee is not in Till, add them
+            if(!till.employees.includes(foundEmployee.email)){ 
+                till.employees.push(foundEmployee.email);
+                till.save(function(err, tillSaved){
+                    if(err) {
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                });
+                return res.status(201).send({formattedEmployee, code: 201});
+            }
+            //else return
+            return res.status(400).send({err: 'Employee already exists in Till', code: 400});
+        });
+    }
+    //If the Employee does not exist in db, create them & add them to the Till
+    else{
+        //Create Employee
+        let newEmployee = new Employee({
+            email: req.body.email,
+            isManager: req.body.isManager
+        });
+
+        //Save Employee and add them to Till
+        newEmployee.save(function(err, employee) {
+            if(err) {
+                console.log(err);
+                return res.status(500).send({err: 'Internal Server Error', code: 500});
+            }
+            else {
+                //formats the return object to send to frontend
+                let formattedEmployee = {
+                    id: employee._id.toString(),
+                    email: employee.email,
+                    isManager: employee.isManager
+                }
+                
+                //Finds Till and adds employee if applicable
+                Till.findById(tillId, function(err, till){
+                    if(err) {
+                        console.log(err);
+                        return res.status(500).send({err: 'Internal Server Error', code: 500});
+                    }
+                    if(till.employees.includes(employee.email)) return res.status(400).send({err: 'Employee already exists in Till', code: 400});
+                    till.employees.push(employee.email);
+                    till.save(function(err, tillSaved){
+                        if(err) {
+                            console.log(err);
+                            return res.status(500).send({err: 'Internal Server Error', code: 500});
+                        }
+                    });
+                });
+                return res.status(201).send({formattedEmployee, code: 201});
+            }
+        });
+    }
 });
 
-
-/**
- * TODO: implement
- * Modify a till's tabs
- *
- * @route POST /till/tabs
- * @expects 
- * @success 
- * @error 
- */
-router.post('/tabs', verifyJWT, async function(req, res){
-    if(!req.body) return res.status(400).send({err: 'No request body'});
-
-    let find_till = await Till.findOne({name: req.body.name}).exec();
-    if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
-});
-
-
-/**
- * TODO: implement
- * Modify a till's props
- *
- * @route POST /till/employees
- * @expects 
- * @success 
- * @error 
- */
-router.post('/props', verifyJWT, async function(req, res){
-    if(!req.body) return res.status(400).send({err: 'No request body'});
-
-    let find_till = await Till.findOne({name: req.body.name}).exec();
-    if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
-});
 
 /**
  * Verify a employee's credentials
@@ -287,15 +400,155 @@ router.post('/auth', async function(req, res){
     if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
     if(till.employees.indexOf(req.body.email) === -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
     if(till.managerPassword !== parseInt(req.body.password)) return res.status(401).send({err: 'Incorrect Password', code: 401});
+    let employee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
 
     //Create JWT via email and tillid
     const payload = {
         email: req.body.email,
-        tillId: req.body.tillid
+        tillId: req.body.tillid,
+        admin: employee.isManager
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || '8h'});
     if(!token) return res.status(500).send({err: 'Internal server error', code: 500});
-    return res.status(200).send({token: "Bearer " + token, objId: till._id.toString(), code: 200}); 
+    return res.status(200).send({token: "Bearer " + token, employeeObj: employee, tillId: till._id.toString(), code: 200}); 
+});
+
+
+/**
+ * Remove Employee from Till
+ *
+ * @route POST /till/removeemployee
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/removeemployee', verifyJWTAdmin, async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Find the Till
+    let till = await Till.findById(req.body.tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+    if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
+
+    //Check if Employee is in Till
+    let indexofEmployee = till.employees.indexOf(req.body.email);
+    if(indexofEmployee === -1) return res.status(404).send({err: 'Employee Not Found in Till', code: 404});
+
+    //Remove Employee and save
+    till.employees.splice(indexofEmployee, 1);
+    till.save(function(err, tillUpdated){
+        if(err) {
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        let formattedTill = {
+            id: till._id.toString(),
+            loginId: till.loginId,
+            name: till.name,
+            managerPassword: till.managerPassword,
+            employees: till.employees,
+            tabs: till.tabs,
+            props: till.props
+        }
+        return res.status(200).send({formattedTill, code: 200}); 
+    });
+});
+
+
+/**
+ * Get all transactions for a Till
+ *
+ * @route POST /till/transactions
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/transactions', verifyJWTAdmin, async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Verify input
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald employeeId input', code: 400});
+
+    //Verify ObjectIds are valid
+    if(!(mongoose.isValidObjectId(req.body.tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(req.body.tillId)) === req.body.tillId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Verify Till exists
+    let till = await Till.findById(req.body.tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+    if(!till) return res.status(404).send({err: 'Till not found', code: 404});
+    if(till.transactions.length === 0) return res.status(404).send({err: 'Till does not have any transactions', code: 404});
+
+    //Assemble transactions
+    let transactions = [];
+    for(let transactionId of till.transactions){
+        let formattedTransaction = {};
+
+        let transaction = await Transaction.findById(transactionId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+        if(!transaction) return res.status(404).send({err: `Transaction not found`, code: 404});
+        formattedTransaction.id = transaction._id.toString();
+
+        let employee = await Employee.findById(transaction.employeeId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+        if(!employee) return res.status(404).send({err: `Employee not found`, code: 404});
+        formattedTransaction.employee = {
+            id: employee._id.toString(),
+            email: employee.email,
+            isManager: employee.isManager
+        }
+
+        let totalPrice = 0;
+        let items = [];
+        for(let item of transaction.items){
+            if(!item.id || item.quantity === 0) return res.status(400).send({err: `Invalid item ID or quantity for ${item}`, code: 400});
+            let foundItem = await Item.findById(item.id).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
+            if(!foundItem) return res.status(404).send({err: `Item not found`, code: 404});
+            items.push({
+                id: foundItem._id.toString(),
+                price: foundItem.price,
+                name: foundItem.name,
+                quantity: item.quantity
+            });
+            totalPrice += foundItem.price * item.quantity;
+        }
+        formattedTransaction.items = items;
+        formattedTransaction.date = transaction.date.toString();
+        formattedTransaction.totalPrice = totalPrice;
+        transactions.push(formattedTransaction);
+    }
+
+    return res.status(200).send({transactions, code: 200});
+});
+
+
+/**
+ * TODO: implement
+ * Modify a till's tabs
+ *
+ * @route POST /till/tabs
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/tabs', verifyJWTAdmin, async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    let find_till = await Till.findOne({name: req.body.name}).exec();
+    if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
+});
+
+
+/**
+ * TODO: implement
+ * Modify a till's props
+ *
+ * @route POST /till/employees
+ * @expects 
+ * @success 
+ * @error 
+ */
+router.post('/props', verifyJWTAdmin, async function(req, res){
+    if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    let find_till = await Till.findOne({name: req.body.name}).exec();
+    if(!find_till) return res.status(403).send({err: 'Till does not exist', code: 403});
 });
 
 module.exports = router;

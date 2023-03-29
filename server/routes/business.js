@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Business = require('../models/Business');
 const User = require('../models/User');
-const verifyJWT = require('../middleware/auth');
+const {verifyJWT, verifyJWTOwner} = require('../middleware/auth');
 
 
 /**
@@ -100,7 +100,7 @@ router.post('/edit', verifyJWT, async function(req, res) {
  *        404 Not Found, User has no business
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTOwner, async (req, res) => {
     //Check if there is a body in the request
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
@@ -164,7 +164,7 @@ router.post('/create', verifyJWT, async (req, res) => {
  *        404 Not Found, User has no business
  *        500 Internal Server Error
  */
-router.post('/admins', verifyJWT, async function(req, res){
+router.post('/admins', verifyJWTOwner, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //checks if the users exist
@@ -216,7 +216,7 @@ router.post('/admins', verifyJWT, async function(req, res){
  * @success 200 POST, returns {formattedBus, code}
  * @error 
  */
-router.post('/edittills', verifyJWT, async function(req, res){
+router.post('/edittills', verifyJWTOwner, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     let find_business = await Business.findOne({email: req.body.name}).exec();

@@ -37,12 +37,11 @@ export async function getItem (obj) {
 }
 
 /*
-    TODO
-    Changes a items name
+    Gets a specific item
 */
-export async function changeName(obj) {
+export async function deleteItem (obj) {
     let data;
-    await fetch('http://localhost:8080/items/', {
+    await fetch('http://localhost:8080/items/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -56,50 +55,11 @@ export async function changeName(obj) {
 }
 
 /*
-    TODO
-    Changes a items image
+    Update an Item's name, price, image, props, & stock
 */
-export async function changeImage(obj) {
+export async function updateItem(obj) {
     let data;
-    await fetch('http://localhost:8080/items/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'authorization': userState.token.get()
-        },
-        body: JSON.stringify(obj)
-    })
-    .then(res => data = res.json())
-    .catch(err => {return err;});
-    return data;
-}
-
-/*
-    TODO
-    Changes a items props
-*/
-export async function changeProps(obj) {
-    let data;
-    await fetch('http://localhost:8080/items/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'authorization': userState.token.get()
-        },
-        body: JSON.stringify(obj)
-    })
-    .then(res => data = res.json())
-    .catch(err => {return err;});
-    return data;
-}
-
-/*
-    TODO
-    Changes a items stock
-*/
-export async function changeStock(obj) {
-    let data;
-    await fetch('http://localhost:8080/items/', {
+    await fetch('http://localhost:8080/items/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

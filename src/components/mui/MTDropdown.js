@@ -24,16 +24,17 @@ const MTDropdown = (props) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const uState = useHookstate(userState);
     const {
-        label, 
-        customLabel,
-        menuItems=[], 
-        variant, 
-        isAccount, 
-        menuOpenAction, 
-        isIconButton, 
-        tooltip, 
-        hasDropdownIcon } = props; // Parameters that can be passed into the custom dropdown
-    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false });
+        label,
+        menuItems=[],
+        variant,
+        isAccount,
+        isEmployee,
+        menuOpenAction,
+        isIconButton,
+        tooltip,
+        hasDropdownIcon,
+        textColor } = props; // Parameters that can be passed into the custom dropdown
+    const { isLoading: userLoading, data: user, refetch: userRefetch } = useQuery("users", getUserName, { enabled: false, refetchOnWindowFocus: false });
 
     //* Handles when the menu (dropdown) opens
     const handleOpenMenu = (e) => {
@@ -49,22 +50,21 @@ const MTDropdown = (props) => {
     }
 
     useEffect(() => {
-        if(uState.token.get() !== ''){
+        if(uState.token.get() !== '' && !(user)){
             userRefetch();
         }
+         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uState.token.get()])
 
     const classes = useStyles();
-
-    console.log(tooltip)
 
     return (
         <div>
             {!isAccount ? 
                 <div>
-                    {!(isIconButton) ? 
-                        hasDropdownIcon ? 
-                            <Tooltip title={tooltip} arrow><Button color={'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> : 
+                    {!(isIconButton) ?
+                        hasDropdownIcon ?
+                            <Tooltip title={tooltip} arrow><Button color={!!(textColor) ? textColor : 'secondary'} variant={variant} endIcon={<ArrowDropDownIcon/>} onClick={handleOpenMenu}>{label}</Button></Tooltip> :
                             <Tooltip title={tooltip} arrow><Button className={classes.button} color={'info'} variant={variant} onClick={handleOpenMenu}>{label}</Button></Tooltip>
                     :
                         <Tooltip title={tooltip}>
@@ -119,16 +119,29 @@ const MTDropdown = (props) => {
                         }}
                         open={Boolean(anchorEl)}
                         onClose={handleCloseMenu}>
-                        {menuItems.map((item) => {
-                            return (
-                                <MenuItem key={item.id} onClick={() => {
-                                    item.action();
-                                    handleCloseMenu();
-                                }}>
-                                    <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
-                                </MenuItem>
-                            );
-                        })}
+                        {userState.isLoggedIn.get() ? 
+                            menuItems.map((item) => {
+                                return (
+                                    <MenuItem key={item.id} disabled={item.disabled} onClick={() => {
+                                        item.action();
+                                        handleCloseMenu();
+                                    }}>
+                                        <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
+                                    </MenuItem>
+                                );
+                            })
+                        :
+                            isEmployee.map((item) => {
+                                return (
+                                    <MenuItem key={item.id} disabled={item.disabled} onClick={() => {
+                                        item.action();
+                                        handleCloseMenu();
+                                    }}>
+                                        <Typography color={item.title === "Logout" ? 'error' : ''}>{item.title}</Typography>
+                                    </MenuItem>
+                                );
+                            })
+                        }
                     </Menu>
                 </div>
             }

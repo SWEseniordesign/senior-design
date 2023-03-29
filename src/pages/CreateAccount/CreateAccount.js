@@ -6,7 +6,6 @@ import MTTextField from "../../components/mui/MTTextField";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { saveUser } from "../../requests/users-req";
 import MTButton from "../../components/mui/MTButton";
-import { userState } from "../../states/userState";
 import { createAccount_Redirect } from "../helper/routesHelper";
 
 const useStyle = makeStyles({

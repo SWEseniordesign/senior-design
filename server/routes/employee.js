@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const {verifyJWT, verifyJWTAdmin, verifyJWTOwner} = require('../middleware/auth');
 const Employee = require('../models/Employee');
-const verifyJWT = require('../middleware/auth');
+
 
 /**
  * Get a employee from email
@@ -39,8 +40,8 @@ router.post('/get', verifyJWT, function(req, res){
     })
 });
 
+
 /**
- * TODO: link employees to a specified Till
  * Create a employee from employee info
  *
  * @route POST /employee/create
@@ -51,7 +52,7 @@ router.post('/get', verifyJWT, function(req, res){
  *        403 Forbidden, Employee already exists
  *        500 Internal Server Error
  */
-router.post('/create', verifyJWT, async (req, res) => {
+router.post('/create', verifyJWTAdmin, async (req, res) => {
     //check if req body exists 
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
@@ -62,7 +63,7 @@ router.post('/create', verifyJWT, async (req, res) => {
     });
 
     //Check if an employee in the system already has that email
-    let find_employee = await Employee.findOne({email: req.body.email}).exec();
+    let find_employee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
     if(find_employee) return res.status(403).send({err: 'Employee already exists', code: 403});
 
     //Attempt to save the new employee
@@ -71,33 +72,47 @@ router.post('/create', verifyJWT, async (req, res) => {
             console.log(err);
             return res.status(500).send({err: 'Internal Server Error', code: 500});
         }
-        else {
-            //formats the return object to send to frontend
-            let formattedEmployee = {
-                id: employee._id,
-                email: employee.email,
-                isManager: employee.isManager,
-                employeeId: employee.employeeId
-            };
-            return res.status(201).send({formattedEmployee, code: 201});
+        //formats the return object to send to frontend
+        let formattedEmployee = {
+            id: employee._id.toString(),
+            email: employee.email,
+            isManager: employee.isManager
         }
+        return res.status(201).send({formattedEmployee, code: 201});
     });
 });
 
+
 /**
- * TODO: not implemented
  * Modify an employee's isManager field
  *
- * @route POST /employee/manager
+ * @route POST /employee/editmanager
  * @expects 
  * @success 
  * @error 
  */
-router.post('/manager', verifyJWT, async (req, res) => {
+router.post('/editmanager', verifyJWTOwner, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
-    let find_employee = await Employee.findOne({email: req.body.email}).exec();
-    if(!find_employee) return res.status(403).send({err: 'Employee does not exist', code: 403});
+    //Check if an employee in the system already has that email
+    let foundEmployee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});
+    if(!foundEmployee) return res.status(404).send({err: 'Employee not found', code: 404});
+
+    //Update info & save
+    foundEmployee.isManager = req.body.isManager;
+    foundEmployee.save(function(err, employee){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
+        }
+        //formats the return object to send to frontend
+        let formattedEmployee = {
+            id: employee._id.toString(),
+            email: employee.email,
+            isManager: employee.isManager
+        }
+        return res.status(201).send({formattedEmployee, code: 201});
+    });
 });
 
 module.exports = router;

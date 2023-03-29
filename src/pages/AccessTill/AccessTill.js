@@ -1,12 +1,11 @@
-import { Grid, Paper, Typography, Snackbar, Alert, Link } from "@mui/material";
+import { Grid, Paper, Typography, Snackbar, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MTButton from "../../components/mui/MTButton";
 import MTTextField from "../../components/mui/MTTextField";
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { COLOR_PALETTE, FONT_FAMILY } from "../../Constants";
 import { userState } from "../../states/userState";
-import { isLoggedIn_Redirect } from "../helper/routesHelper";
 import { authTill } from "../../requests/tills-req";
 
 const useStyle = makeStyles({
@@ -71,15 +70,16 @@ export const AccessTill = () => {
                 email: email,
                 password: password
             }
-            let error = await authTill(empCreds);
+            let tillResponse = await authTill(empCreds);
 
-            if(!!(error.err)){
-                setAlertMessage({message: error.err, status: 'warning'});
-            } else if(!!(error.token)) {
-                userState.token.set(error.token);
-                userState.tillId.set(error.objId);
-                userState.isLoggedIn.set(true);
-                navigate(`/view-till/${error.objId}`);
+            if(!!(tillResponse.err)){
+                setAlertMessage({message: tillResponse.err, status: 'warning'});
+            } else if(!!(tillResponse.token)) {
+                userState.token.set(tillResponse.token);
+                userState.employee.set(tillResponse.employeeObj);
+                userState.tillId.set(tillResponse.tillId);
+                userState.isLoggedIn.set(false);
+                navigate(`/view-till/${tillResponse.tillId}`);
             }
 
             setOpen(true);

@@ -6,11 +6,6 @@ import { LoadingButton } from '@mui/lab';
 const useStyles = makeStyles((theme) => ({
   MTButton: {
     height: '2.5rem',
-  },
-  responsive: {
-      [theme.breakpoints.down('lg')]: {
-          width: '100%'
-      }
   }
 }))
 
@@ -32,6 +27,7 @@ export default function MtButton(props) {
     loading,
     isLoadingButton,
     endIcon,
+    startIcon,
     makeResponsive
   } = props;
 
@@ -55,8 +51,12 @@ export default function MtButton(props) {
           variant={variant}
           onClick={onClick}
           endIcon={endIcon}
+          startIcon={startIcon}
           sx={{
-            width: !!(makeResponsive) ? getWidth() : '100%',
+            width: !(makeResponsive) ? getWidth() : {
+              lg: '100%',
+              xs: '100%'
+            },
             background: backgroundColor,
             color: textColor,
             borderColor: borderColor
