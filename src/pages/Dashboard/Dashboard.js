@@ -636,7 +636,7 @@ const Dashboard = () => {
                                             <DialogTitle id="alert-dialog-title">{"Successfully added till"}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText id="alert-dialog-description">
-                                                    The till loginId is {newTillLoginId}.
+                                                    The till loginId is {newTillLoginId}
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>
