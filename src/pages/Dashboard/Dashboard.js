@@ -179,8 +179,6 @@ const Dashboard = () => {
             }
             const createdTill = await getTill(response.formattedTill);
             setNewTillLoginId(createdTill.formattedTill.loginId)
-
-            setAddTillOpen(true);//remove?
         } catch(e){
             console.log(e);
         }
@@ -207,7 +205,6 @@ const Dashboard = () => {
             } else {
                 setSuccessEditTillDialogOpen(true);
             }
-            setEditTillOpen(true); //remove?
         } catch(e){
             console.log(e);
         }
@@ -453,11 +450,13 @@ const Dashboard = () => {
                                                                 </Typography>
                                                             </DialogTitle>
                                                             <DialogContent>
-                                                                <DialogContentText id="alert-dialog-description">
-                                                                    The keep the name or manager password the same, please leave field blank.
-                                                                </DialogContentText>
                                                                 <div className={classes.dialogElement}>
                                                                     <Grid container rowSpacing={3}>
+                                                                        <Grid item xs={12} md={12}>
+                                                                            <DialogContentText id="alert-dialog-description">
+                                                                                The keep the name or manager password the same, please leave field blank.
+                                                                            </DialogContentText>
+                                                                        </Grid>
                                                                         <Grid item xs={12} md={12}>
                                                                             <MTTextField label={'New Name'} value={updatedTillName} onChangeFunc={setUpdatedTillName} isFullWidth isRequired autocomplete="off" mb={4} />
                                                                         </Grid>
