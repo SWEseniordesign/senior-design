@@ -6,11 +6,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BusinessIcon from '@mui/icons-material/Business';
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle }  from '@material-ui/core';
-//import Dialog from '@material-ui/core/Dialog';
-//import DialogActions from '@material-ui/core/DialogActions';
-//import DialogContent from '@material-ui/core/DialogContent';
-//import DialogContentText from '@material-ui/core/DialogContentText';
-//import DialogTitle from '@material-ui/core/DialogTitle';
 import MTTextField from '../../components/mui/MTTextField' 
 import MTButton from "../../components/mui/MTButton";
 import MTSelect from "../../components/mui/MTSelect";
@@ -226,6 +221,17 @@ const Dashboard = () => {
         setTillCredsDialogOpen(true);
     };
 
+    //* The types of business myTill supports.
+    const businessTypes = [
+        {id: 1, title: 'Whole Sale', onClick: (e) => setUpdatedBusinessType(e.target.value)},
+        {id: 2, title: 'Quick Service', onClick: (e) => setUpdatedBusinessType(e.target.value)}
+    ]
+    //* MenuItems that are apart of the business dropdown.
+    const dropdownMenuItems_ForBusiness = () => [
+        {id: 1, title: 'Edit Business', action: () => handleEditBusinessClick()},
+        {id: 2, title: 'Delete Business', action: () => {}}
+    ];
+
     //* MenuItems that are apart of each individual till dropdown.
     const dropdownMenuItems_ForTills = (till) => [
         {id: 1, title: 'Edit Till', action: () => handleEditTill(till)},
@@ -233,67 +239,35 @@ const Dashboard = () => {
         {id: 3, title: 'Delete Till', action: () => {}}
     ];
 
-    //* MenuItems that are apart of the business dropdown.
-    const dropdownMenuItems_ForBusiness = () => [
-        {id: 1, title: 'Edit Business', action: () => handleEditBusinessClick()},
-        {id: 2, title: 'Delete Business', action: () => {}}
-    ];
-
-    //const classes = useStyle();
-    const [busName, setBusName] = useState("");
-    const [busType, setBusType] = useState("");
-    const [ownerName, setOwnerName] = useState("");
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    const [submitTriggered, setSubmitTriggered] = useState(false);
-
+    const [submitEditBusinessTriggered, setSubmitEditBusinessTriggered] = useState(false);
+    const [updatedBusinessName, setUpdatedBusinessName] = useState('');
+    const [updatedBusinessType, setUpdatedBusinessType] = useState('');
+    const [editBusinessOpen, setEditBusinessOpen] = useState(false);
     const [isSameBusDialogOpen, setIsSameBusDialogOpen] = useState(false);
+    const [failedEditBusDialogOpen, setFailedEditBusDialogOpen] = useState(false);
+    const [successEditBusDialogOpen, setSuccessEditBusDialogOpen] = useState(false);
+ 
     const closeSameBusDialog = () => setIsSameBusDialogOpen(false);
+    const closeFailedEditBusDialog = () => setFailedEditBusDialogOpen(false);
+    const closeSuccessEditBusDialog = () => setSuccessEditBusDialogOpen(false);
 
-    const getBus = async() => {
-        const bus = await getBusiness()
-        setBusName(bus.formattedBus.name)
-        setBusType(bus.formattedBus.type)
-    }
-    const getOwner = async() => {
-        const owner = await getUserName()
-        setOwnerName(owner.formattedUser.fname + " " + owner.formattedUser.lname)
-    }
 
-    useEffect(() => {
-        if(submitTriggered) {
-            getBus();
-            getOwner(); //remove?
-            setSubmitTriggered(false);
-        }
-        getBus();
-        getOwner();
-        
-    }, [submitTriggered]);
-
-    const [businessName, setBusinessName] = useState('');
-    const [businessType, setBusinessType] = useState('');
-    const [open, setOpen] = useState(false);
-
-    //* The types of business myTill supports.
-    const businessTypes = [
-        {id: 1, title: 'Whole Sale', onClick: (e) => setBusinessType(e.target.value)},
-        {id: 2, title: 'Quick Service', onClick: (e) => setBusinessType(e.target.value)}
-    ]
 
     const handleEditBusinessClick = () => {
-        setOpen(true);
+        setEditBusinessOpen(true);
     };
-    const handleClose = () => {
-        setSubmitTriggered(true);
-        setOpen(false);
+    const handleEditBusinessClose = () => {
+        setSubmitEditBusinessTriggered(true);
+        setEditBusinessOpen(false);
     };
     
     const handleEditBusinessSubmit = async(e) => {
         e.preventDefault();
         try{
             let updatedBusiness = {
-                name: businessName,
-                type: businessType
+                name: updatedBusinessName,
+                type: updatedBusinessType
                 //admins: [],
                 //tills: []
             }
@@ -303,21 +277,19 @@ const Dashboard = () => {
                 setAlertMessage({message: 'Business with same name already exists', status: 'warning'});
                 setIsSameBusDialogOpen(true);
             }
-            else if(!(response) || response.code !== 201){
-                setAlertMessage({message: !(response) ? 'Failed to update business.' : response.err, status: 'warning'});
+            else if(!(response) || response.code !== 200){
+                setFailedEditBusDialogOpen(true);
             } else {
-                setAlertMessage({message: 'Business Updated!', status: 'success'});
-                setBusinessName('');
-                setBusinessType('');
+                setSuccessEditBusDialogOpen(true);
+                setUpdatedBusinessName('');
+                setUpdatedBusinessType('');
             }
-
-            setOpen(true);
         } catch(e){
             console.log(e);
         }
 
-        setSubmitTriggered(true);
-        setOpen(false);
+        setSubmitEditBusinessTriggered(true);
+        setEditBusinessOpen(false);
     };
     
     useEffect (() => {
@@ -333,9 +305,10 @@ const Dashboard = () => {
         }
         getBusAndTills();
 
+        setSubmitEditBusinessTriggered(false);
         setSubmitAddTillTriggered(false);
         setSubmitEditTillTriggered(false);
-    }, [submitAddTillTriggered, submitEditTillTriggered])
+    }, [submitEditBusinessTriggered, submitAddTillTriggered, submitEditTillTriggered])
 
     return (
         <div className={classes.root}>
@@ -377,9 +350,9 @@ const Dashboard = () => {
                                         <MTDropdown isIconButton menuItems={dropdownMenuItems_ForBusiness()}/>
                                         </IconButton>
                                         
-                                        {open && (
+                                        {editBusinessOpen && (
                                             <div className={classes.overlay}>
-                                                <Dialog open={open} onClose={handleClose} className={classes.dialog} PaperProps={{ style: { zIndex: 10002 } }} aria-labelledby="form-dialog-title">
+                                                <Dialog open={editBusinessOpen} onClose={handleEditBusinessClose} className={classes.dialog} PaperProps={{ style: { zIndex: 10002 } }} aria-labelledby="form-dialog-title">
                                                     <div className={classes.dialogContainer}>
                                                         <DialogTitle id="form-dialog-title">
                                                             <Typography sx={{
@@ -394,14 +367,14 @@ const Dashboard = () => {
                                                         </DialogTitle>
                                                         <DialogContent>
                                                             <div className={classes.dialogElement}>
-                                                                <MTTextField label={'Name'} value={businessName} onChangeFunc={setBusinessName} isFullWidth isRequired mb={4} />
+                                                                <MTTextField label={'Name'} value={updatedBusinessName} onChangeFunc={setUpdatedBusinessName} isFullWidth isRequired mb={4} />
                                                             </div>
                                                             <div className={classes.dialogElement}>
-                                                                <MTSelect label={'Type'} items={businessTypes} value={businessType} setValue={setBusinessType} isRequired isFullWidth></MTSelect>
+                                                                <MTSelect label={'Type'} items={businessTypes} value={updatedBusinessType} setValue={setUpdatedBusinessType} isRequired isFullWidth></MTSelect>
                                                             </div>
                                                         </DialogContent>
                                                         <DialogActions>
-                                                            <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleClose} isFullWidth></MTButton>
+                                                            <MTButton label={'CANCEL'} variant={'outlined'} type={'submit'} onClick={handleEditBusinessClose} isFullWidth></MTButton>
                                                             <MTButton label={'UPDATE'} variant={'contained'} type={'submit'} onClick={handleEditBusinessSubmit} isFullWidth></MTButton>
                                                         </DialogActions>
                                                     </div>
@@ -410,7 +383,7 @@ const Dashboard = () => {
                                         )}
                                         <Dialog
                                             open={isSameBusDialogOpen}
-                                            onClose={handleClose}
+                                            onClose={closeSameBusDialog}
                                             aria-labelledby="alert-dialog-title"
                                             aria-describedby="alert-dialog-description"
                                         >
@@ -615,6 +588,38 @@ const Dashboard = () => {
                                                     </Dialog>
                                                 </div>
                                             )}
+                                            <Dialog
+                                                open={failedEditBusDialogOpen}
+                                                onClose={closeFailedEditBusDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Failed to edit business"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        Could not edit business.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeFailedEditBusDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
+                                            <Dialog
+                                                open={successEditBusDialogOpen}
+                                                onClose={closeSuccessEditBusDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Successfully edited business"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        The business information has been updated.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSuccessEditBusDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
                                             <Dialog
                                                 open={failedAddTillDialogOpen}
                                                 onClose={closeFailedAddTillDialog}
