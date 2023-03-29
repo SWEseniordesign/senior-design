@@ -28,10 +28,10 @@ router.post('/create', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.employeeId === 'undefined' || !req.body.employeeId) return res.status(400).send({err: 'Invald employeeId input', code: 400});
+    if(typeof req.body.employeeId === 'undefined' || !req.body.employeeId) return res.status(400).send({err: 'Invalid employeeId input', code: 400});
     if(typeof req.body.items === 'undefined' || !req.body.items || req.body.items.length === 0) return res.status(400).send({err: 'Invald items input', code: 400});
-    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invald price input', code: 400});
-    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald tillId input', code: 400});
+    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invalid price input', code: 400});
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invalid tillId input', code: 400});
 
     //Verify ObjectIds are valid
     if(!(mongoose.isValidObjectId(req.body.employeeId)) || !(mongoose.isValidObjectId(req.body.tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
@@ -128,7 +128,7 @@ router.post('/get', verifyJWT, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.transactionId === 'undefined' || !req.body.transactionId) return res.status(400).send({err: 'Invald transaction input', code: 400});
+    if(typeof req.body.transactionId === 'undefined' || !req.body.transactionId) return res.status(400).send({err: 'Invalid transaction input', code: 400});
 
     //verify ObjectId are valid
     if(!(mongoose.isValidObjectId(req.body.transactionId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});

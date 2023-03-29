@@ -20,6 +20,10 @@ router.post('/login', async function(req, res) {
     //Check if there is a body in the request
     if(Object.keys(req.body).length === 0) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.email === 'undefined'        || !req.body.email)         return res.status(400).send({err: 'Invalid email input', code: 400});
+    if(typeof req.body.password === 'undefined'     || !req.body.password)      return res.status(400).send({err: 'Invalid password input', code: 400});
+
     //find the user
     let find_user = await User.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(!find_user) return res.status(404).send({err: 'Invalid email or password', code: 404});
@@ -61,6 +65,13 @@ router.post('/login', async function(req, res) {
  */
 router.post('/register', async function(req, res) {
     if(Object.keys(req.body).length === 0) return res.status(400).send({err: 'No request body', code: 400});
+
+    //Verify input
+    if(typeof req.body.fname === 'undefined'        || !req.body.fname)         return res.status(400).send({err: 'Invald fname input', code: 400});
+    if(typeof req.body.lname === 'undefined'        || !req.body.lname)         return res.status(400).send({err: 'Invald lname input', code: 400});
+    if(typeof req.body.email === 'undefined'        || !req.body.email)         return res.status(400).send({err: 'Invald email input', code: 400});
+    if(typeof req.body.password === 'undefined'     || !req.body.password)      return res.status(400).send({err: 'Invald password input', code: 400});
+    if(typeof req.body.businessId === 'undefined'   || !req.body.businessId)    return res.status(400).send({err: 'Invald businessId input', code: 400});
 
     //Create temp user
     let new_user = new User({
