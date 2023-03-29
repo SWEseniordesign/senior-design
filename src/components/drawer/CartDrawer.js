@@ -33,7 +33,6 @@ const useStyles = makeStyles({
 const CartDrawer = () => {
 
   const localOrderState = useHookstate(orderState);
-  const [err, setErr] = useState('');
 
   const addItemToCart = (item) => {
     let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
@@ -78,7 +77,7 @@ const CartDrawer = () => {
     let transactionResponse = await createTransaction(newTransaction);
     console.log(!!(transactionResponse.err))
     if(!!(transactionResponse.err)){
-      setErr(transactionResponse.err);
+      console.log(transactionResponse.err);
     } else {
       localOrderState.order.set([]);
     }
