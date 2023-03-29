@@ -152,6 +152,84 @@ const Dashboard = () => {
         }
     }
 
+    /* Add Till functionality */
+    const handleAddTillClick = () => {
+        setAddTillOpen(true);
+    };
+    const handleAddTillClose = () => {
+        setSubmitAddTillTriggered(true);
+        setAddTillOpen(false);
+    };
+    const handleAddTillSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            let newTill = {
+                businessId: businessId,
+                name: newTillName,
+                managerPassword: newTillManagerPassword,
+                employees: [],
+                tabs: [],
+                props: []
+            }
+            let response = await createTill(newTill);
+            if(!(response) || response.code !== 201){
+                setFailedAddTillDialogOpen(true);
+            } else {
+                setSuccessAddTillDialogOpen(true);
+            }
+            const createdTill = await getTill(response.formattedTill);
+            setNewTillLoginId(createdTill.formattedTill.loginId)
+
+            setAddTillOpen(true);//remove?
+        } catch(e){
+            console.log(e);
+        }
+        setSubmitAddTillTriggered(true);
+        setAddTillOpen(false);
+    };
+
+    /* Edit Till functionality */
+    const handleEditTill = (till) => {
+        setEditTillOpen(true);
+        setTillToUpdate(till);
+    }
+    const handleEditTillSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            let updatedTill = {
+                id: tillToUpdate.id,
+                name: updatedTillName !== '' ? updatedTillName : tillToUpdate.name,
+                managerPassword: updatedTillManagerPassword !== '' ? updatedTillManagerPassword : tillToUpdate.managerPassword,
+            }
+            let response = await editTill(updatedTill);
+            if(!(response) || response.code !== 200){
+                setFailedEditTillDialogOpen(true);
+            } else {
+                setSuccessEditTillDialogOpen(true);
+            }
+            setEditTillOpen(true); //remove?
+        } catch(e){
+            console.log(e);
+        }
+
+        setSubmitEditTillTriggered(true);
+        setEditTillOpen(false);
+    };
+
+    /* View Till Credentials functionality */
+    const handleTillCreds = (till) => {
+        setThisTillName(till.name);
+        setThisTillLoginId(till.loginId);
+        setThisTillManagerPassword(till.managerPassword)
+        setTillCredsDialogOpen(true);
+    };
+
+    //* MenuItems that are apart of each individual till dropdown.
+    const dropdownMenuItems_ForTills = (till) => [
+        {id: 1, title: 'Edit Till', action: () => handleEditTill(till)},
+        {id: 2, title: 'View Credentials', action: () => {handleTillCreds(till)}},
+        {id: 3, title: 'Delete Till', action: () => {}}
+    ];
 
     useEffect (() => {
         async function getBusAndTills(){
@@ -168,96 +246,7 @@ const Dashboard = () => {
 
         setSubmitAddTillTriggered(false);
         setSubmitEditTillTriggered(false);
-    }, [submitAddTillTriggered, submitEditTillTriggered]) //check this was ok to do?
-
-    const handleEditTill = (till) => {
-        setEditTillOpen(true);
-        setTillToUpdate(till);
-    }
-    
-    const handleEditTillSubmit = async(e) => {
-        e.preventDefault();
-        try{
-            let updatedTill = {
-                id: tillToUpdate.id,
-                name: updatedTillName !== '' ? updatedTillName : tillToUpdate.name,
-                managerPassword: updatedTillManagerPassword !== '' ? updatedTillManagerPassword : tillToUpdate.managerPassword,
-            }
-            let response = await editTill(updatedTill);
-            if(!(response) || response.code !== 200){
-                //setAlertMessage({message: !(response) ? 'Failed to edit till.' : response.err, status: 'warning'});
-                setFailedEditTillDialogOpen(true);
-            } else {
-                //setAlertMessage({message: 'Till Created!', status: 'success'});
-                setSuccessEditTillDialogOpen(true);
-            }
-            //const createdTill = await getTill(response.formattedTill);
-            //setNewTillLoginId(createdTill.formattedTill.loginId)
-
-            setEditTillOpen(true); //remove?
-        } catch(e){
-            console.log(e);
-        }
-
-        setSubmitEditTillTriggered(true);
-        setEditTillOpen(false);
-        
-        //const thisTill = await getTill(tillToUpdate); //dont need to get first, this was just test
-        //console.log(thisTill);
-    };
-    const handleTillCreds = (till) => {
-        setThisTillName(till.name);
-        setThisTillLoginId(till.loginId);
-        setThisTillManagerPassword(till.managerPassword)
-        setTillCredsDialogOpen(true);
-    };
-    
-
-    const handleAddTillClick = () => {
-        setAddTillOpen(true);
-    };
-    const handleAddTillClose = () => {
-        setSubmitAddTillTriggered(true);
-        setAddTillOpen(false);
-    };
-
-    const handleAddTillSubmit = async(e) => {
-        e.preventDefault();
-        try{
-            let newTill = {
-                businessId: businessId,
-                name: newTillName,
-                managerPassword: newTillManagerPassword,
-                employees: [],
-                tabs: [],
-                props: []
-            }
-            let response = await createTill(newTill);
-            if(!(response) || response.code !== 201){
-                //setAlertMessage({message: !(response) ? 'Failed to create till.' : response.err, status: 'warning'});
-                setFailedAddTillDialogOpen(true);
-            } else {
-                //setAlertMessage({message: 'Till Created!', status: 'success'});
-                setSuccessAddTillDialogOpen(true);
-            }
-            const createdTill = await getTill(response.formattedTill);
-            setNewTillLoginId(createdTill.formattedTill.loginId)
-
-            setAddTillOpen(true);
-        } catch(e){
-            console.log(e);
-        }
-
-        setSubmitAddTillTriggered(true);
-        setAddTillOpen(false);
-    };
-
-    //* MenuItems that are apart of each individual till dropdown.
-    const dropdownMenuItems_ForTills = (till) => [
-        {id: 1, title: 'Edit Till', action: () => handleEditTill(till)},
-        {id: 2, title: 'View Credentials', action: () => {handleTillCreds(till)}},
-        {id: 3, title: 'Delete Till', action: () => {}}
-    ];
+    }, [submitAddTillTriggered, submitEditTillTriggered])
 
     return (
             <div className={classes.root}>
