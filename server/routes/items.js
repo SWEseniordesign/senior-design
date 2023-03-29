@@ -24,7 +24,7 @@ router.post('/get', verifyJWT, function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invalid id input', code: 400});
 
     //find item by its objectid
     let objectId = req.body.id;
@@ -73,9 +73,9 @@ router.post('/create', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
-    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
-    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invald price input', code: 400});
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invalid price input', code: 400});
 
     //Create temp new item
     let new_item = new Item({
@@ -141,8 +141,8 @@ router.post('/delete', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
-    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invalid id input', code: 400});
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
 
     //find item by its objectid
     let itemId = req.body.id;
@@ -201,11 +201,11 @@ router.post('/update', verifyJWTAdmin, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Verify input
-    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
-    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invald price input', code: 400});
-    if(typeof req.body.image === 'undefined' || !req.body.image) return res.status(400).send({err: 'Invald image input', code: 400});
-    if(typeof req.body.stock === 'undefined' || !req.body.stock) return res.status(400).send({err: 'Invald stock input', code: 400});
-    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+    if(typeof req.body.price === 'undefined' || !req.body.price) return res.status(400).send({err: 'Invalid price input', code: 400});
+    if(typeof req.body.image === 'undefined' || !req.body.image) return res.status(400).send({err: 'Invalid image input', code: 400});
+    if(typeof req.body.stock === 'undefined' || !req.body.stock) return res.status(400).send({err: 'Invalid stock input', code: 400});
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invalid id input', code: 400});
 
     let updatedItem = {
         name: req.body.name,

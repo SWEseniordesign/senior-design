@@ -27,7 +27,7 @@ router.post('/get', verifyJWT, function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invald id input', code: 400});
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invalid id input', code: 400});
 
     //find tab by its objectid
     let objectId = req.body.id;

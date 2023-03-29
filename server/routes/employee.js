@@ -102,8 +102,8 @@ router.post('/editmanager', verifyJWTOwner, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Verify input
-    if(typeof req.body.email === 'undefined' || !req.body.email) return res.status(400).send({err: 'Invald email input', code: 400});
-    if(typeof req.body.isManager === 'undefined' || !req.body.isManager) return res.status(400).send({err: 'Invald isManager input', code: 400});
+    if(typeof req.body.email === 'undefined' || !req.body.email) return res.status(400).send({err: 'Invalid email input', code: 400});
+    if(typeof req.body.isManager === 'undefined' || !req.body.isManager) return res.status(400).send({err: 'Invalid isManager input', code: 400});
 
     //Check if an employee in the system already has that email
     let foundEmployee = await Employee.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500});});

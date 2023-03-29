@@ -228,12 +228,12 @@ router.post('/modifyposition', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Verify input
-    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
-    if(typeof req.body.x === 'undefined' || !req.body.x) return res.status(400).send({err: 'Invald x input', code: 400});
-    if(typeof req.body.y === 'undefined' || !req.body.y) return res.status(400).send({err: 'Invald y input', code: 400});
-    if(typeof req.body.width === 'undefined' || !req.body.width) return res.status(400).send({err: 'Invald width input', code: 400});
-    if(typeof req.body.height === 'undefined' || !req.body.height) return res.status(400).send({err: 'Invald height input', code: 400});
-    if(typeof req.body.static === 'undefined' || !req.body.static) return res.status(400).send({err: 'Invald static input', code: 400});
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
+    if(typeof req.body.x === 'undefined' || !req.body.x) return res.status(400).send({err: 'Invalid x input', code: 400});
+    if(typeof req.body.y === 'undefined' || !req.body.y) return res.status(400).send({err: 'Invalid y input', code: 400});
+    if(typeof req.body.width === 'undefined' || !req.body.width) return res.status(400).send({err: 'Invalid width input', code: 400});
+    if(typeof req.body.height === 'undefined' || !req.body.height) return res.status(400).send({err: 'Invalid height input', code: 400});
+    if(typeof req.body.static === 'undefined' || !req.body.static) return res.status(400).send({err: 'Invalid static input', code: 400});
 
     //Create temp object
     let updatedDimensions = {
@@ -279,8 +279,8 @@ router.post('/delete', verifyJWTAdmin, function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
-    if(typeof req.body.tabId === 'undefined' || !req.body.tabId) return res.status(400).send({err: 'Invald tabId input', code: 400});
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
+    if(typeof req.body.tabId === 'undefined' || !req.body.tabId) return res.status(400).send({err: 'Invalid tabId input', code: 400});
 
     //find card by its objectid
     let cardId = req.body.cardId;
@@ -355,9 +355,9 @@ router.post('/update', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Verify input
-    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invald cardId input', code: 400});
-    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
-    if(typeof req.body.color === 'undefined' || !req.body.color) return res.status(400).send({err: 'Invald color input', code: 400});
+    if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+    if(typeof req.body.color === 'undefined' || !req.body.color) return res.status(400).send({err: 'Invalid color input', code: 400});
 
     //Save updated info
     let updatedCard = {

@@ -21,8 +21,8 @@ router.post('/login', async function(req, res) {
     if(Object.keys(req.body).length === 0) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.email === 'undefined'        || !req.body.email)         return res.status(400).send({err: 'Invald email input', code: 400});
-    if(typeof req.body.password === 'undefined'     || !req.body.password)      return res.status(400).send({err: 'Invald password input', code: 400});
+    if(typeof req.body.email === 'undefined'        || !req.body.email)         return res.status(400).send({err: 'Invalid email input', code: 400});
+    if(typeof req.body.password === 'undefined'     || !req.body.password)      return res.status(400).send({err: 'Invalid password input', code: 400});
 
     //find the user
     let find_user = await User.findOne({email: req.body.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});

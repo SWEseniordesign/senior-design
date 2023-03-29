@@ -42,6 +42,7 @@ router.post('/get', verifyJWT, async function(req, res){
     });
 });
 
+
 /** 
  * TODO:  write unit test
 *    Edits a business's name and type
@@ -56,6 +57,10 @@ router.post('/edit', verifyJWT, async function(req, res) {
     //Find the currently logged in user
     let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
     if(user === null) return res.status(404).send({err: 'User does not exist', code: 404});
+
+    //Verify input
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+    if(typeof req.body.type === 'undefined' || !req.body.type) return res.status(400).send({err: 'Invalid type input', code: 400});
 
     //Find the user's business
     let name = req.body.name;
@@ -105,8 +110,8 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
     //Verify input
-    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invald name input', code: 400});
-    if(typeof req.body.type === 'undefined' || !req.body.type) return res.status(400).send({err: 'Invald type input', code: 400});
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+    if(typeof req.body.type === 'undefined' || !req.body.type) return res.status(400).send({err: 'Invalid type input', code: 400});
 
     //Check if a user exist & if they have a businessId assigned to them
     let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
