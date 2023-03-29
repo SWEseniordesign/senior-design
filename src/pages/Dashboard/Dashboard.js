@@ -273,15 +273,15 @@ const Dashboard = () => {
     ]
     //* MenuItems that are apart of the business dropdown.
     const dropdownMenuItems_ForBusiness = () => [
-        {id: 1, title: 'Edit Business', action: () => handleEditBusinessClick()},
-        {id: 2, title: 'Delete Business', action: () => {}}
+        {id: 1, title: 'Edit Business', disabled: false, action: () => handleEditBusinessClick()},
+        {id: 2, title: 'Delete Business', disabled: true, action: () => {}}
     ];
 
     //* MenuItems that are apart of each individual till dropdown.
     const dropdownMenuItems_ForTills = (till) => [
-        {id: 1, title: 'Edit Till', action: () => handleEditTill(till)},
-        {id: 2, title: 'View Credentials', action: () => {handleTillCreds(till)}},
-        {id: 3, title: 'Delete Till', action: () => {}}
+        {id: 1, title: 'Edit Till', disabled: false, action: () => handleEditTill(till)},
+        {id: 2, title: 'View Credentials', disabled: false, action: () => {handleTillCreds(till)}},
+        {id: 3, title: 'Delete Till', disabled: true, action: () => {}}
     ];
 
     useEffect (() => {
