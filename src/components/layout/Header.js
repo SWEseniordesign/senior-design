@@ -93,11 +93,11 @@ const Header = (props) => {
         {id: 1, title: 'Open Till', action: () => handleAccessTill()}
     ];
 
-    //* MenuItems that are apart of the pages dropdown.
-    const dropdownMenuItems_Pages = [
-        {id: 1, title: 'About', action: () => {}},
-        // {id: 2, title: 'Contact Us', action: () => {}}
-    ];
+    // //* MenuItems that are apart of the pages dropdown.
+    // const dropdownMenuItems_Pages = [
+    //     {id: 1, title: 'About', action: () => {}},
+    //     // {id: 2, title: 'Contact Us', action: () => {}}
+    // ];
 
     //* MenuItems that are apart of the avatar dropdown.
     const dropdownMenuItems_AccountOwner = [

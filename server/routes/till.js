@@ -345,7 +345,7 @@ router.post('/addemployee', verifyJWTAdmin, async function(req, res){
     //If the Employee does not exist in db, create them & add them to the Till
     else{
         //Verify Input
-        if(typeof req.body.isManager === 'undefined' || !req.body.isManager) return res.status(400).send({err: 'Invalid isManager input', code: 400});
+        if(typeof req.body.isManager === 'undefined') return res.status(400).send({err: 'Invalid isManager input', code: 400});
 
         //Create Employee
         let newEmployee = new Employee({

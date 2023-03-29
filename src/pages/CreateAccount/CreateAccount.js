@@ -86,8 +86,9 @@ export const CreateAccount = () => {
                 }
                 let error = await saveUser(newUser);
 
-                if(error.code === 403){
+                if(error.code !== 201){
                     setAlertMessage({message: error.err, status: 'warning'});
+                    setOpen(true);
                 } else {
                     navigate('/login');
                 }
