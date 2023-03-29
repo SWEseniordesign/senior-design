@@ -112,6 +112,18 @@ const Dashboard = () => {
     const [tills, setTills] = useState([])
     const [loading, setLoading] = useState(true)
 
+    /* State variables for Edit Business Dialog */
+    const [submitEditBusinessTriggered, setSubmitEditBusinessTriggered] = useState(false);
+    const [updatedBusinessName, setUpdatedBusinessName] = useState('');
+    const [updatedBusinessType, setUpdatedBusinessType] = useState('');
+    const [editBusinessOpen, setEditBusinessOpen] = useState(false);
+    const [isSameBusDialogOpen, setIsSameBusDialogOpen] = useState(false);
+    const [failedEditBusDialogOpen, setFailedEditBusDialogOpen] = useState(false);
+    const [successEditBusDialogOpen, setSuccessEditBusDialogOpen] = useState(false);
+    const closeSameBusDialog = () => setIsSameBusDialogOpen(false);
+    const closeFailedEditBusDialog = () => setFailedEditBusDialogOpen(false);
+    const closeSuccessEditBusDialog = () => setSuccessEditBusDialogOpen(false);
+
     /* State variables for Add Till Dialog */
     const [newTillName, setNewTillName] = useState('');
     const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
@@ -151,6 +163,40 @@ const Dashboard = () => {
             navigate(`/edit-till/${till.id}`)
         }
     }
+
+    /* Edit Business Functionality */
+    const handleEditBusinessClick = () => {
+        setEditBusinessOpen(true);
+    };
+    const handleEditBusinessClose = () => {
+        setSubmitEditBusinessTriggered(true);
+        setEditBusinessOpen(false);
+    };
+    const handleEditBusinessSubmit = async(e) => {
+        e.preventDefault();
+        try{
+            let updatedBusiness = {
+                name: updatedBusinessName,
+                type: updatedBusinessType
+            }
+            let response = await editBusiness(updatedBusiness);
+            if(response.code === 403) {
+                setIsSameBusDialogOpen(true);
+            }
+            else if(!(response) || response.code !== 200){
+                setFailedEditBusDialogOpen(true);
+            } else {
+                setSuccessEditBusDialogOpen(true);
+                setUpdatedBusinessName('');
+                setUpdatedBusinessType('');
+            }
+        } catch(e){
+            console.log(e);
+        }
+        
+        setSubmitEditBusinessTriggered(true);
+        setEditBusinessOpen(false);
+    };
 
     /* Add Till functionality */
     const handleAddTillClick = () => {
@@ -239,59 +285,6 @@ const Dashboard = () => {
         {id: 3, title: 'Delete Till', action: () => {}}
     ];
 
-    const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
-    const [submitEditBusinessTriggered, setSubmitEditBusinessTriggered] = useState(false);
-    const [updatedBusinessName, setUpdatedBusinessName] = useState('');
-    const [updatedBusinessType, setUpdatedBusinessType] = useState('');
-    const [editBusinessOpen, setEditBusinessOpen] = useState(false);
-    const [isSameBusDialogOpen, setIsSameBusDialogOpen] = useState(false);
-    const [failedEditBusDialogOpen, setFailedEditBusDialogOpen] = useState(false);
-    const [successEditBusDialogOpen, setSuccessEditBusDialogOpen] = useState(false);
- 
-    const closeSameBusDialog = () => setIsSameBusDialogOpen(false);
-    const closeFailedEditBusDialog = () => setFailedEditBusDialogOpen(false);
-    const closeSuccessEditBusDialog = () => setSuccessEditBusDialogOpen(false);
-
-
-
-    const handleEditBusinessClick = () => {
-        setEditBusinessOpen(true);
-    };
-    const handleEditBusinessClose = () => {
-        setSubmitEditBusinessTriggered(true);
-        setEditBusinessOpen(false);
-    };
-    
-    const handleEditBusinessSubmit = async(e) => {
-        e.preventDefault();
-        try{
-            let updatedBusiness = {
-                name: updatedBusinessName,
-                type: updatedBusinessType
-                //admins: [],
-                //tills: []
-            }
-            let response = await editBusiness(updatedBusiness);
-            if(response.code === 403) {
-                console.log("business exists")
-                setAlertMessage({message: 'Business with same name already exists', status: 'warning'});
-                setIsSameBusDialogOpen(true);
-            }
-            else if(!(response) || response.code !== 200){
-                setFailedEditBusDialogOpen(true);
-            } else {
-                setSuccessEditBusDialogOpen(true);
-                setUpdatedBusinessName('');
-                setUpdatedBusinessType('');
-            }
-        } catch(e){
-            console.log(e);
-        }
-
-        setSubmitEditBusinessTriggered(true);
-        setEditBusinessOpen(false);
-    };
-    
     useEffect (() => {
         async function getBusAndTills(){
             const result = await getAllTills();
