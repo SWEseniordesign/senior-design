@@ -684,10 +684,10 @@ const Dashboard = () => {
                                             <DialogTitle id="alert-dialog-title">{thisTillName} {"Credentials"}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText id="alert-dialog-description">
-                                                    Till loginId: {thisTillLoginId}.
+                                                    Till loginId: {thisTillLoginId}
                                                 </DialogContentText>
                                                 <DialogContentText id="alert-dialog-description">
-                                                    Till manager password: {thisTillManagerPassword}.
+                                                    Till manager password: {thisTillManagerPassword}
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>
