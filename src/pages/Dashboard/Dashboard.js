@@ -233,6 +233,12 @@ const Dashboard = () => {
         {id: 3, title: 'Delete Till', action: () => {}}
     ];
 
+    //* MenuItems that are apart of the business dropdown.
+    const dropdownMenuItems_ForBusiness = () => [
+        {id: 1, title: 'Edit Business', action: () => handleEditBusinessClick()},
+        {id: 2, title: 'Delete Business', action: () => {}}
+    ];
+
     //const classes = useStyle();
     const [busName, setBusName] = useState("");
     const [busType, setBusType] = useState("");
@@ -367,9 +373,9 @@ const Dashboard = () => {
                                                         display: 'flex'}}>
                                             {loading ? <Skeleton width={'80%'} /> : business?.type}
                                         </Typography>
-                                                <IconButton aria-label="more" onClick={handleEditBusinessClick} sx={{position: 'absolute', top: 20, right: 20}}>
-                                                <MoreVertIcon />
-                                            </IconButton>
+                                        <IconButton disableRipple sx={{position: 'absolute', top: 20, right: 20, "&:hover": {backgroundColor: "transparent"}}}>
+                                        <MTDropdown isIconButton menuItems={dropdownMenuItems_ForBusiness()}/>
+                                        </IconButton>
                                         
                                         {open && (
                                             <div className={classes.overlay}>
@@ -534,9 +540,6 @@ const Dashboard = () => {
                                             <Fab color="primary" aria-label="add" onClick={handleAddTillClick} sx={{position: 'absolute', bottom: 20, right: 20}}>
                                                 <AddIcon />
                                             </Fab>
-                                            <IconButton aria-label="more" sx={{position: 'absolute', top: 20, right: 20}}>
-                                                <MoreVertIcon />
-                                            </IconButton>
                                             {addTillOpen && (
                                                 <div className={classes.overlay}>
                                                     <Dialog open={addTillOpen} onClose={handleAddTillClose} className={classes.dialog} PaperProps={{ style: { zIndex: 10002 } }} aria-labelledby="form-dialog-title">
