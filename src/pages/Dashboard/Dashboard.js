@@ -174,6 +174,9 @@ const Dashboard = () => {
             setBusinessId(result.business.id);
         }
         getBusAndTills();
+
+        setSubmitAddTillTriggered(false);
+        setSubmitEditTillTriggered(false);
     }, [submitAddTillTriggered, submitEditTillTriggered]) //check this was ok to do?
 
     const handleEditTill = (till) => {
