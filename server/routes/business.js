@@ -42,6 +42,49 @@ router.post('/get', verifyJWT, async function(req, res){
     });
 });
 
+/** 
+ * TODO:  write unit test
+*    Edits a business's name and type
+*    @route POST /business/edit
+*    @expects JSON object with {name: "", type: ""}
+*    @success 200 OK, {updatedBusiness{}, code: 200}
+*    @error  404 Not Found, User does not exist or Business with {name} does not exist
+*            403 Forbidden, Business already exists
+*            500 Internal Server Error
+*/
+router.post('/edit', verifyJWT, async function(req, res) {
+    //Find the currently logged in user
+    let user = await User.findOne({email: req.user.email}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
+    if(user === null) return res.status(404).send({err: 'User does not exist', code: 404});
+
+    //Find the user's business
+    let name = req.body.name;
+    Business.findOne({ownerId: user._id}, async function(err, business){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal server error.', code: 500});
+        } else {
+            //If business is not found
+            if(business === null) return res.status(404).send({err: `Business with ${name} does not exist`, code: 404});
+
+            //Check if a business with the same name already exists
+            let findBusinessDup = await Business.findOne({name: req.body.name}).exec().catch( err => {return res.status(500).send({err: 'Internal server error.', code: 500})});
+            if(findBusinessDup !== null) return res.status(403).send({err: 'Business already exists', code: 403});
+
+            //Update the business name and type
+            business.name = req.body.name;
+            business.type = req.body.type;
+            business.save(function(err, updatedBusiness) {
+                if(err) {
+                    console.log(err);
+                    return res.status(500).send({err: 'Internal server error.', code: 500});
+                }
+                return res.status(200).send({updatedBusiness, code: 200});
+            });
+        }
+    })
+});
+
 
 /**
  * Creates a business from JSON object

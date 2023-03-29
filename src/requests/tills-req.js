@@ -28,7 +28,25 @@ export async function createTill (obj) {
 }
 
 /*
-Get a Till from its name
+Edit a Till's name and manager password from its object
+*/
+export async function editTill (obj) {
+    let data;
+    await fetch('http://localhost:8080/till/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'authorization': userState.token.get()
+        },
+        body: JSON.stringify(obj)
+    })
+    .then(res => data = res.json())
+    .catch(err => console.log(err));   
+    return data;
+}
+
+/*
+Get a Till from its object
 */
 export async function getTill (obj) {
     let data;

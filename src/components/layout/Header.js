@@ -81,7 +81,7 @@ const Header = (props) => {
     //* Activated when the user opens the avatar dropdown. Checks if the user has a business.
     const userHasBusiness = async() => {
         let response;
-        if(userState.token.get() !== ''){
+        if(userState.token.get() !== '' && userState.employee.get() === {}){
             response = await getUserBusiness();
         }
 
@@ -96,20 +96,32 @@ const Header = (props) => {
     //* MenuItems that are apart of the pages dropdown.
     const dropdownMenuItems_Pages = [
         {id: 1, title: 'About', action: () => {}},
-        {id: 2, title: 'Contact Us', action: () => {}}
+        // {id: 2, title: 'Contact Us', action: () => {}}
     ];
 
     //* MenuItems that are apart of the avatar dropdown.
-    const dropdownMenuItems_Account = [
-        {id: 1, title: hasBusiness ? 'View Business Dashboard' : 'Create Business', action: () => {
+    const dropdownMenuItems_AccountOwner = [
+        {id: 1, title: hasBusiness ? 'View Business Dashboard' : 'Create Business', disabled: false, action: () => {
             hasBusiness ? navigate('/dashboard') : navigate('/create-business')
             pageState.previousPage.set(location.pathname)}},
-        {id: 2, title: 'Edit Profile', action: () => {}},
-        {id: 3, title: 'Logout', action: () => {
+        {id: 2, title: 'Edit Profile', disabled: true, action: () => {}},
+        {id: 3, title: 'Logout', disabled: false, action: () => {
             uState.token.set("");
+            uState.employee.set({});
             navigate('/');
         }}
     ];
+
+        //* MenuItems that are apart of the avatar dropdown.
+        const dropdownMenuItems_AccountEmployee = [
+            {id: 0, title: 'Logout', disabled: false, action: () => {
+                uState.token.set("");
+                uState.employee.set({});
+                navigate('/');
+            }}
+        ];
+
+    console.log(uState.get())
 
     const classes = useStyles();
 
@@ -146,7 +158,11 @@ const Header = (props) => {
                             </div>
                             :
                             <div className={classes.signUpLoginContainer}>
-                                <MTDropdown isAccount menuOpenAction={userHasBusiness} menuItems={dropdownMenuItems_Account} />
+                                <MTDropdown 
+                                    isAccount 
+                                    isEmployee={dropdownMenuItems_AccountEmployee}
+                                    menuOpenAction={userHasBusiness} 
+                                    menuItems={dropdownMenuItems_AccountOwner} />
                             </div>
                         }
                     </Toolbar>

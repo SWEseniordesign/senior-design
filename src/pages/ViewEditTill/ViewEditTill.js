@@ -1,6 +1,6 @@
 import { IconButton, Skeleton, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MtButton from "../../components/mui/MTButton";
 import { MTTabs } from "../../components/mui/MTTabs";
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
     },
     tabbar: {
-        width: '95%',
+        width: '100%',
         display: 'flex',
         alignItems: 'flex-start',
         marginTop: '12px',
@@ -63,14 +63,13 @@ export const ViewEditTill = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
-    // const [isManager, setIsManager] = useState(false);
-    // const [isAdmin, setIsAdmin] = useState(false);
-    const [transactionModalOpen, setTransactionModalOpen] = useState(false);
-    const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
-
     const localTabState = useHookstate(tabState);
     const localOrderState = useHookstate(orderState);
+
+    const [isEdit, setIsEdit] = useState(location.pathname.includes('edit'));
+    const [isManager, setIsManager] = useState(false);
+    const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+    const [openEmployeeModal, setOpenEmployeeModal] = useState(false);
 
     const {isLoading: isLoadingTill, data: till} = useQuery(["tills", params.id], () => getTill({id: params.id}), { refetchOnWindowFocus: false });
 
@@ -93,6 +92,10 @@ export const ViewEditTill = () => {
         localOrderState.tillId.set(till.formattedTill.id);
         localOrderState.isOpen.set(true);
     }
+
+    useEffect(() => {
+        setIsManager(userState.employee.get().isManager);
+    }, [])
 
     const classes = useStyles();
 
@@ -140,7 +143,6 @@ export const ViewEditTill = () => {
                             }
                         </Grid2>
                     </Grid2>
-                    {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees} tillId={till.formattedTill.id}/>}
                 </div>
             :
             //? The following JSX is for when the till is being viewed as a employee. (Not in edit mode)
@@ -155,7 +157,7 @@ export const ViewEditTill = () => {
                             </Grid2>
                             <Grid2 container xs={12} lg={8} className={classes.action_buttons}>
                                 <Grid2 xs={12} md={6} lg={4.7} xl={4}><MtButton makeResponsive label={'View Transactions History'} variant={'outlined'} onClick={() => setTransactionModalOpen(true)} /></Grid2>
-                                <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>
+                                {(isManager || userState.isLoggedIn.get()) && <Grid2 xs={12} md={6} lg={2} xl={2}><MtButton makeResponsive label={'Edit Till'} variant={'outlined'} onClick={handleEditTill} /></Grid2>}
                                 <Grid2 xs={12} md={6} lg={2} xl={2}>
                                     <IconButton onClick={() => handleOrderInformation()}>
                                         <ShoppingCartIcon fontSize="medium" />
@@ -179,6 +181,7 @@ export const ViewEditTill = () => {
                     </Grid2>
             </div>
         }
+        {openEmployeeModal && <ManageEmployeeModal open={openEmployeeModal} setOpen={setOpenEmployeeModal} employees = {till.formattedTill.employees} tillId={till.formattedTill.id}/>}
         {transactionModalOpen && <ViewTransactionModal open={transactionModalOpen} setOpen={setTransactionModalOpen} tillId={till.formattedTill.id} />}
         </div>
     )

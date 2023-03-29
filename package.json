@@ -1,16 +1,16 @@
 {
   "name": "senior-design",
   "version": "0.1.0",
-  "homepage": "",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@hookstate/core": "^4.0.0-rc21",
     "@hookstate/localstored": "^4.0.0",
+    "@material-ui/core": "^4.12.4",
     "@mui/base": "^5.0.0-alpha.115",
     "@mui/icons-material": "^5.11.0",
-    "@mui/lab": "^5.0.0-alpha.121",
+    "@mui/lab": "^5.0.0-alpha.122",
     "@mui/material": "^5.11.11",
     "@mui/styles": "^5.11.12",
     "@testing-library/jest-dom": "^5.14.1",
@@ -41,6 +41,7 @@
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
     "recharts": "^2.3.2",
+    "serverless-http": "^3.2.0",
     "supertest": "^6.3.3",
     "web-vitals": "^2.1.0",
     "yarn": "^1.22.19"

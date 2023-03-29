@@ -86,7 +86,7 @@ export const Login = () => {
 
             setOpen(true);
         } catch(e){
-            console.log('dn');
+            console.log(e);
         }
     }
 
