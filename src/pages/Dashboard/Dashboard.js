@@ -81,7 +81,7 @@ const Dashboard = () => {
     const localTabState = useHookstate(tabState);
 
     /* Pie chart data and functionality */
-    const PIE_COLORS = [COLOR_PALETTE.BLUE_GREEN, COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40"];
+    const PIE_COLORS = [COLOR_PALETTE.BLUE_GROTTO, COLOR_PALETTE.NAVY_BLUE, "#042E40", "#1D9DA8"];
     const pieData = [
         {name: 'Food', orders: 40},
         {name: 'Drinks', orders: 15},
