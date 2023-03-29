@@ -105,7 +105,7 @@ const Dashboard = () => {
     const [newTillManagerPassword, setNewTillManagerPassword] = useState('');
     const [newTillLoginId, setNewTillLoginId] = useState('');
     const [addTillOpen, setAddTillOpen] = useState(false);
-    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false); //need this as well as addTillOpen or only need one?
+    const [submitAddTillTriggered, setSubmitAddTillTriggered] = useState(false);
     const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
     const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
     const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
@@ -116,15 +116,11 @@ const Dashboard = () => {
     const [updatedTillName, setUpdatedTillName] = useState('');
     const [updatedTillManagerPassword, setUpdatedTillManagerPassword] = useState('');
     const [editTillOpen, setEditTillOpen] = useState(false);
-    const [submitEditTillTriggered, setSubmitEditTillTriggered] = useState(false); //need this as well as addTillOpen or only need one?
-    //const [failedAddTillDialogOpen, setFailedAddTillDialogOpen] = useState(false);
-    //const [successAddTillDialogOpen, setSuccessAddTillDialogOpen] = useState(false);
-    //const closeFailedAddTillDialog = () => setFailedAddTillDialogOpen(false);
-    //const closeSuccessAddTillDialog = () => setSuccessAddTillDialogOpen(false);
-    //ALERT MESSAGE INSTEAD LIE LOGIN PAGE!
-    //const handleEditTill = async(till) => {
-        //setEditTillOpen
-    //};
+    const [submitEditTillTriggered, setSubmitEditTillTriggered] = useState(false);
+    const [failedEditTillDialogOpen, setFailedEditTillDialogOpen] = useState(false);
+    const [successEditTillDialogOpen, setSuccessEditTillDialogOpen] = useState(false);
+    const closeFailedEditTillDialog = () => setFailedEditTillDialogOpen(false);
+    const closeSuccessEditTillDialog = () => setSuccessEditTillDialogOpen(false);
     const closeEditTill = () => setEditTillOpen(false);
 
     /* Stuff for View Till Credentials Dialog */
@@ -198,12 +194,12 @@ const Dashboard = () => {
                 //props: []
             }
             let response = await editTill(updatedTill);
-            if(!(response) || response.code !== 201){
-                setAlertMessage({message: !(response) ? 'Failed to edit till.' : response.err, status: 'warning'});
-                //setFailedAddTillDialogOpen(true);
+            if(!(response) || response.code !== 200){
+                //setAlertMessage({message: !(response) ? 'Failed to edit till.' : response.err, status: 'warning'});
+                setFailedEditTillDialogOpen(true);
             } else {
-                setAlertMessage({message: 'Till Created!', status: 'success'});
-                //setSuccessAddTillDialogOpen(true);
+                //setAlertMessage({message: 'Till Created!', status: 'success'});
+                setSuccessEditTillDialogOpen(true);
             }
             //const createdTill = await getTill(response.formattedTill);
             //setNewTillLoginId(createdTill.formattedTill.loginId)
@@ -248,10 +244,10 @@ const Dashboard = () => {
             }
             let response = await createTill(newTill);
             if(!(response) || response.code !== 201){
-                setAlertMessage({message: !(response) ? 'Failed to create till.' : response.err, status: 'warning'});
+                //setAlertMessage({message: !(response) ? 'Failed to create till.' : response.err, status: 'warning'});
                 setFailedAddTillDialogOpen(true);
             } else {
-                setAlertMessage({message: 'Till Created!', status: 'success'});
+                //setAlertMessage({message: 'Till Created!', status: 'success'});
                 setSuccessAddTillDialogOpen(true);
             }
             const createdTill = await getTill(response.formattedTill);
@@ -527,6 +523,38 @@ const Dashboard = () => {
                                                 </DialogContent>
                                                 <DialogActions>
                                                     <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSuccessAddTillDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
+                                            <Dialog
+                                                open={failedEditTillDialogOpen}
+                                                onClose={closeFailedEditTillDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Failed to edit till"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        Could not edit till.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeFailedEditTillDialog}></MTButton>
+                                                </DialogActions>
+                                            </Dialog>
+                                            <Dialog
+                                                open={successEditTillDialogOpen}
+                                                onClose={closeSuccessEditTillDialog}
+                                                aria-labelledby="alert-dialog-title"
+                                                aria-describedby="alert-dialog-description"
+                                            >
+                                                <DialogTitle id="alert-dialog-title">{"Successfully edited till"}</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id="alert-dialog-description">
+                                                        The till name and/or manager password has been updated.
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <MTButton label={'CLOSE'} variant={'contained'} onClick={closeSuccessEditTillDialog}></MTButton>
                                                 </DialogActions>
                                             </Dialog>
                                             <Dialog
