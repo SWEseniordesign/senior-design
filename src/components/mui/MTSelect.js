@@ -17,6 +17,7 @@ const MTSelect = (props) => {
         isFullWidth, 
         isRequired } = props;
 
+    //* Handles changing the value
     const handleChange = (e) => {
         setValue(e.target.value);
     }

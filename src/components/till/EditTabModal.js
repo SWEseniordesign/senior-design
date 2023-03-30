@@ -37,6 +37,7 @@ export const EditTabModal = (props) => {
     const [saveMessage, setSaveMessage] = useState('');
     const localTabState = useHookstate(tabState);
 
+    //* Handles adding a tab
     const handleAddTab = async (e) => {
         setLoading(true);
         localTabState.tabs.get().map((tab, i) => {
@@ -62,6 +63,7 @@ export const EditTabModal = (props) => {
 
     }
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         localTabState.isEdit.set(false);
     }

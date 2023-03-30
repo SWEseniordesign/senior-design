@@ -25,12 +25,15 @@ export default function MTTextField(props) {
     hasPasswordHideShow
   } = props;
 
+  //* Handles password show
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
+  //* Handles password mouse down
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
+  //* Determines the password show
   useEffect(() => {
     let result;
     if(!!(type)){

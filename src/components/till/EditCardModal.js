@@ -39,6 +39,7 @@ export const EditCardModal = (props) => {
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
 
+    //* Handles editing a card
     const handleEditCard = async (e) => {
         setLoading(true);
     
@@ -68,6 +69,7 @@ export const EditCardModal = (props) => {
 
     }
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         localCardState.isEdit.set(false);
     }

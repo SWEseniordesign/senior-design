@@ -53,6 +53,7 @@ export const AddItemModal = (props) => {
 
     const aspect = 16/9;
 
+    //* Handles image sizing
     useEffect(() => {
         if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
             return
@@ -82,6 +83,7 @@ export const AddItemModal = (props) => {
         )
     }, [imgSrc, completedCrop]);
 
+    //* Handles selecting an image
     const onSelectFile = (e) => {
         if (e.target.files && e.target.files.length > 0) {
             setCrop(undefined)
@@ -140,6 +142,7 @@ export const AddItemModal = (props) => {
         return base64;
     }
 
+    //* Handles adding an item to the card
     const handleAddItem = async (e) => {
         setLoading(true);
 
@@ -171,6 +174,7 @@ export const AddItemModal = (props) => {
 
     }
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         localItemState.isAdd.set(false);
     }

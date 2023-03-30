@@ -32,6 +32,7 @@ export default function MtButton(props) {
     disabled,
   } = props;
 
+  //* Determines the width of the button given the props
   const getWidth = () => {
     if(!isFullWidth){
       if(!!(width)){
