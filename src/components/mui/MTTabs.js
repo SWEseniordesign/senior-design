@@ -131,6 +131,7 @@ export const MTTabs = (props) => {
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
+    //* Refresh the tabs when either a tab has been edited or a tab has been added
     useEffect(() => {
         setValue(0);
         fetchTabs();
@@ -301,6 +302,7 @@ export const MTTabs = (props) => {
 
     }
 
+    //* Update the card props
     const updateCardProps = async(newDimensions) => {
         await modifyCardPosition(newDimensions);
     }

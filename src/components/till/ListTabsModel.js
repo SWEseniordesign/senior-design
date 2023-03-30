@@ -36,10 +36,12 @@ export const ListTabsModel = (props) => {
 
     const localTabState = useHookstate(tabState);
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         localTabState.isListOfTabs.set(false);
     }
 
+    //* Table columns for the list of tabs
     const tableColumns = [
         {id: 0, dataPropId: 'name', label: 'Name', width: '100%'},
         {id: 1, dataPropId: 'color', label: 'Color', width: '100%'}

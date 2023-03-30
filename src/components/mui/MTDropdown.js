@@ -49,6 +49,7 @@ const MTDropdown = (props) => {
         setAnchorEl(null);
     }
 
+    //* Handles fetching the user
     useEffect(() => {
         if(uState.token.get() !== '' && !(user)){
             userRefetch();

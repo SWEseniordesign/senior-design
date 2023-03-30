@@ -36,17 +36,20 @@ export const ViewTransactionModal = (props) => {
 
     const {isLoading: isLoadingTransactions, data: transactions} = useQuery('transactions', () => getAllTransactions({tillId: tillId}))
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         setOpen(false);
     }
 
+    //* Table columns for the transactions
     const tableColumns = [
-        {id: 0, dataPropId: 'employee', label: 'Employee', subprops: [
-            {id: 0, dataPropId: 'id', label: 'Employee Id', width: '100%'},
-            {id: 1, dataPropId: 'email', label: 'Employee Email', width: '100%'},
+        {id: 0, dataPropId: 'id', label: 'Transaction ID', width: '100%'},
+        {id: 1, dataPropId: 'employee', label: 'Employee', subprops: [
+            // {id: 0, dataPropId: 'id', label: 'Employee Id', width: '100%'},
+            {id: 0, dataPropId: 'email', label: 'Employee Email', width: '100%'},
         ], width: '100%'},
-        {id: 1, dataPropId: 'date', label: 'Date', width: '100%'},
-        {id: 2, dataPropId: 'totalPrice', label: 'Total Price', width: '100%'}
+        {id: 2, dataPropId: 'date', label: 'Date', width: '100%'},
+        {id: 3, dataPropId: 'totalPrice', label: 'Total Price', width: '100%'}
     ]
     
     const classes = useStyles();

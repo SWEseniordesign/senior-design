@@ -38,6 +38,7 @@ export const AddTabModal = (props) => {
     const [loading, setLoading] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
 
+    //* Handles adding a tab
     const handleAddTab = async (e) => {
         setLoading(true);
         localTabState.tabs[localTabState.tabs.get().length-1].set(none);
@@ -63,6 +64,7 @@ export const AddTabModal = (props) => {
         return () => clearTimeout(timeout);
     }
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         localTabState.isAdd.set(false);
     }

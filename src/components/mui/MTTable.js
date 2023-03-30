@@ -44,6 +44,7 @@ export const MTTable = (props) => {
     const localTabState = useHookstate(tabState);
     const localItemState = useHookstate(itemState);
 
+    //* Handles the dropdown selection in the table
     useEffect(() => {
         for (let i = 0; i < rows.length; i++) {
             if(localItemState.itemListOpen.get().length <= rows.length){
@@ -53,20 +54,24 @@ export const MTTable = (props) => {
          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasMoreInfo])
 
+    //* Handles page changing
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
     
+    //* Handles the edit button
     const handleEditButton = (e, row) => {
         setEditRow(row);
         localTabState.isEdit.set(true);
     }
 
+    //* Handles rows per page
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPageSelection(event.target.value);
         setPage(0);
     };
 
+    //* Determines the output for the table depending on the dataPropId prop
     const determineFormattedOutput = (propId, row) => {
         switch(propId){
             case 'date':
@@ -80,10 +85,12 @@ export const MTTable = (props) => {
         }
     }
 
+    //* Handles dropdown selecting
     const handleMoreInfo = (i) => {
         localItemState.itemListOpen[i].set(info => !info);
     }
 
+    //* handles closing the modal
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;

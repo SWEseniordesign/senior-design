@@ -41,6 +41,7 @@ export const AddCardModal = (props) => {
     const localTabState = useHookstate(tabState);
     const localCardState = useHookstate(cardState);
 
+    //* Handles adding a card to a tab
     const handleAddCard = async (e) => {
         setLoading(true);
         console.log(localTabState.activeTab.get())
@@ -110,6 +111,7 @@ export const AddCardModal = (props) => {
 
     }
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         localCardState.isAdd.set(false);
     }

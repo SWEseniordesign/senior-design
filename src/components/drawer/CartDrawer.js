@@ -35,6 +35,7 @@ const CartDrawer = () => {
 
   const localOrderState = useHookstate(orderState);
 
+  //* Handles adding item to the cart
   const addItemToCart = (item) => {
     let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
     if(itemIndex > -1){
@@ -42,6 +43,7 @@ const CartDrawer = () => {
     }
   };
 
+  //* Handles removing items from the cart
   const removeItemFromCart = (item) => {
       let itemIndex = localOrderState.order.get().findIndex((i) => i.id === item.id);
       if(itemIndex > -1){
@@ -53,10 +55,12 @@ const CartDrawer = () => {
       }
   };
 
+  //* Get the subtotal of the items in the cart
   const getSubtotal = () => {
       return localOrderState.order.get().reduce((total, item) => total + (item.price * item.quantity), 0);
   }
     
+  //* Handles the checkout action for an order
   const handleCheckout = async () => {
 
     let itemIdArr = [];
@@ -73,10 +77,8 @@ const CartDrawer = () => {
       price: (getSubtotal() * 1.15).toFixed(2)
     }
 
-    console.log(newTransaction)
-
     let transactionResponse = await createTransaction(newTransaction);
-    console.log(!!(transactionResponse.err))
+
     if(!!(transactionResponse.err)){
       console.log(transactionResponse.err);
     } else {

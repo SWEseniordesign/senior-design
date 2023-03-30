@@ -50,15 +50,18 @@ export const ManageEmployeeModal = (props) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState({message: '', status: 'success'});
 
+    //* Table columns for the employee list
     const tableColumns = [
         {id: 0, dataPropId: 'email', label: 'Email', width: '100%'},
         {id: 1, dataPropId: 'isManager', label: 'Manager', width: '100%'},
     ]
 
+    //* Handles closing the modal
     const handleCloseModal = () => {
         setOpen(false);
     }
     
+    //* Handles closing the alert
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -67,6 +70,7 @@ export const ManageEmployeeModal = (props) => {
         setSnackbarOpen(false);
     };
 
+    //* Handles adding the employee
     async function addEmp() {
         let employee = {email: email, isManager: isManager, tillId: tillId};
         let response = await addEmployee(employee);
@@ -81,6 +85,7 @@ export const ManageEmployeeModal = (props) => {
         setSnackbarOpen(true);
     }
 
+    //* Handles deleting an employee
     async function deleteEmployee(e, row) {
         let response  = await removeEmployee({email: row.email, tillId: tillId});
         console.log(response);
@@ -93,6 +98,7 @@ export const ManageEmployeeModal = (props) => {
         setSnackbarOpen(true);
     }
 
+    //* Handles grabbing the employee
     useEffect(() => {
         async function getEmployees() {
             let empObjects = [];
