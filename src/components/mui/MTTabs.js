@@ -134,6 +134,7 @@ export const MTTabs = (props) => {
     useEffect(() => {
         setValue(0);
         fetchTabs();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [localTabState.isEdit.get(), localTabState.isAdd.get()])
 
     //* Once we have the till information and the tab information, we can store the tabs in the local state
