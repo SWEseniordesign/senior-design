@@ -131,11 +131,9 @@ export const MTTabs = (props) => {
 
     const ResponsiveLayout = WidthProvider(Responsive);
 
-    //* Refresh the tabs when either a tab has been edited or a tab has been added
     useEffect(() => {
         setValue(0);
         fetchTabs();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [localTabState.isEdit.get(), localTabState.isAdd.get()])
 
     //* Once we have the till information and the tab information, we can store the tabs in the local state
@@ -303,7 +301,6 @@ export const MTTabs = (props) => {
 
     }
 
-    //* Update the card props
     const updateCardProps = async(newDimensions) => {
         await modifyCardPosition(newDimensions);
     }
@@ -404,7 +401,7 @@ export const MTTabs = (props) => {
                                 layouts={{lg: layout}}
                                 draggableHandle=".draggableHandle"
                                 cols={{ lg: 6, md: 6, sm: 3, xs: 1, xxs: 1 }}
-                                rowHeight={350}
+                                rowHeight={410}
                                 onLayoutChange={(e) => handleLayoutChange(e, false)}
                                 >
                                 {localCards.map((card, index) => {
@@ -526,7 +523,7 @@ export const MTTabs = (props) => {
                                     layouts={{lg: layout}}
                                     draggableHandle=".draggableHandle"
                                     cols={{ lg: 6, md: 6, sm: 3, xs: 1, xxs: 1 }}
-                                    rowHeight={310}
+                                    rowHeight={380}
                                     onLayoutChange={(e) => handleLayoutChange(e, false)}
                                     >
                                     {localCards?.map((card, index) => {
