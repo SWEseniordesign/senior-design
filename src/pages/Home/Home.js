@@ -10,8 +10,7 @@ import { useNavigate } from "react-router";
 
 import workersPic from "../../resources/HomePictures/fast-food-workers.jpeg";
 import cashierPic from "../../resources/HomePictures/cashier.jpeg";
-import dashboardPic from "../../resources/HomePictures/dashboard-pic.png";
-import tillPic from "../../resources/HomePictures/till-pic.png";
+import tillPic from "../../resources/HomePictures/till-sc.png";
 import { pageState } from "../../states/pageState";
 
 
@@ -287,7 +286,7 @@ export const Home = () => {
                     </Grid>
 
                     <Grid item xs={12} md={6}>
-                        <Image sx={{borderRadius: '6px'}} src={dashboardPic} />
+                        <Image sx={{borderRadius: '6px'}} src={tillPic} />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <Box sx={{width: '100%', height: 300, paddingRight: '20px'}}>
@@ -310,7 +309,7 @@ export const Home = () => {
                                 </Typography>
                             </div>
                             <Typography sx={{fontSize: '18px'}}>
-                                Organize your till items to make them effortlessly findable when things get hectic.  Upload pictures of your items and arrange them however you want.
+                                Organize your till items to make them effortlessly findable when things get hectic.  Our tills also include a search bar, for when you just can't find that one item.
                             </Typography>
                         </Box>
                     </Grid>
