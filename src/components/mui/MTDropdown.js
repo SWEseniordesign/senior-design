@@ -89,7 +89,7 @@ const MTDropdown = (props) => {
                         onClose={handleCloseMenu}>
                         {menuItems.map((item) => {
                             return (
-                                <MenuItem key={item.id} onClick={() => {
+                                <MenuItem key={item.id} disabled={item.disabled} onClick={() => {
                                     item.action();
                                     handleCloseMenu();
                                 }}>
