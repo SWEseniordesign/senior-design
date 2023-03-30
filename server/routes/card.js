@@ -356,8 +356,6 @@ router.post('/update', verifyJWTAdmin, async function(req, res){
 
     //Verify input
     if(typeof req.body.cardId === 'undefined' || !req.body.cardId) return res.status(400).send({err: 'Invalid cardId input', code: 400});
-    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
-    if(typeof req.body.color === 'undefined' || !req.body.color) return res.status(400).send({err: 'Invalid color input', code: 400});
 
     //Save updated info
     let updatedCard = {
