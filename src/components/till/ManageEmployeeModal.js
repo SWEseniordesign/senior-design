@@ -70,7 +70,7 @@ export const ManageEmployeeModal = (props) => {
     async function addEmp() {
         let employee = {email: email, isManager: isManager, tillId: tillId};
         let response = await addEmployee(employee);
-        console.log(response);
+
         if(!(response) || response.code !== 201){
             setAlertMessage({message: !(response) ? 'Failed add employee' : response.err, status: 'warning'});
         } else {

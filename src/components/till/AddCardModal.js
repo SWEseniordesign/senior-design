@@ -43,7 +43,7 @@ export const AddCardModal = (props) => {
 
     const handleAddCard = async (e) => {
         setLoading(true);
-
+        console.log(localTabState.activeTab.get())
         let newCard = {
             tabId: localTabState.activeTab.get(),
             name: newCardName,

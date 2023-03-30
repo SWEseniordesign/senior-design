@@ -9,6 +9,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { none, useHookstate } from "@hookstate/core";
 import { orderState } from "../../states/orderState";
 import { createTransaction } from "../../requests/transactions-req";
+import { userState } from "../../states/userState";
+import missingImage from '../../resources/missing-img.png'
 
 const useStyles = makeStyles({
   drawer: {
@@ -16,7 +18,7 @@ const useStyles = makeStyles({
     flexShrink: 0,
   },
   drawerPaper: {
-    width: 340,
+    width: 400,
     borderRight: "none",
   },
   drawerHeader: {
@@ -113,9 +115,13 @@ const CartDrawer = () => {
             {localOrderState.order.get().map((item) => (
                 <ListItem key={item.id}>
                 <ListItemIcon>
-                    <img src={item.image} alt={item.name} style={{ width: "50px", height: "50px" }} />
+                    {item.image ?
+                    <img src={item.image} alt={item.name} style={{ width: "80px", height: "45px" }} />
+                    :
+                    <img src={missingImage} alt={item.name} style={{ width: "80px", height: "45px" }} />
+                    }
                 </ListItemIcon>
-                <ListItemText primary={item.name} secondary={`$${item.price.toFixed(2)}`} />
+                <ListItemText primary={item.name} secondary={`$${item.price.toFixed(2)}`} sx={{marginLeft: 2}}/>
                 <IconButton onClick={() => removeItemFromCart(item)}>
                     <RemoveIcon />
                 </IconButton>
@@ -141,7 +147,8 @@ const CartDrawer = () => {
                 <Typography>{`$${(getSubtotal() * 1.15).toFixed(2)}`}</Typography>
             </ListItem>
             <ListItem>
-                <MtButton variant="contained" onClick={handleCheckout} label={'CHECKOUT'} />
+                <MtButton variant="contained" disabled={!(userState.employee.get()._id)} onClick={handleCheckout} label={'CHECKOUT'} />
+                {!(userState.employee.get()._id) && <Typography variant={"subtitle2"} sx={{marginLeft: '12px'}}>Cannot make transaction. User is a Business Owner</Typography>}
             </ListItem>
         </List>
 

@@ -50,6 +50,7 @@ export const AddTabModal = (props) => {
             setSaveMessage("Error create the tab");
         }
         localTabState.tabs.merge([{id: localTabState.tabs.get().length+1, name: '+', canAdd: true}]);
+        localTabState.activeTab.set('');
 
         setLoading(false);
 

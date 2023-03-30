@@ -81,7 +81,7 @@ const Header = (props) => {
     //* Activated when the user opens the avatar dropdown. Checks if the user has a business.
     const userHasBusiness = async() => {
         let response;
-        if(userState.token.get() !== '' && userState.employee.get() === {}){
+        if(userState.token.get() !== ''){
             response = await getUserBusiness();
         }
 
@@ -93,11 +93,11 @@ const Header = (props) => {
         {id: 1, title: 'Open Till', action: () => handleAccessTill()}
     ];
 
-    //* MenuItems that are apart of the pages dropdown.
-    const dropdownMenuItems_Pages = [
-        {id: 1, title: 'About', action: () => {}},
-        // {id: 2, title: 'Contact Us', action: () => {}}
-    ];
+    // //* MenuItems that are apart of the pages dropdown.
+    // const dropdownMenuItems_Pages = [
+    //     {id: 1, title: 'About', action: () => {}},
+    //     // {id: 2, title: 'Contact Us', action: () => {}}
+    // ];
 
     //* MenuItems that are apart of the avatar dropdown.
     const dropdownMenuItems_AccountOwner = [
@@ -120,8 +120,6 @@ const Header = (props) => {
                 navigate('/');
             }}
         ];
-
-    console.log(uState.get())
 
     const classes = useStyles();
 
@@ -147,7 +145,7 @@ const Header = (props) => {
                             <>
                                 <div className={classes.separator}></div>
                                 <div className={classes.dropdownContainer}>
-                                    <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/>
+                                    {/* <MTDropdown hasDropdownIcon label={'Pages'} menuItems={dropdownMenuItems_Pages}/> */}
                                     <MTDropdown hasDropdownIcon label={'For Employees'} menuItems={dropdownMenuItems_ForEmployees}/>
                                 </div>
                             </>}

@@ -29,39 +29,37 @@ router.post('/get', verifyJWT, function(req, res){
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invalid id input', code: 400});
+
     //find till by its objectid
     let objectId = req.body.id;
 
-    //if objectId is 12 bytes in length, move on to next check
-    if(mongoose.isValidObjectId(objectId)){
-        //if objectId is an actually objectId, attempt to find it
-        if((String)(new ObjectId(objectId)) === objectId){
-            Till.findById(objectId, function(err, till){
-                if(err){
-                    console.log(err);
-                    return res.status(500).send({err: 'Internal Server Error', code: 500});
-                } else {
-                    //If till not found
-                    if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
-                    let formattedTill = {
-                        id: till._id.toString(),
-                        loginId: till.loginId,
-                        name: till.name,
-                        managerPassword: till.managerPassword,
-                        employees: till.employees,
-                        tabs: till.tabs,
-                        props: till.props,
-                        transactions: till.transactions
-                    };
-                    return res.status(200).send({formattedTill, code: 200});
-                }
-            });
+    //verify ObjectId is valid
+    if(!(mongoose.isValidObjectId(objectId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(objectId)) === objectId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+
+    //Find Till
+    Till.findById(objectId, function(err, till){
+        if(err){
+            console.log(err);
+            return res.status(500).send({err: 'Internal Server Error', code: 500});
         } else {
-            return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
+            //If till not found
+            if(till === null) return res.status(404).send({err: `Till does not exist`, code: 404});
+            let formattedTill = {
+                id: till._id.toString(),
+                loginId: till.loginId,
+                name: till.name,
+                managerPassword: till.managerPassword,
+                employees: till.employees,
+                tabs: till.tabs,
+                props: till.props,
+                transactions: till.transactions
+            };
+            return res.status(200).send({formattedTill, code: 200});
         }
-    } else {
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    }
+    });
 });
 
 
@@ -82,6 +80,11 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
     //Check if req body exists
     if(!req.body) return res.status(400).send({err: 'No request body', code: 400});
 
+    //Verify input
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+    if(typeof req.body.managerPassword === 'undefined' || !req.body.managerPassword) return res.status(400).send({err: 'Invalid managerPassword input', code: 400});
+    if(typeof req.body.businessId === 'undefined' || !req.body.businessId) return res.status(400).send({err: 'Invalid businessId input', code: 400});
+
     //Create temp new till
     let new_till = new Till({
         name: req.body.name,
@@ -94,12 +97,8 @@ router.post('/create', verifyJWTOwner, async (req, res) => {
     let businessId = req.body.businessId;
 
     //verify ObjectId is valid
-    if(!(mongoose.isValidObjectId(businessId))){
-        return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
-    }
-    if(!((String)(new ObjectId(businessId)) === businessId)){
-        return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
-    }
+    if(!(mongoose.isValidObjectId(businessId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
+    if(!((String)(new ObjectId(businessId)) === businessId)) return res.status(400).send({err: 'Type 2: Id is not a valid ObjectId', code: 400});
 
     //Checks if business already has a till with that name, if it does it won't add it
     let business = await Business.findById(businessId).catch( err => {return res.status(500).send({err: 'Error finding business to link to till', code: 500});});
@@ -177,18 +176,18 @@ router.post('/edit', verifyJWT, function(req, res) {
     //Check if req body exists
     if (!req.body) return res.status(400).send({err: 'No request body', code: 400});
   
+    //Verify input
+    if(typeof req.body.id === 'undefined' || !req.body.id) return res.status(400).send({err: 'Invalid id input', code: 400});
+    if(typeof req.body.managerPassword === 'undefined' || !req.body.managerPassword) return res.status(400).send({err: 'Invalid managerPassword input', code: 400});
+    if(typeof req.body.name === 'undefined' || !req.body.name) return res.status(400).send({err: 'Invalid name input', code: 400});
+
     //Find till by its ObjectId
     const objectId = req.body.id;
   
     //Verify ObjectId is valid
-    if (!mongoose.isValidObjectId(objectId)) {
-      return res.status(400).send({err: 'Type 1: Till ID is not a valid ObjectId', code: 400});
-    }
-    //Verify ObjectId is actually an ObjectId
-    if (String(new ObjectId(objectId)) !== objectId) {
-      return res.status(400).send({err: 'Type 2: Till ID is not a valid ObjectId', code: 400});
-    }
-  
+    if (!mongoose.isValidObjectId(objectId)) return res.status(400).send({err: 'Type 1: Till ID is not a valid ObjectId', code: 400});
+    if (String(new ObjectId(objectId)) !== objectId) return res.status(400).send({err: 'Type 2: Till ID is not a valid ObjectId', code: 400});
+
     //Find the till and update its name and manager password
     Till.findByIdAndUpdate(
       objectId,
@@ -264,8 +263,6 @@ router.post('/getall', verifyJWT, async function(req, res){
         tills: businessResult.tills
     }       
 
-    // if(business.tills.length === 0) return res.status(404).send({err: 'Business does not have tills', code: 404});
-
     //Grab tills
     let tills = [];
     for (let tillId of business.tills) {
@@ -301,6 +298,10 @@ router.post('/getall', verifyJWT, async function(req, res){
 router.post('/addemployee', verifyJWTAdmin, async function(req, res){
     //check if req body exists 
     if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Verify input
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invalid tillId input', code: 400});
+    if(typeof req.body.email === 'undefined' || !req.body.email) return res.status(400).send({err: 'Invalid email input', code: 400});
 
     //Store tillId
     let tillId = req.body.tillId;
@@ -343,6 +344,9 @@ router.post('/addemployee', verifyJWTAdmin, async function(req, res){
     }
     //If the Employee does not exist in db, create them & add them to the Till
     else{
+        //Verify Input
+        if(typeof req.body.isManager === 'undefined') return res.status(400).send({err: 'Invalid isManager input', code: 400});
+
         //Create Employee
         let newEmployee = new Employee({
             email: req.body.email,
@@ -396,6 +400,11 @@ router.post('/addemployee', verifyJWTAdmin, async function(req, res){
 router.post('/auth', async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
+    //Verify Input
+    if(typeof req.body.tillid === 'undefined' || !req.body.tillid) return res.status(400).send({err: 'Invalid tillid input', code: 400});
+    if(typeof req.body.email === 'undefined' || !req.body.email) return res.status(400).send({err: 'Invalid email input', code: 400});
+    if(typeof req.body.password === 'undefined' || !req.body.password) return res.status(400).send({err: 'Invalid password input', code: 400});
+
     let till = await Till.findOne({loginId: req.body.tillid}).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
     if(!till) return res.status(403).send({err: 'Till does not exist', code: 403});
     if(till.employees.indexOf(req.body.email) === -1) return res.status(404).send({err: 'Employee Not Found', code: 404});
@@ -424,6 +433,10 @@ router.post('/auth', async function(req, res){
  */
 router.post('/removeemployee', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
+
+    //Verify Input
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invalid tillId input', code: 400});
+    if(typeof req.body.email === 'undefined' || !req.body.email) return res.status(400).send({err: 'Invalid email input', code: 400});
 
     //Find the Till
     let till = await Till.findById(req.body.tillId).exec().catch( err => {return res.status(500).send({err: 'Internal Server Error', code: 500})});
@@ -466,7 +479,7 @@ router.post('/transactions', verifyJWTAdmin, async function(req, res){
     if(!req.body) return res.status(400).send({err: 'No request body'});
 
     //Verify input
-    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invald employeeId input', code: 400});
+    if(typeof req.body.tillId === 'undefined' || !req.body.tillId) return res.status(400).send({err: 'Invalid employeeId input', code: 400});
 
     //Verify ObjectIds are valid
     if(!(mongoose.isValidObjectId(req.body.tillId))) return res.status(400).send({err: 'Type 1: Id is not a valid ObjectId', code: 400});
